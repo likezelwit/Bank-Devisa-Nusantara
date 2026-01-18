@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi Kartu | Bank Devisa Nusantara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">BDN<span>.</span></div>
+        <a href="../" class="btn-back">← Kembali ke Beranda</a>
+    </nav>
+
+    <main class="container">
+        <div class="form-wrapper">
+            <header class="form-header">
+                <h1>Penerbitan Kartu Mandiri</h1>
+                <p>Silakan lengkapi formulir pendaftaran kartu pintar seri 0810.</p>
+            </header>
+
+            <div class="progress-container">
+                <div class="progress" id="progressLine"></div>
+                <div class="circle active">1</div>
+                <div class="circle">2</div>
+            </div>
+
+            <div class="form-content">
+                <div class="step active" id="step1">
+                    <div class="input-group">
+                        <label>Nama Lengkap (Sesuai Identitas)</label>
+                        <input type="text" id="inputNama" placeholder="Contoh: ARYA WIGUNA">
+                    </div>
+                    <div class="input-group">
+                        <label>Pin Keamanan (6 Digit)</label>
+                        <input type="password" id="inputPW" maxlength="6" placeholder="******">
+                    </div>
+                    <button class="btn-primary" onclick="goStep2()">Verifikasi Data</button>
+                </div>
+
+                <div class="step" id="step2">
+                    <div class="success-banner">DATA BERHASIL DIVERIFIKASI</div>
+                    
+                    <div class="card-display">
+                        <div class="card-chip"></div>
+                        <div class="card-number" id="displayNo">0810 **** **** ****</div>
+                        <div class="card-holder" id="displayName">NAMA PEMILIK</div>
+                        <div class="card-brand">SERI 0810 - BDN</div>
+                    </div>
+
+                    <div class="instruction">
+                        <p><strong>Peringatan Keamanan:</strong> Harap catat nomor kartu Anda. Sistem tidak akan menampilkan data ini kembali demi perlindungan privasi.</p>
+                    </div>
+
+                    <button class="btn-primary" onclick="window.print()">Cetak Dokumen Fisik</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
