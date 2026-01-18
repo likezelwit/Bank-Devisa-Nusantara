@@ -1,31 +1,54 @@
-function goStep2() {
-    const nama = document.getElementById('inputNama').value;
-    const pw = document.getElementById('inputPW').value;
-
-    if (nama === "" || pw.length < 6) {
-        alert("Otoritas Ditolak: Mohon lengkapi Nama dan 6 digit PIN Keamanan.");
-        return;
+function nextStep(s) {
+    if (s === 2) {
+        if (document.getElementById('inputNama').value.trim() === "") {
+            alert("Sistem membutuhkan nama lengkap untuk proses verifikasi."); return;
+        }
     }
-
-    // Simulasi Generate Nomor Kartu 0810
-    let randomNum = "";
-    for(let i = 0; i < 12; i++) {
-        randomNum += Math.floor(Math.random() * 10);
+    if (s === 3) {
+        if (document.getElementById('inputPW').value.length < 6) {
+            alert("PIN keamanan harus terdiri dari 6 digit angka."); return;
+        }
     }
-    const fullNumber = "0810" + randomNum;
-    const formatted = fullNumber.match(/.{1,4}/g).join(" ");
+    updateUI(s);
+}
 
-    // Update Tampilan
-    document.getElementById('displayNo').innerText = formatted;
-    document.getElementById('displayName').innerText = nama.toUpperCase();
+function updateUI(s) {
+    // Sembunyikan semua step
+    document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+    // Tampilkan step yang diminta
+    document.getElementById('step' + s).classList.add('active');
 
-    // Pindah Step
-    document.getElementById('step1').classList.remove('active');
-    document.getElementById('step2').classList.add('active');
-    
     // Update Progress Bar
-    document.querySelectorAll('.circle')[1].classList.add('active');
-    document.getElementById('progressLine').style.width = "100%";
+    const progress = ((s - 1) / 3) * 100;
+    document.getElementById('progressLine').style.width = progress + "%";
 
-    console.log("Log: Kartu berhasil diterbitkan untuk " + nama);
+    // Update Circle Color
+    document.querySelectorAll('.circle').forEach((circle, idx) => {
+        if (idx < s) circle.classList.add('active');
+    });
+}
+
+function generateFinal() {
+    if (!document.getElementById('checkAgree').checked) {
+        alert("Anda harus menyetujui syarat & ketentuan layanan."); return;
+    }
+
+    const btn = document.getElementById('btnGenerate');
+    btn.disabled = true;
+    btn.innerText = "MENGHUBUNGI SERVER PUSAT...";
+
+    // Simulasi Proses Bank (1.5 detik)
+    setTimeout(() => {
+        const nama = document.getElementById('inputNama').value;
+        const randomNumbers = Array.from({length: 12}, () => Math.floor(Math.random() * 10)).join('');
+        const fullCard = "0810" + randomNumbers;
+        
+        // Format Tampilan Nomor (XXXX XXXX XXXX XXXX)
+        const formatted = fullCard.match(/.{1,4}/g).join(" ");
+
+        document.getElementById('displayNo').innerText = formatted;
+        document.getElementById('displayName').innerText = nama.toUpperCase();
+
+        updateUI(4);
+    }, 1500);
 }
