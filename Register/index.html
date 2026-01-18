@@ -3,58 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrasi Kartu | Bank Devisa Nusantara</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Pendaftaran Kartu Pintar | Bank Devisa Nusantara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
-        <a href="../" class="btn-back">← Kembali ke Beranda</a>
+        <a href="../" class="btn-back">← Batal</a>
     </nav>
 
     <main class="container">
         <div class="form-wrapper">
-            <header class="form-header">
-                <h1>Penerbitan Kartu Mandiri</h1>
-                <p>Silakan lengkapi formulir pendaftaran kartu pintar seri 0810.</p>
-            </header>
-
             <div class="progress-container">
-                <div class="progress" id="progressLine"></div>
-                <div class="circle active">1</div>
-                <div class="circle">2</div>
+                <div class="progress-bar-bg">
+                    <div class="progress-line" id="progressLine"></div>
+                </div>
+                <div class="circle active" data-title="Data">1</div>
+                <div class="circle" data-title="PIN">2</div>
+                <div class="circle" data-title="Syarat">3</div>
+                <div class="circle" data-title="Hasil">4</div>
             </div>
 
             <div class="form-content">
                 <div class="step active" id="step1">
-                    <div class="input-group">
-                        <label>Nama Lengkap (Sesuai Identitas)</label>
-                        <input type="text" id="inputNama" placeholder="Contoh: ARYA WIGUNA">
+                    <div class="header-step">
+                        <h1>Identitas Pemegang Kartu</h1>
+                        <p>Pastikan nama sesuai dengan dokumen identitas resmi (KTP/SIM).</p>
                     </div>
                     <div class="input-group">
-                        <label>Pin Keamanan (6 Digit)</label>
-                        <input type="password" id="inputPW" maxlength="6" placeholder="******">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="inputNama" placeholder="Contoh: RADEN ARYA">
                     </div>
-                    <button class="btn-primary" onclick="goStep2()">Verifikasi Data</button>
+                    <button class="btn-primary" onclick="nextStep(2)">Lanjutkan</button>
                 </div>
 
                 <div class="step" id="step2">
-                    <div class="success-banner">DATA BERHASIL DIVERIFIKASI</div>
-                    
+                    <div class="header-step">
+                        <h1>Otorisasi Keamanan</h1>
+                        <p>Gunakan 6 digit angka rahasia untuk akses Dashboard.</p>
+                    </div>
+                    <div class="input-group">
+                        <label>Buat PIN 6 Digit</label>
+                        <input type="password" id="inputPW" maxlength="6" pattern="\d*" inputmode="numeric" placeholder="******">
+                    </div>
+                    <button class="btn-primary" onclick="nextStep(3)">Konfirmasi PIN</button>
+                </div>
+
+                <div class="step" id="step3">
+                    <div class="header-step">
+                        <h1>Persetujuan & Deklarasi</h1>
+                        <p>Mohon tinjau kebijakan penggunaan kartu pintar 0810.</p>
+                    </div>
+                    <div class="agreement-box">
+                        <p>1. Kartu ini adalah properti simulasi Bank Devisa Nusantara.<br>
+                           2. Pengguna bertanggung jawab penuh atas kerahasiaan PIN.<br>
+                           3. Sistem mencatat waktu pendaftaran secara real-time.</p>
+                        <label class="check-label">
+                            <input type="checkbox" id="checkAgree"> Saya setuju dengan seluruh ketentuan.
+                        </label>
+                    </div>
+                    <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu</button>
+                </div>
+
+                <div class="step" id="step4">
+                    <div class="success-header">
+                        <div class="icon-success">✓</div>
+                        <h2>Penerbitan Selesai</h2>
+                    </div>
+
                     <div class="card-display">
-                        <div class="card-chip"></div>
-                        <div class="card-number" id="displayNo">0810 **** **** ****</div>
-                        <div class="card-holder" id="displayName">NAMA PEMILIK</div>
-                        <div class="card-brand">SERI 0810 - BDN</div>
+                        <div class="card-top">
+                            <span class="bank-name">BANK DEVISA NUSANTARA</span>
+                            <span class="chip-card"></span>
+                        </div>
+                        <div class="card-mid">
+                            <div class="card-number" id="displayNo">0810 0000 0000 0000</div>
+                        </div>
+                        <div class="card-bottom">
+                            <div class="card-info">
+                                <small>NAMA PEMEGANG</small>
+                                <div id="displayName">NAMA LENGKAP</div>
+                            </div>
+                            <div class="card-series">SERI 0810</div>
+                        </div>
                     </div>
 
-                    <div class="instruction">
-                        <p><strong>Peringatan Keamanan:</strong> Harap catat nomor kartu Anda. Sistem tidak akan menampilkan data ini kembali demi perlindungan privasi.</p>
+                    <div class="alert-box">
+                        PENTING: Jangan berikan nomor kartu ini kepada siapapun.
                     </div>
-
-                    <button class="btn-primary" onclick="window.print()">Cetak Dokumen Fisik</button>
+                    
+                    <button class="btn-primary" onclick="location.href='../Dashboard/'">Akses Dashboard BDN</button>
                 </div>
             </div>
         </div>
