@@ -1,10 +1,10 @@
 :root {
-    --bg: #f8fafc;
     --navy: #0f172a;
     --gold: #b8924e;
-    --blue-accent: #2563eb;
+    --blue: #2563eb;
+    --bg: #f8fafc;
     --white: #ffffff;
-    --text-main: #1e293b;
+    --gray: #64748b;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,10 +12,9 @@
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg);
-    color: var(--text-main);
+    color: var(--navy);
 }
 
-/* NAVBAR SAMA DENGAN BERANDA */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -25,51 +24,56 @@ body {
     border-bottom: 1px solid #e2e8f0;
 }
 
-.logo { font-size: 1.5rem; font-weight: 800; color: var(--navy); }
+.logo { font-size: 1.5rem; font-weight: 800; }
 .logo span { color: var(--gold); }
-.btn-back { text-decoration: none; color: var(--navy); font-weight: 600; font-size: 0.9rem; }
+.btn-back { text-decoration: none; color: var(--gray); font-size: 0.9rem; font-weight: 600; }
 
-/* FORM WRAPPER */
-.container { padding: 3rem 5%; display: flex; justify-content: center; }
-.form-wrapper { background: var(--white); width: 100%; max-width: 550px; padding: 2.5rem; border-radius: 20px; border: 1px solid #e2e8f0; }
-.form-header { text-align: center; margin-bottom: 2rem; }
-.form-header h1 { font-size: 1.8rem; color: var(--navy); margin-bottom: 0.5rem; }
-.form-header p { color: #64748b; font-size: 0.9rem; }
+.container { padding: 4rem 5%; display: flex; justify-content: center; }
+.form-wrapper { background: var(--white); width: 100%; max-width: 500px; padding: 3rem; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
-/* PROGRESS BAR */
-.progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 2rem; }
-.progress-container::before { content: ""; background: #e2e8f0; position: absolute; top: 50%; left: 0; transform: translateY(-50%); height: 4px; width: 100%; z-index: 1; }
-.circle { width: 30px; height: 30px; background: #fff; border: 3px solid #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; font-weight: bold; }
-.circle.active { border-color: var(--blue-accent); color: var(--blue-accent); }
+/* Progress Tracker */
+.progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 3rem; }
+.progress-bar-bg { position: absolute; top: 15px; width: 100%; height: 3px; background: #e2e8f0; z-index: 1; }
+.progress-line { width: 0%; height: 100%; background: var(--blue); transition: 0.5s ease; }
+.circle { width: 32px; height: 32px; background: white; border: 3px solid #e2e8f0; border-radius: 50%; z-index: 2; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; position: relative; }
+.circle.active { border-color: var(--blue); color: var(--blue); }
+.circle::after { content: attr(data-title); position: absolute; top: 40px; font-size: 0.65rem; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
 
-/* INPUTS */
+/* Step Logic */
 .step { display: none; }
-.step.active { display: block; animation: fadeIn 0.5s; }
+.step.active { display: block; animation: slideUp 0.4s ease; }
+.header-step h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.header-step p { font-size: 0.9rem; color: var(--gray); margin-bottom: 2rem; }
+
+/* Input Styling */
 .input-group { margin-bottom: 1.5rem; }
-.input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.85rem; }
-.input-group input { width: 100%; padding: 0.8rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; }
+.input-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--navy); }
+.input-group input { width: 100%; padding: 1rem; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 1rem; transition: 0.3s; }
+.input-group input:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
 
-.btn-primary { width: 100%; padding: 1rem; background: var(--navy); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
-.btn-primary:hover { background: var(--blue-accent); }
+.btn-primary { width: 100%; padding: 1.1rem; background: var(--navy); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 1rem; }
+.btn-primary:hover { background: var(--blue); transform: translateY(-2px); }
 
-/* KARTU DIGITAL */
-.card-display {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    border-radius: 15px; padding: 20px; color: white; height: 200px; position: relative; margin: 20px 0;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-}
-.card-chip { width: 40px; height: 30px; background: #e2e8f0; border-radius: 4px; }
-.card-number { margin-top: 40px; font-size: 1.3rem; letter-spacing: 3px; font-family: monospace; }
-.card-holder { margin-top: 25px; font-size: 0.9rem; text-transform: uppercase; opacity: 0.8; }
-.card-brand { position: absolute; bottom: 20px; right: 20px; font-size: 0.7rem; color: var(--gold); font-weight: bold; }
+/* Agreement Box */
+.agreement-box { background: #f1f5f9; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; }
+.agreement-box p { font-size: 0.8rem; line-height: 1.5; margin-bottom: 1rem; }
+.check-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; }
 
-.success-banner { background: #dcfce7; color: #166534; padding: 10px; text-align: center; border-radius: 8px; font-weight: 800; font-size: 0.8rem; }
-.instruction { background: #fef2f2; color: #991b1b; padding: 1rem; border-radius: 8px; font-size: 0.8rem; margin-top: 1rem; border: 1px solid #fee2e2; }
+/* The Virtual Card */
+.card-display { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 2rem; border-radius: 20px; color: white; margin-bottom: 1.5rem; box-shadow: 0 20px 40px rgba(15, 23, 42, 0.3); }
+.bank-name { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; color: var(--gold); }
+.chip-card { width: 45px; height: 35px; background: linear-gradient(135deg, #e2e8f0, #94a3b8); border-radius: 6px; float: right; }
+.card-number { font-size: 1.5rem; margin: 2rem 0; letter-spacing: 3px; font-family: monospace; }
+.card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+.card-info small { font-size: 0.6rem; opacity: 0.6; display: block; }
+.card-info div { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+.card-series { font-size: 0.7rem; font-weight: 800; opacity: 0.5; }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.alert-box { background: #fff1f2; color: #9f1239; padding: 1rem; border-radius: 10px; font-size: 0.8rem; text-align: center; font-weight: 600; }
 
-/* RESPONSIVE */
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
 @media (max-width: 600px) {
     .navbar { padding: 1rem 5%; }
-    .form-wrapper { padding: 1.5rem; border: none; box-shadow: none; }
+    .form-wrapper { padding: 2rem 1.5rem; box-shadow: none; background: transparent; }
 }
