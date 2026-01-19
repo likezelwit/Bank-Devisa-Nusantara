@@ -2,40 +2,90 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Secure Checkout | BDN Private Banking</title>
     <link rel="stylesheet" href="../style.css">
+    <style>
+        /* CSS Khusus agar layout stabil di Mobile */
+        body { overflow-x: hidden; background: #f8fafc; }
+        .card-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .confirm-box {
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            padding: 2.5rem 1.5rem;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        .order-summary {
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        input#cardInput {
+            transition: all 0.3s ease;
+            outline: none;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        input#cardInput:focus {
+            border-color: #b5985a;
+            box-shadow: 0 0 0 4px rgba(181, 152, 90, 0.1);
+        }
+        @media (max-width: 480px) {
+            .step-header h1 { font-size: 1.8rem; }
+            .confirm-box { padding: 2rem 1rem; }
+        }
+    </style>
 </head>
 <body>
     <main class="card-container">
-        <div class="confirm-box" style="max-width: 500px; margin: 0 auto; text-align: center;">
-            <header class="step-header">
-                <span class="step-badge">TRANSACTION GATEWAY</span>
-                <h1>Konfirmasi <br><span class="text-gradient">Pembayaran.</span></h1>
-                <p>Masukkan nomor kartu BDN untuk validasi Diamond Royal.</p>
+        <div class="confirm-box">
+            <header class="step-header" style="margin-bottom: 2rem;">
+                <span class="step-badge" style="background: rgba(181, 152, 90, 0.1); color: #b5985a; padding: 6px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 800;">TRANSACTION GATEWAY</span>
+                <h1 style="margin-top: 1rem;">Konfirmasi <br><span class="text-gradient">Pembayaran.</span></h1>
+                <p style="color: #64748b; font-size: 0.9rem;">Validasi kepemilikan rekening untuk penerbitan Diamond Royal.</p>
             </header>
 
-            <div class="payment-card" style="background: white; padding: 2rem; border-radius: 28px; text-align: left; border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.05);">
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="font-size: 0.75rem; font-weight: 800; color: #64748b;">NOMOR KARTU SUMBER DANA</label>
-                    <input type="number" id="cardInput" placeholder="Contoh: 08103522..." 
-                        style="width: 100%; padding: 1rem; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 1.1rem; margin-top: 8px;">
+            <div class="payment-form">
+                <div style="margin-bottom: 1.5rem; text-align: left;">
+                    <label style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; letter-spacing: 1px; display: block; margin-bottom: 8px;">NOMOR KARTU SUMBER DANA</label>
+                    <input type="number" id="cardInput" placeholder="0810 •••• •••• ••••" 
+                        style="width: 100%; padding: 1.2rem; border-radius: 16px; border: 2px solid #e2e8f0; font-size: 1.1rem; font-weight: 600;">
                 </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span>Total Tagihan:</span>
-                    <strong class="text-gradient">$50,000.00</strong>
+
+                <div class="order-summary">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.85rem;">
+                        <span style="color: #64748b;">Instrumen:</span>
+                        <strong style="color: #1e293b;">Diamond Royal Elite</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.85rem;">
+                        <span style="color: #64748b;">Biaya Aktivasi:</span>
+                        <strong style="color: #16a34a;">$50,000.00</strong>
+                    </div>
+                    <div style="border-top: 1px dashed #cbd5e1; padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; color: #1e293b;">Total:</span>
+                        <span class="text-gradient" style="font-size: 1.4rem; font-weight: 800;">$50,000.00</span>
+                    </div>
                 </div>
             </div>
 
-            <button class="btn-primary" id="btnPay" style="width: 100%; margin-top: 2rem;">BAYAR & AKTIVASI SEKARANG</button>
-            <p id="loader" style="display:none; margin-top: 15px; font-weight: 700; color: #64748b;">MEMERIKSA DATABASE...</p>
+            <button class="btn-primary" id="btnPay" style="width: 100%; padding: 1.2rem; border-radius: 16px; font-weight: 700; cursor: pointer;">BAYAR & AKTIVASI SEKARANG</button>
+            <p id="loader" style="display:none; margin-top: 20px; font-size: 0.8rem; font-weight: 700; color: #b5985a; letter-spacing: 1px;">MENGHUBUNGKAN KE SERVER SECURE...</p>
         </div>
     </main>
 
     <script type="module">
-        // Path '../../' berarti naik 2 folder ke root tempat firebase.js berada
         import { db } from "../../firebase.js";
-        import { ref, get, child } from "https://www.gstatic.com/firebasejs/9.x/firebase-database.js";
+        import { ref, get, child } from "https://www.gstatic.com/firebasejs/9.10.12/firebase-database.js";
 
         const btnPay = document.getElementById('btnPay');
         const loader = document.getElementById('loader');
@@ -44,35 +94,32 @@
             const cardNum = document.getElementById('cardInput').value;
             
             if (cardNum.length < 5) {
-                alert("Masukkan nomor kartu yang valid!");
+                alert("Harap masukkan nomor kartu yang valid!");
                 return;
             }
 
             loader.style.display = "block";
+            btnPay.style.opacity = "0.7";
             btnPay.disabled = true;
 
             try {
                 const dbRef = ref(db);
-                // Mencari di: nasabah/[nomor_kartu]
                 const snapshot = await get(child(dbRef, `nasabah/${cardNum}`));
                 
                 if (snapshot.exists()) {
                     const userData = snapshot.val();
-                    
-                    // Simpan data ke session agar aman saat pindah halaman
                     sessionStorage.setItem('pending_card', cardNum);
                     sessionStorage.setItem('pending_pin', userData.pin);
                     sessionStorage.setItem('pending_saldo', userData.saldo);
-                    
                     window.location.href = '../konfirmasi/';
                 } else {
-                    alert("KARTU TIDAK TERDAFTAR!\nPastikan data ada di Realtime Database path: nasabah/" + cardNum);
+                    alert("KARTU TIDAK TERDAFTAR!\nSistem tidak menemukan data nomor ini.");
                     loader.style.display = "none";
+                    btnPay.style.opacity = "1";
                     btnPay.disabled = false;
                 }
             } catch (error) {
-                console.error(error);
-                alert("Koneksi Gagal: " + error.message);
+                alert("Gangguan Koneksi: " + error.message);
                 loader.style.display = "none";
                 btnPay.disabled = false;
             }
