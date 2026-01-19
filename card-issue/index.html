@@ -22,7 +22,7 @@
         </header>
 
         <section class="selection-grid">
-            <div class="card-option active" onclick="selectCard(this)">
+            <div class="card-option active" onclick="selectCard(this)" data-variant="Platinum Elite">
                 <div class="card-preview platinum">
                     <div class="card-chip silver"></div>
                     <div class="card-brand">PLATINUM ELITE</div>
@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <div class="card-option" onclick="selectCard(this)">
+            <div class="card-option" onclick="selectCard(this)" data-variant="Gold Priority">
                 <div class="card-preview gold-card">
                     <div class="card-chip gold"></div>
                     <div class="card-brand">GOLD PRIORITY</div>
@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <div class="card-option" onclick="selectCard(this)">
+            <div class="card-option" onclick="selectCard(this)" data-variant="Rose Signature">
                 <div class="card-preview rose-gold">
                     <div class="card-chip gold"></div>
                     <div class="card-brand">ROSE SIGNATURE</div>
@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <div class="card-option" onclick="selectCard(this)">
+            <div class="card-option" onclick="selectCard(this)" data-variant="Black Signature">
                 <div class="card-preview black">
                     <div class="card-chip gold"></div>
                     <div class="card-brand">BLACK SIGNATURE</div>
@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <div class="card-option" onclick="selectCard(this)">
+            <div class="card-option" onclick="selectCard(this)" data-variant="Emerald Private">
                 <div class="card-preview emerald">
                     <div class="card-chip gold"></div>
                     <div class="card-brand">EMERALD PRIVATE</div>
@@ -87,7 +87,7 @@
                 </div>
             </div>
 
-            <div class="card-option" onclick="selectCard(this)">
+            <div class="card-option" onclick="selectCard(this)" data-variant="Diamond Royal">
                 <div class="card-preview diamond">
                     <div class="card-chip gold"></div>
                     <div class="card-brand">DIAMOND ROYAL</div>
@@ -102,14 +102,59 @@
         </section>
 
         <footer class="action-footer">
-            <button class="btn-primary" onclick="window.location.href='checkout/'">KONFIRMASI PENERBITAN</button>
+            <button id="mainBtn" class="btn-primary" onclick="window.location.href='checkout/'">KONFIRMASI PENERBITAN</button>
         </footer>
     </main>
 
     <script>
+        // Fungsi UI Sederhana (Tetap di sini agar responsif)
         function selectCard(element) {
+            // Cek apakah tombol sedang disabled (sudah beli)
+            const btn = document.getElementById('mainBtn');
+            if (btn.disabled) return;
+
             document.querySelectorAll('.card-option').forEach(card => card.classList.remove('active'));
             element.classList.add('active');
+        }
+    </script>
+
+    <script type="module">
+        import { db } from "../firebase.js";
+        import { ref, onValue } from "https://www.gstatic.com/firebasejs/9.x/firebase-database.js";
+
+        const btn = document.getElementById('mainBtn');
+        const grid = document.querySelector('.selection-grid');
+
+        // 1. Cek LocalStorage dulu (Biar instan tanpa nunggu fetch)
+        if (localStorage.getItem('diamond_active') === 'true') {
+            lockInterface();
+        }
+
+        // 2. Sinkronisasi dengan Firebase (Data Akurat/Pusat)
+        // Kita asumsikan nomor kartu disimpan di localStorage saat login
+        const loggedCard = localStorage.getItem('pending_card'); 
+
+        if (loggedCard) {
+            const userRef = ref(db, 'nasabah/' + loggedCard);
+            
+            onValue(userRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.cardStatus === "Diamond Royal Active") {
+                    localStorage.setItem('diamond_active', 'true'); // Update local jika di DB sudah aktif
+                    lockInterface();
+                }
+            });
+        }
+
+        function lockInterface() {
+            btn.innerText = "KARTU DIAMOND ANDA AKTIF";
+            btn.disabled = true;
+            btn.style.background = "#94a3b8";
+            btn.style.cursor = "not-allowed";
+            btn.onclick = null; // Matikan fungsi pindah halaman
+            
+            grid.style.filter = "grayscale(0.8)";
+            grid.style.pointerEvents = "none";
         }
     </script>
 </body>
