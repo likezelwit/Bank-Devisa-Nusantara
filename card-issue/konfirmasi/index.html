@@ -14,14 +14,14 @@
     </nav>
 
     <main class="card-container">
-        <div class="confirm-box">
+        <div class="confirm-box" style="max-width: 400px; margin: 0 auto; text-align: center;">
             <header class="step-header">
-                <span class="step-badge">PENGAMANAN KARTU</span>
+                <span class="step-badge">SECURE ACTIVATION</span>
                 <h1>Buat PIN <br><span class="text-gradient">Baru Anda.</span></h1>
-                <p>Gunakan 6 digit angka yang sulit ditebak untuk keamanan transaksi.</p>
+                <p>Otorisasi biometrik dan enkripsi PIN 6-digit diperlukan.</p>
             </header>
 
-            <div class="pin-display">
+            <div class="pin-display" style="display: flex; justify-content: center; gap: 15px; margin-bottom: 3rem;">
                 <div class="dot"></div>
                 <div class="dot"></div>
                 <div class="dot"></div>
@@ -30,7 +30,7 @@
                 <div class="dot"></div>
             </div>
             
-            <div class="numpad">
+            <div class="numpad" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
                 <button onclick="addPin(1)">1</button>
                 <button onclick="addPin(2)">2</button>
                 <button onclick="addPin(3)">3</button>
@@ -40,9 +40,9 @@
                 <button onclick="addPin(7)">7</button>
                 <button onclick="addPin(8)">8</button>
                 <button onclick="addPin(9)">9</button>
-                <button onclick="resetPin()" style="color: #ef4444;">DEL</button>
+                <button onclick="resetPin()" style="color: #ef4444; font-weight: 800;">DEL</button>
                 <button onclick="addPin(0)">0</button>
-                <button onclick="finishProcess()" class="btn-ok">OK</button>
+                <button onclick="finishProcess()" style="background: var(--gold); color: white; font-weight: 800;">OK</button>
             </div>
         </div>
     </main>
@@ -65,11 +65,10 @@
 
         function finishProcess() {
             if(pinCount === 6) {
-                // Kamu bisa arahkan ke folder sukses nanti: ../sukses/
-                alert("PIN Terverifikasi. Menghubungkan ke Jaringan Secure...");
+                alert("PIN Terverifikasi secara Enkripsi. Menghubungkan ke Server Pusat...");
                 window.location.href = '../sukses/'; 
             } else {
-                alert("PIN harus 6 digit lengkap!");
+                alert("Harap masukkan 6 digit PIN!");
             }
         }
     </script>
