@@ -1,0 +1,70 @@
+:root {
+    --navy: #0f172a;
+    --gold: #b8924e;
+    --white: #ffffff;
+    --bg: #f8fafc;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background: var(--bg); 
+    color: var(--navy); 
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 8%; background: white; border-bottom: 1px solid #e2e8f0;
+}
+.logo { font-size: 1.5rem; font-weight: 800; }
+.logo span { color: var(--gold); }
+.btn-back { font-size: 0.75rem; font-weight: 700; color: var(--navy); text-decoration: none; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px; }
+
+/* CONTAINER */
+.card-container { max-width: 900px; margin: 0 auto; padding: 4rem 5%; }
+.step-header { margin-bottom: 3rem; text-align: center; }
+.step-badge { font-size: 0.7rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+h1 { font-size: 2.5rem; margin: 1rem 0; }
+.text-gradient { background: linear-gradient(90deg, var(--navy), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* SELECTION GRID (Responsive) */
+.selection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+
+.card-option { 
+    background: white; border: 2px solid #e2e8f0; border-radius: 24px; padding: 1.5rem; 
+    cursor: pointer; transition: 0.3s; 
+}
+.card-option.active { border-color: var(--gold); background: #fdfaf3; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(184, 146, 78, 0.1); }
+
+/* CARD PREVIEW */
+.card-preview { 
+    height: 180px; width: 100%; border-radius: 16px; margin-bottom: 1.5rem; 
+    position: relative; padding: 1.5rem; color: white; overflow: hidden;
+}
+.card-preview.platinum { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+.card-preview.black { background: linear-gradient(135deg, #2d3436 0%, #000000 100%); }
+
+.card-chip { width: 45px; height: 35px; background: #e2e8f0; border-radius: 6px; margin-bottom: 2rem; }
+.card-chip.gold { background: var(--gold); }
+.card-brand { font-size: 0.8rem; font-weight: 700; opacity: 0.8; }
+.card-number { font-size: 1.1rem; letter-spacing: 2px; margin-top: 10px; }
+
+.option-details h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+.option-details p { font-size: 0.85rem; color: #64748b; margin-bottom: 1rem; }
+.price { font-size: 0.75rem; font-weight: 800; color: #16a34a; }
+
+/* FOOTER ACTION */
+.action-footer { text-align: center; }
+.btn-primary { 
+    background: var(--navy); color: white; border: none; padding: 1rem 3rem; 
+    font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; transition: 0.3s;
+}
+.btn-primary:hover { background: var(--gold); }
+
+/* MOBILE F12 MODE */
+@media (max-width: 600px) {
+    h1 { font-size: 1.8rem; }
+    .card-preview { height: 160px; }
+    .btn-primary { width: 100%; }
+}
