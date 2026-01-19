@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
         <a href="../" class="btn-back">BATALKAN</a>
@@ -35,82 +34,51 @@
             <div class="form-content">
                 <div class="step active" id="step1">
                     <h2>01. Identitas Personal</h2>
-                    <div class="input-group">
-                        <label>Nama Lengkap (Sesuai KTP)</label>
-                        <input type="text" id="inputNama" placeholder="Contoh: RADEN ARYA">
-                    </div>
-                    <div class="input-group">
-                        <label>NIK (16 Digit KTP)</label>
-                        <input type="text" id="inputNIK" maxlength="16" placeholder="3201xxxxxxxxxxxx">
-                    </div>
+                    <div class="input-group"><label>Nama Lengkap</label><input type="text" id="inputNama" placeholder="RADEN ARYA"></div>
+                    <div class="input-group"><label>NIK</label><input type="text" id="inputNIK" maxlength="16" placeholder="16 Digit NIK"></div>
                     <button class="btn-primary" onclick="nextStep(2)">Lanjutkan</button>
                 </div>
 
                 <div class="step" id="step2">
                     <h2>02. Verifikasi Kontak</h2>
-                    <div class="input-group">
-                        <label>Nomor WhatsApp (Aktif)</label>
-                        <input type="tel" id="inputWA" placeholder="08xxxxxxxxxx">
-                    </div>
-                    <div class="input-group">
-                        <label>Email Korespondensi</label>
-                        <input type="email" id="inputEmail" placeholder="nama@email.com">
-                    </div>
-                    <button class="btn-primary" onclick="nextStep(3)">Verifikasi Kontak</button>
+                    <div class="input-group"><label>WhatsApp</label><input type="tel" id="inputWA" placeholder="08xxxxxxxxxx"></div>
+                    <div class="input-group"><label>Email</label><input type="email" id="inputEmail" placeholder="nama@email.com"></div>
+                    <button class="btn-primary" onclick="nextStep(3)">Lanjutkan</button>
                 </div>
 
                 <div class="step" id="step3">
                     <h2>03. Informasi Pekerjaan</h2>
                     <div class="input-group">
-                        <label>Pekerjaan Utama</label>
-                        <select id="jobType">
-                            <option>Karyawan Swasta</option>
-                            <option>PNS / BUMN</option>
-                            <option>Wiraswasta</option>
-                            <option>Pelajar / Mahasiswa</option>
-                        </select>
+                        <label>Pekerjaan</label>
+                        <select id="jobType"><option>Karyawan Swasta</option><option>PNS</option><option>Wiraswasta</option></select>
                     </div>
-                    <div class="input-group">
-                        <label>Pendapatan Per Bulan</label>
-                        <input type="number" id="income" placeholder="Rp">
-                    </div>
-                    <button class="btn-primary" onclick="nextStep(4)">Validasi Data</button>
+                    <div class="input-group"><label>Pendapatan</label><input type="number" id="income" placeholder="Rp"></div>
+                    <button class="btn-primary" onclick="nextStep(4)">Lanjutkan</button>
                 </div>
 
                 <div class="step" id="step4">
                     <h2>04. Kontak Darurat</h2>
-                    <div class="input-group">
-                        <label>Nama Keluarga Terdekat</label>
-                        <input type="text" id="emergencyName" placeholder="Nama Lengkap">
-                    </div>
+                    <div class="input-group"><label>Nama Keluarga</label><input type="text" id="emergencyName" placeholder="Nama Lengkap"></div>
                     <button class="btn-primary" onclick="nextStep(5)">Lanjutkan</button>
                 </div>
 
                 <div class="step" id="step5">
-                    <h2>05. Otorisasi PIN Keamanan</h2>
-                    <div class="input-group">
-                        <label>Buat 6 Digit PIN</label>
-                        <input type="password" id="inputPW" maxlength="6" class="pin-input" placeholder="******">
-                    </div>
+                    <h2>05. PIN Keamanan</h2>
+                    <div class="input-group"><label>6 Digit PIN</label><input type="password" id="inputPW" maxlength="6" placeholder="******"></div>
                     <button class="btn-primary" onclick="nextStep(6)">Setel PIN</button>
                 </div>
 
                 <div class="step" id="step6">
-                    <h2>06. Analisis Database Pusat</h2>
-                    <div class="loading-box">
-                        <div class="spinner"></div>
-                        <p id="slikStatus">Menghubungkan ke server Otoritas Jasa Keuangan...</p>
-                    </div>
-                    <button class="btn-primary" id="btnSlik" style="display:none" onclick="nextStep(7)">Lihat Hasil Analisis</button>
+                    <h2>06. Analisis Database</h2>
+                    <div class="loading-box"><div class="spinner"></div><p id="slikStatus">Menghubungkan ke server OJK...</p></div>
+                    <button class="btn-primary" id="btnSlik" style="display:none" onclick="nextStep(7)">Lihat Hasil</button>
                 </div>
 
                 <div class="step" id="step7">
                     <h2>07. Konfirmasi Akhir</h2>
                     <div class="agreement-box">
-                        <p>Saya menyatakan data yang diinput adalah benar dan bersedia mematuhi syarat & ketentuan Bank Devisa Nusantara.</p>
-                        <label class="check-label">
-                            <input type="checkbox" id="checkAgree"> Saya Setuju
-                        </label>
+                        <p>Saya setuju dengan syarat & ketentuan BDN.</p>
+                        <label class="check-label"><input type="checkbox" id="checkAgree"> Saya Setuju</label>
                     </div>
                     <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu</button>
                 </div>
@@ -118,55 +86,44 @@
                 <div class="step" id="step8">
                     <div id="processingArea">
                         <div class="header-step">
-                            <h1>Proses Penerbitan Kartu</h1>
-                            <p>Mohon tunggu, sistem sedang memverifikasi antrean data Anda.</p>
+                            <h1>Sistem Antrean Pusat</h1>
+                            <p>Data Anda sedang dalam antrean enkripsi perbankan.</p>
                         </div>
-
                         <div class="legal-policy-box">
-                            <h4>Kebijakan Penggunaan Layanan BDN</h4>
-                            <p>1. Seluruh data yang dikirimkan telah terenkripsi secara end-to-end melalui protokol keamanan tingkat tinggi.</p>
-                            <p>2. Kartu digital ini merupakan properti resmi Bank Devisa Nusantara dan diatur dalam peraturan perbankan digital 2026.</p>
-                            <p>3. Kementerian Keuangan dan Otoritas Terkait bertanggung jawab penuh atas validasi data nasabah secara nasional.</p>
-                            <p>4. Penyalahgunaan data atau pembuatan akun palsu akan ditindak lanjuti secara hukum sesuai UU ITE yang berlaku.</p>
+                            <h4>Legalitas & Tanggung Jawab</h4>
+                            <p>Diterbitkan pada: <span id="currentDate"></span></p>
+                            <p>Data dikelola oleh Kementrian Komunikasi & Keuangan Digital secara otomatis.</p>
                         </div>
-
                         <div class="loading-box">
                             <div class="spinner-large"></div>
-                            <div id="queueStatus" class="queue-status">Menghubungkan ke Antrean Pusat...</div>
-                            <div id="timerDisplay" class="timer-display">Estimasi: Menghitung...</div>
+                            <div class="progress-loader-container">
+                                <div id="fillBar" class="progress-loader-fill"></div>
+                            </div>
+                            <div id="queueStatus" class="queue-status">Menghitung Antrean...</div>
+                            <div id="timerDisplay" class="timer-display">Estimasi: Sedang memproses...</div>
                         </div>
                     </div>
 
                     <div id="finalResult" style="display: none;">
                         <div class="success-header">
                             <div class="check-icon">✓</div>
-                            <h2>KARTU BERHASIL DITERBITKAN</h2>
+                            <h2>KARTU AKTIF</h2>
                         </div>
-                        
                         <div id="captureArea" class="card-display">
-                            <div class="card-top">
-                                <span class="bank-name">BANK DEVISA NUSANTARA</span>
-                                <span class="chip-card"></span>
-                            </div>
-                            <div class="card-mid">
-                                <div class="card-number" id="displayNo">0000 0000 0000 0000</div>
-                            </div>
+                            <div class="card-top"><span class="bank-name">BANK DEVISA NUSANTARA</span><span class="chip-card"></span></div>
+                            <div class="card-mid"><div class="card-number" id="displayNo">0000 0000 0000 0000</div></div>
                             <div class="card-bottom">
-                                <div class="card-info">
-                                    <small>CARD HOLDER</small>
-                                    <div id="displayName">NAME</div>
-                                </div>
+                                <div class="card-info"><small>CARD HOLDER</small><div id="displayName">NAME</div></div>
                                 <div class="card-series">PLATINUM 0810</div>
                             </div>
                         </div>
-                        <button class="btn-screenshot" onclick="takeScreenshot()">📸 Simpan ke Galeri</button>
-                        <button class="btn-primary" onclick="location.href='../Dashboard/'">Masuk ke Dashboard</button>
+                        <button class="btn-screenshot" onclick="takeScreenshot()">📸 Simpan Kartu</button>
+                        <button class="btn-primary" onclick="location.href='../Dashboard/'">Ke Dashboard</button>
                     </div>
                 </div>
             </div>
         </div>
     </main>
-
     <script src="script.js"></script>
 </body>
 </html>
