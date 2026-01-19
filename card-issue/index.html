@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penerbitan Kartu Premium | BDN</title>
+    <title>Elite Card Issuance | BDN Private Banking</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -11,27 +11,27 @@
 
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
-        <a href="../" class="btn-back">KEMBALI KE PORTAL</a>
+        <a href="../" class="btn-back">EXIT PRIVILEGE</a>
     </nav>
 
     <main class="card-container">
         <header class="step-header">
-            <span class="step-badge">EXCLUSIVE CARD SELECTION</span>
-            <h1>Pilih Varian <br><span class="text-gradient">Kartu Pintar 0810.</span></h1>
-            <p>Tingkatkan pengalaman perbankan Anda dengan seri kartu terbatas kami.</p>
+            <span class="step-badge">WORLDWIDE ELITE MEMBERSHIP</span>
+            <h1>Pilih Instrumen <br><span class="text-gradient">Finansial Anda.</span></h1>
+            <p>Eksklusivitas tanpa batas. Pilih kartu yang mencerminkan status sosial Anda.</p>
         </header>
 
         <section class="selection-grid">
             <div class="card-option active" onclick="selectCard(this)">
                 <div class="card-preview platinum">
                     <div class="card-chip silver"></div>
-                    <div class="card-brand">PLATINUM 0810</div>
+                    <div class="card-brand">PLATINUM ELITE</div>
                     <div class="card-number">0810 **** **** ****</div>
                 </div>
                 <div class="option-details">
-                    <h3>Platinum Edition</h3>
-                    <p>Standard premium dengan akses Airport Lounge & Limit 100Jt.</p>
-                    <span class="price-tag">BIAYA: GRATIS</span>
+                    <h3>Platinum Elite</h3>
+                    <p>Standard premium access. Airport lounge worldwide.</p>
+                    <span class="price-tag">$499 / Year</span>
                 </div>
             </div>
 
@@ -43,8 +43,21 @@
                 </div>
                 <div class="option-details">
                     <h3>Gold Priority</h3>
-                    <p>Cashback 5% Merchant & Layanan Bebas Antrian Cabang.</p>
-                    <span class="price-tag">BIAYA: Rp 25.000</span>
+                    <p>Priority lane in 150+ countries & 5% cashback.</p>
+                    <span class="price-tag">$1,200 / Year</span>
+                </div>
+            </div>
+
+            <div class="card-option" onclick="selectCard(this)">
+                <div class="card-preview rose-gold">
+                    <div class="card-chip gold"></div>
+                    <div class="card-brand">ROSE SIGNATURE</div>
+                    <div class="card-number">0810 **** **** ****</div>
+                </div>
+                <div class="option-details">
+                    <h3>Rose Signature</h3>
+                    <p>Exclusive luxury shopping & spa privileges worldwide.</p>
+                    <span class="price-tag">$2,500 / Year</span>
                 </div>
             </div>
 
@@ -56,8 +69,8 @@
                 </div>
                 <div class="option-details">
                     <h3>Black Signature</h3>
-                    <p>Unlimited Limit & Layanan Concierge Pribadi 24 Jam.</p>
-                    <span class="price-tag">BIAYA: Rp 50.000</span>
+                    <p>No spending limit. 24/7 Personal Global Concierge.</p>
+                    <span class="price-tag">$10,000 / Year</span>
                 </div>
             </div>
 
@@ -69,14 +82,27 @@
                 </div>
                 <div class="option-details">
                     <h3>Emerald Private</h3>
-                    <p>Akses Helikopter, Kapal Pesiar, & Personal Banker Khusus.</p>
-                    <span class="price-tag special">BIAYA: Rp 250.000</span>
+                    <p>Private Jet & Yacht access. Personal Banker 24/7.</p>
+                    <span class="price-tag special">$25,000 / Year</span>
+                </div>
+            </div>
+
+            <div class="card-option" onclick="selectCard(this)">
+                <div class="card-preview diamond">
+                    <div class="card-chip gold"></div>
+                    <div class="card-brand">DIAMOND ROYAL</div>
+                    <div class="card-number">0810 **** **** ****</div>
+                </div>
+                <div class="option-details">
+                    <h3>Diamond Royal</h3>
+                    <p>Invitation only. Real diamond embedded on physical card.</p>
+                    <span class="price-tag special">$50,000 / Year</span>
                 </div>
             </div>
         </section>
 
         <footer class="action-footer">
-            <button class="btn-primary" onclick="proceedToConfirmation()">KONFIRMASI PENERBITAN</button>
+            <button class="btn-primary" onclick="window.location.href='konfirmasi/'">KONFIRMASI PENERBITAN</button>
         </footer>
     </main>
 
@@ -84,12 +110,6 @@
         function selectCard(element) {
             document.querySelectorAll('.card-option').forEach(card => card.classList.remove('active'));
             element.classList.add('active');
-        }
-
-        function proceedToConfirmation() {
-            const activeCard = document.querySelector('.card-option.active h3').innerText;
-            alert('Anda memilih: ' + activeCard + '\nLanjut ke halaman konfirmasi PIN?');
-            window.location.href = 'konfirmasi.html';
         }
     </script>
 </body>
