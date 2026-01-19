@@ -16,16 +16,7 @@
         .btn-primary { width: 100%; padding: 1.2rem; border-radius: 15px; background: var(--dark); color: white; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.3s; }
         .btn-primary:active { transform: scale(0.98); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        /* PERBAIKAN: Loader harus memiliki display:none di awal */
-        #loader { 
-            display: none; 
-            margin-top: 15px; 
-            font-size: 0.8rem; 
-            font-weight: 700; 
-            color: var(--gold); 
-            animation: pulse 1.5s infinite; 
-        }
+        #loader { display: none; margin-top: 15px; font-size: 0.8rem; font-weight: 700; color: var(--gold); animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
@@ -64,7 +55,7 @@
         const firebaseConfig = {
             apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
             authDomain: "wifist-d3588.firebaseapp.com",
-            databaseURL: "https://wifist-d3588-default-rtdb.firebaseio.com",
+            databaseURL: "https://wifist-d3588-default-rtdb.firebaseio.com/", // Sudah ditambahkan "/"
             projectId: "wifist-d3588",
             storageBucket: "wifist-d3588.firebasestorage.app",
             messagingSenderId: "460842291436",
@@ -90,6 +81,7 @@
 
             try {
                 const dbRef = ref(db);
+                // Mengambil data dari path nasabah/nomorkartu
                 const snapshot = await get(child(dbRef, `nasabah/${cardNum}`));
                 
                 if (snapshot.exists()) {
@@ -98,7 +90,6 @@
                     sessionStorage.setItem('pending_pin', data.pin);
                     sessionStorage.setItem('pending_saldo', data.saldo);
                     
-                    // Gunakan delay kecil agar user sempat melihat animasi loading sebelum pindah
                     setTimeout(() => {
                         window.location.href = '../konfirmasi/';
                     }, 800);
@@ -109,7 +100,7 @@
                 }
             } catch (err) {
                 console.error("Database Error:", err);
-                alert("Gagal terhubung ke database. Cek koneksi internet Anda.");
+                alert("Gagal terhubung ke database. Cek Rules Firebase Anda.");
                 loader.style.display = "none";
                 btnPay.disabled = false;
             }
