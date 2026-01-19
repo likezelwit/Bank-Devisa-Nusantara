@@ -5,50 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank Devisa Nusantara | Portal Layanan Mandiri</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
-        <div class="system-status">Sistem Aktif</div>
+        <div class="nav-right">
+            <div class="system-status">Sistem Operasional Aktif</div>
+        </div>
     </nav>
 
-    <main class="hero">
+    <header class="hero">
         <div class="hero-content">
-            <h1>Bank Devisa Nusantara</h1>
-            <p>Portal resmi layanan mandiri untuk aktivasi, registrasi, dan standarisasi kartu pintar seri 0810 di seluruh wilayah Nusantara.</p>
+            <span class="badge">Selamat Datang di Portal Pusat</span>
+            <h1>Solusi Perbankan <br><span class="text-gradient">Masa Depan.</span></h1>
+            <p>Akses cepat layanan aktivasi kartu 0810, pendaftaran nasabah baru, dan pusat informasi keuangan digital terintegrasi.</p>
         </div>
+    </header>
 
-        <div class="menu-grid">
-            <a href="Register/" class="menu-card">
-                <div class="card-icon">💳</div>
-                <div class="card-info">
-                    <h3>Registrasi Baru</h3>
-                    <p>Penerbitan kartu identitas digital 0810.</p>
-                </div>
-            </a>
+    <main class="container">
+        <section class="menu-section">
+            <h2 class="section-title">Akses Pendaftaran & Kartu</h2>
+            <div class="menu-grid">
+                <a href="register/" class="menu-card highlight">
+                    <div class="card-icon">💳</div>
+                    <div class="card-info">
+                        <h3>Daftar Nasabah Baru</h3>
+                        <p>Ajukan kartu digital & buka akun bank dalam hitungan menit.</p>
+                    </div>
+                </a>
+                <a href="register/" class="menu-card">
+                    <div class="card-icon">✨</div>
+                    <div class="card-info">
+                        <h3>Pendaftaran Kartu</h3>
+                        <p>Standarisasi kartu pintar seri 0810 Platinum.</p>
+                    </div>
+                </a>
+            </div>
+        </section>
 
-            <a href="Dashboard/" class="menu-card">
-                <div class="card-icon">🔐</div>
-                <div class="card-info">
-                    <h3>Dashboard Login</h3>
-                    <p>Masuk ke akun dan kelola saldo kartu Anda.</p>
-                </div>
-            </a>
+        <section class="menu-section">
+            <h2 class="section-title">Produk & Edukasi Keuangan</h2>
+            <div class="menu-grid secondary">
+                <a href="produk/" class="menu-card">
+                    <div class="card-icon">🏦</div>
+                    <div class="card-info">
+                        <h3>Produk & Layanan</h3>
+                        <p>Tabungan, Kredit, Investasi & Pinjaman.</p>
+                    </div>
+                </a>
+                <a href="edukasi/" class="menu-card">
+                    <div class="card-icon">📘</div>
+                    <div class="card-info">
+                        <h3>Informasi Edukasi</h3>
+                        <p>Panduan literasi keuangan & syarat ketentuan.</p>
+                    </div>
+                </a>
+                <a href="promo/" class="menu-card">
+                    <div class="card-icon">🎁</div>
+                    <div class="card-info">
+                        <h3>Promo & Penawaran</h3>
+                        <p>Diskon administrasi & bunga spesial terbaru.</p>
+                    </div>
+                </a>
+                <a href="berita/" class="menu-card">
+                    <div class="card-icon">📰</div>
+                    <div class="card-info">
+                        <h3>Berita & Pengumuman</h3>
+                        <p>Update kebijakan & info operasional bank.</p>
+                    </div>
+                </a>
+            </div>
+        </section>
 
-            <a href="Panduan/" class="menu-card">
-                <div class="card-icon">📘</div>
-                <div class="card-info">
-                    <h3>Standar Fisik</h3>
-                    <p>Panduan dimensi dan produksi fisik.</p>
-                </div>
-            </a>
-        </div>
+        <section class="menu-section">
+            <h2 class="section-title">Bantuan & Keamanan</h2>
+            <div class="menu-grid tertiary">
+                <a href="lokasi/" class="menu-card small">
+                    <div class="card-icon">📍</div>
+                    <h3>Lokasi & Cabang</h3>
+                </a>
+                <a href="faq/" class="menu-card small">
+                    <div class="card-icon">❓</div>
+                    <h3>Pusat FAQ</h3>
+                </a>
+                <a href="keamanan/" class="menu-card small">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Privasi & Keamanan</h3>
+                </a>
+                <a href="kontak/" class="menu-card small">
+                    <div class="card-icon">📞</div>
+                    <h3>Hubungi Kami</h3>
+                </a>
+                <a href="pengaduan/" class="menu-card small">
+                    <div class="card-icon">⚠️</div>
+                    <h3>Layanan Pengaduan</h3>
+                </a>
+            </div>
+        </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 PT Bank Devisa Nusantara. Terdaftar dan Diawasi oleh Simulasi OJK.</p>
+        <div class="footer-top">
+            <div class="footer-logo">BDN<span>.</span></div>
+            <div class="social-links">
+                <a href="#">FB</a> <a href="#">TW</a> <a href="#">IG</a>
+            </div>
+        </div>
+        <p class="copyright">&copy; 2026 PT Bank Devisa Nusantara. Terdaftar dan Diawasi oleh Otoritas Jasa Keuangan.</p>
     </footer>
 
     <script src="script.js"></script>
