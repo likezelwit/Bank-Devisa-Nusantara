@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Registrasi Nasabah Baru | BDN</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -116,24 +116,52 @@
                 </div>
 
                 <div class="step" id="step8">
-                    <div id="captureArea" class="card-display">
-                        <div class="card-top">
-                            <span class="bank-name">BANK DEVISA NUSANTARA</span>
-                            <span class="chip-card"></span>
+                    <div id="processingArea">
+                        <div class="header-step">
+                            <h1>Proses Penerbitan Kartu</h1>
+                            <p>Mohon tunggu, sistem sedang memverifikasi antrean data Anda.</p>
                         </div>
-                        <div class="card-mid">
-                            <div class="card-number" id="displayNo">0810 0000 0000 0000</div>
+
+                        <div class="legal-policy-box">
+                            <h4>Kebijakan Penggunaan Layanan BDN</h4>
+                            <p>1. Seluruh data yang dikirimkan telah terenkripsi secara end-to-end melalui protokol keamanan tingkat tinggi.</p>
+                            <p>2. Kartu digital ini merupakan properti resmi Bank Devisa Nusantara dan diatur dalam peraturan perbankan digital 2026.</p>
+                            <p>3. Kementerian Keuangan dan Otoritas Terkait bertanggung jawab penuh atas validasi data nasabah secara nasional.</p>
+                            <p>4. Penyalahgunaan data atau pembuatan akun palsu akan ditindak lanjuti secara hukum sesuai UU ITE yang berlaku.</p>
                         </div>
-                        <div class="card-bottom">
-                            <div class="card-info">
-                                <small>CARD HOLDER</small>
-                                <div id="displayName">NAMA NASABAH</div>
-                            </div>
-                            <div class="card-series">SERI 0810</div>
+
+                        <div class="loading-box">
+                            <div class="spinner-large"></div>
+                            <div id="queueStatus" class="queue-status">Menghubungkan ke Antrean Pusat...</div>
+                            <div id="timerDisplay" class="timer-display">Estimasi: Menghitung...</div>
                         </div>
                     </div>
-                    <button class="btn-screenshot" onclick="takeScreenshot()">📸 Simpan Gambar</button>
-                    <button class="btn-primary" onclick="location.href='../Dashboard/'">Akses Dashboard</button>
+
+                    <div id="finalResult" style="display: none;">
+                        <div class="success-header">
+                            <div class="check-icon">✓</div>
+                            <h2>KARTU BERHASIL DITERBITKAN</h2>
+                        </div>
+                        
+                        <div id="captureArea" class="card-display">
+                            <div class="card-top">
+                                <span class="bank-name">BANK DEVISA NUSANTARA</span>
+                                <span class="chip-card"></span>
+                            </div>
+                            <div class="card-mid">
+                                <div class="card-number" id="displayNo">0000 0000 0000 0000</div>
+                            </div>
+                            <div class="card-bottom">
+                                <div class="card-info">
+                                    <small>CARD HOLDER</small>
+                                    <div id="displayName">NAME</div>
+                                </div>
+                                <div class="card-series">PLATINUM 0810</div>
+                            </div>
+                        </div>
+                        <button class="btn-screenshot" onclick="takeScreenshot()">📸 Simpan ke Galeri</button>
+                        <button class="btn-primary" onclick="location.href='../Dashboard/'">Masuk ke Dashboard</button>
+                    </div>
                 </div>
             </div>
         </div>
