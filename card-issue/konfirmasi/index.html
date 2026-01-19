@@ -2,35 +2,55 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Otorisasi PIN | BDN</title>
     <link rel="stylesheet" href="../style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #f8fafc; overflow: hidden; }
+        .card-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .confirm-box { width: 100%; max-width: 400px; }
+        
+        .pin-display { gap: 12px; margin: 2rem 0; }
+        .dot { 
+            width: 16px; height: 16px; border: 2px solid #cbd5e1; border-radius: 50%; 
+            transition: all 0.2s ease;
+        }
+        .dot.active { background: #b5985a; border-color: #b5985a; transform: scale(1.2); box-shadow: 0 0 10px rgba(181, 152, 90, 0.4); }
+
+        .numpad { 
+            display: grid; grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; max-width: 320px; margin: 0 auto;
+        }
+        .numpad button {
+            aspect-ratio: 1/1; border-radius: 50%; border: 1px solid #e2e8f0;
+            background: white; font-size: 1.4rem; font-weight: 700; color: #1e293b;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .numpad button:active { background: #f1f5f9; transform: scale(0.9); }
+        #submitBtn { background: #1e293b !important; color: white !important; border: none; font-size: 1rem; }
+        
+        @media (max-width: 380px) {
+            .numpad { gap: 8px; }
+            .numpad button { font-size: 1.2rem; }
+            .step-header h1 { font-size: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="logo">BDN<span>.</span></div>
-    </nav>
-
     <main class="card-container">
-        <div class="confirm-box" style="max-width: 400px; margin: 0 auto; text-align: center;">
+        <div class="confirm-box">
             <header class="step-header">
-                <span class="step-badge">SECURE AUTHORIZATION</span>
-                <h1>Otorisasi <br><span class="text-gradient">PIN Keamanan.</span></h1>
-                <p>Transaksi sebesar <strong>$50,000.00</strong> memerlukan verifikasi PIN 6-digit Anda.</p>
+                <span class="step-badge" style="background: #1e293b; color: white; padding: 5px 12px; border-radius: 100px; font-size: 0.65rem;">SECURE PIN</span>
+                <h1 style="margin: 15px 0 5px 0;">Otorisasi PIN</h1>
+                <p style="font-size: 0.85rem; color: #64748b;">Konfirmasi transaksi <strong>$50,000.00</strong></p>
             </header>
 
-            <div class="pin-display" style="display: flex; justify-content: center; gap: 15px; margin-bottom: 3rem;">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
+            <div class="pin-display" style="display: flex; justify-content: center;">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
             
-            <div class="numpad" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 10px;">
+            <div class="numpad">
                 <button class="num-btn" data-val="1">1</button>
                 <button class="num-btn" data-val="2">2</button>
                 <button class="num-btn" data-val="3">3</button>
@@ -40,16 +60,16 @@
                 <button class="num-btn" data-val="7">7</button>
                 <button class="num-btn" data-val="8">8</button>
                 <button class="num-btn" data-val="9">9</button>
-                <button onclick="clearPin()" style="color: #ef4444; font-weight: 800; background: #fff1f2;">DEL</button>
+                <button onclick="clearPin()" style="background: #fff1f2 !important; color: #ef4444 !important; font-size: 0.9rem;">DEL</button>
                 <button class="num-btn" data-val="0">0</button>
-                <button id="submitBtn" style="background: var(--gold); color: white; font-weight: 800;">OK</button>
+                <button id="submitBtn">OK</button>
             </div>
         </div>
     </main>
 
     <script type="module">
         import { db } from "../../firebase.js";
-        import { ref, update } from "https://www.gstatic.com/firebasejs/9.x/firebase-database.js";
+        import { ref, update } from "https://www.gstatic.com/firebasejs/9.10.12/firebase-database.js";
 
         let inputPin = "";
         const dots = document.querySelectorAll('.dot');
@@ -70,10 +90,7 @@
         };
 
         document.getElementById('submitBtn').addEventListener('click', async () => {
-            if (inputPin.length !== 6) {
-                alert("Harap masukkan 6 digit PIN!");
-                return;
-            }
+            if (inputPin.length !== 6) return alert("Harap masukkan 6 digit PIN!");
 
             const pinBenar = sessionStorage.getItem('pending_pin');
             const cardNum = sessionStorage.getItem('pending_card');
@@ -83,29 +100,20 @@
             if (inputPin === pinBenar) {
                 if (saldoSkrg >= harga) {
                     const saldoBaru = saldoSkrg - harga;
-
                     try {
-                        // Update saldo di Firebase
                         const updates = {};
                         updates[`nasabah/${cardNum}/saldo`] = saldoBaru;
                         updates[`nasabah/${cardNum}/cardStatus`] = "Diamond Royal Active";
-
                         await update(ref(db), updates);
-                        
-                        // Tandai kartu terbeli di browser lokal
                         localStorage.setItem('diamond_active', 'true');
-                        
-                        alert("PEMBAYARAN BERHASIL!\nSisa Saldo: $" + saldoBaru.toLocaleString());
                         window.location.href = '../sukses/';
-                    } catch (e) {
-                        alert("Gagal memproses ke server.");
-                    }
+                    } catch (e) { alert("Server Busy. Coba lagi."); }
                 } else {
-                    alert("TRANSAKSI GAGAL: Saldo Anda tidak mencukupi untuk Diamond Royal ($50,000).");
+                    alert("Saldo Tidak Cukup ($50,000 Required)");
                     window.location.href = '../';
                 }
             } else {
-                alert("PIN SALAH! Otorisasi ditolak.");
+                alert("PIN Salah!");
                 clearPin();
             }
         });
