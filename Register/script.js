@@ -1,60 +1,106 @@
 function nextStep(s) {
+    // Validasi Step 1: Nama
     if (s === 2 && document.getElementById('inputNama').value.trim() === "") {
-        alert("Nama lengkap wajib diisi."); return;
+        return alert("Otoritas Ditolak: Nama lengkap wajib diisi sesuai identitas!");
     }
-    if (s === 3 && document.getElementById('inputPW').value.length < 6) {
-        alert("PIN harus 6 digit."); return;
+    // Validasi Step 5: PIN (Karena di HTML kamu Step 5 adalah PIN)
+    if (s === 6) {
+        const pin = document.getElementById('inputPW').value;
+        if (pin.length < 6 || isNaN(pin)) {
+            return alert("Otoritas Ditolak: PIN harus terdiri dari 6 digit angka!");
+        }
     }
     updateUI(s);
 }
 
 function updateUI(s) {
+    // 1. Switch Active Step
     document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
     document.getElementById('step' + s).classList.add('active');
-    document.getElementById('progressLine').style.width = ((s - 1) / 3 * 100) + "%";
-    document.querySelectorAll('.circle').forEach((c, i) => {
-        if (i < s) c.classList.add('active');
+
+    // 2. Update Progress Line (Ada 8 step, jadi pembaginya 7 gap)
+    const progressPercent = ((s - 1) / 7) * 100;
+    document.getElementById('progressLine').style.width = progressPercent + "%";
+
+    // 3. Update Circles
+    document.querySelectorAll('.circle').forEach((circle, i) => {
+        const stepNum = i + 1;
+        circle.innerText = stepNum; // Memastikan angka muncul di lingkaran
+
+        if (stepNum < s) {
+            circle.classList.add('completed');
+            circle.classList.remove('active');
+            circle.innerHTML = "✓"; // Kasih centang kalau sudah lewat
+        } else if (stepNum === s) {
+            circle.classList.add('active');
+            circle.classList.remove('completed');
+            circle.innerText = stepNum;
+        } else {
+            circle.classList.remove('active', 'completed');
+            circle.innerText = stepNum;
+        }
     });
+
+    // Scroll ke atas otomatis setiap ganti step biar gak bingung di HP
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function generateFinal() {
+async function generateFinal() {
     if (!document.getElementById('checkAgree').checked) {
-        alert("Setujui persyaratan terlebih dahulu."); return;
+        return alert("Otoritas Ditolak: Anda harus menyetujui seluruh persyaratan layanan!");
     }
-
+    
     const btn = document.getElementById('btnGenerate');
-    btn.disabled = true;
-    btn.innerText = "PROSES ENKRIPSI...";
+    btn.disabled = true; 
+    btn.innerText = "MENGAMANKAN DATA KE DATABASE PUSAT...";
 
-    setTimeout(() => {
-        const nama = document.getElementById('inputNama').value;
-        const rand = Array.from({length: 12}, () => Math.floor(Math.random() * 10)).join('');
-        const formatted = ("0810" + rand).match(/.{1,4}/g).join(" ");
+    const nama = document.getElementById('inputNama').value;
+    const pin = document.getElementById('inputPW').value;
+    
+    // Generate nomor kartu 0810 + 12 digit acak
+    const rand = Array.from({length: 12}, () => Math.floor(Math.random() * 10)).join('');
+    const fullNumber = "0810" + rand;
 
-        document.getElementById('displayNo').innerText = formatted;
+    try {
+        // Simpan ke Firebase (db diambil dari firebase.js di root)
+        await db.collection("nasabah").add({
+            nama_lengkap: nama,
+            nomor_kartu: fullNumber,
+            pin_keamanan: pin,
+            saldo: 0,
+            status: "Aktif",
+            tgl_daftar: new Date().toISOString()
+        });
+
+        // Tampilkan hasil di Step 8
+        const formattedNumber = fullNumber.match(/.{1,4}/g).join(" ");
+        document.getElementById('displayNo').innerText = formattedNumber;
         document.getElementById('displayName').innerText = nama.toUpperCase();
-        updateUI(4);
-    }, 1500);
+        
+        updateUI(8);
+    } catch (e) {
+        console.error(e);
+        alert("Kegagalan Sistem: Gagal menyambung ke server pusat!");
+        btn.disabled = false;
+        btn.innerText = "Terbitkan Sekarang";
+    }
 }
 
-// FUNGSI SCREENSHOT AREA KARTU
 function takeScreenshot() {
-    const target = document.getElementById('captureArea');
+    const card = document.getElementById('captureArea');
+    const btn = document.querySelector('.btn-screenshot');
+    btn.innerText = "MENGAMBIL GAMBAR...";
     
-    // Gunakan html2canvas untuk mengambil element spesifik
-    html2canvas(target, {
-        backgroundColor: null, // Agar background transparan jika border-radius ada
-        scale: 2, // Meningkatkan kualitas gambar (HD)
-        logging: false,
-        useCORS: true
+    html2canvas(card, { 
+        scale: 3, // Kualitas super tajam
+        backgroundColor: null,
+        borderRadius: 20
     }).then(canvas => {
-        // Ubah hasil canvas menjadi URL Gambar
-        const image = canvas.toDataURL("image/png");
-        
-        // Buat link download otomatis
         const link = document.createElement('a');
-        link.download = 'BDN-Kartu-Pintar-' + document.getElementById('inputNama').value + '.png';
-        link.href = image;
+        const timestamp = new Date().getTime();
+        link.download = `BDN-CARD-${timestamp}.png`;
+        link.href = canvas.toDataURL("image/png");
         link.click();
+        btn.innerText = "📸 Simpan Gambar";
     });
 }
