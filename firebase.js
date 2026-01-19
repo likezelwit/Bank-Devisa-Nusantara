@@ -1,3 +1,4 @@
+// firebase.js (di folder utama)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.12/firebase-app.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/9.10.12/firebase-database.js";
 
