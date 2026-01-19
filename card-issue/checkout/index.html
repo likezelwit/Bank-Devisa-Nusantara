@@ -5,156 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Secure Checkout | BDN Private Banking</title>
     <style>
-        /* CSS TERPADU - STABIL & RESPONSIVE */
-        :root { 
-            --gold: #b5985a; 
-            --dark: #1e293b; 
-            --light-bg: #f8fafc;
-        }
-
-        body { 
-            margin: 0; 
-            padding: 0; 
-            background: var(--light-bg); 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            overflow-x: hidden; 
-        }
-
-        .card-container { 
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 15px; 
-            box-sizing: border-box; 
-        }
-
-        .confirm-box { 
-            width: 100%; 
-            max-width: 450px; 
-            background: white; 
-            padding: 2.5rem 1.5rem; 
-            border-radius: 30px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
-            border: 1px solid #f1f5f9; 
-            box-sizing: border-box; 
-            text-align: center;
-        }
-
-        .text-gradient { 
-            background: linear-gradient(45deg, #b5985a, #d4af37); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            font-weight: 800; 
-        }
-
-        .order-summary { 
-            background: #f8fafc; 
-            border: 1px dashed #cbd5e1; 
-            border-radius: 20px; 
-            padding: 1.2rem; 
-            margin: 1.5rem 0; 
-            text-align: left;
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
-
-        label {
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: #94a3b8;
-            display: block;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        input#cardInput { 
-            width: 100%; 
-            padding: 1.2rem; 
-            border-radius: 15px; 
-            border: 2px solid #e2e8f0; 
-            font-size: 1.2rem; 
-            font-weight: 700; 
-            text-align: center; 
-            box-sizing: border-box; 
-            transition: 0.3s; 
-        }
-
-        input#cardInput:focus { 
-            border-color: var(--gold); 
-            outline: none; 
-            box-shadow: 0 0 0 4px rgba(181,152,90,0.1); 
-        }
-
-        .btn-primary { 
-            width: 100%; 
-            padding: 1.2rem; 
-            border-radius: 15px; 
-            background: var(--dark); 
-            color: white; 
-            border: none; 
-            font-weight: 700; 
-            font-size: 1rem; 
-            cursor: pointer; 
-            transition: 0.3s; 
-        }
-
+        /* CSS STABIL & RESPONSIF SESUAI GAMBAR ANDA */
+        :root { --gold: #b5985a; --dark: #1e293b; }
+        body { margin: 0; padding: 0; background: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+        .card-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box; }
+        .confirm-box { width: 100%; max-width: 450px; background: white; padding: 2.5rem 1.5rem; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; box-sizing: border-box; }
+        .text-gradient { background: linear-gradient(45deg, #b5985a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
+        .order-summary { background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 20px; padding: 1.2rem; margin: 1.5rem 0; text-align: left; }
+        input#cardInput { width: 100%; padding: 1.2rem; border-radius: 15px; border: 2px solid #e2e8f0; font-size: 1.2rem; font-weight: 700; text-align: center; box-sizing: border-box; transition: 0.3s; }
+        input#cardInput:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 4px rgba(181,152,90,0.1); }
+        .btn-primary { width: 100%; padding: 1.2rem; border-radius: 15px; background: var(--dark); color: white; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-primary:active { transform: scale(0.97); }
-        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; opacity: 0.7; }
-
-        #loader {
-            display: none;
-            margin-top: 15px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--gold);
-            letter-spacing: 1px;
-        }
-
-        @media (max-width: 480px) { 
-            h1 { font-size: 1.8rem !important; } 
-            .confirm-box { padding: 2rem 1rem; }
-        }
+        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+        @media (max-width: 480px) { h1 { font-size: 1.8rem !important; } }
     </style>
 </head>
 <body>
     <main class="card-container">
         <div class="confirm-box">
-            <header style="margin-bottom: 2rem;">
-                <span style="background: rgba(181,152,90,0.1); color: var(--gold); padding: 5px 15px; border-radius: 100px; font-size: 0.7rem; font-weight: 800; letter-spacing: 1px;">SECURE GATEWAY</span>
+            <header style="text-align: center; margin-bottom: 2rem;">
+                <span style="background: rgba(181,152,90,0.1); color: var(--gold); padding: 5px 15px; border-radius: 100px; font-size: 0.7rem; font-weight: 800; letter-spacing: 1px;">SECURE CHECKOUT</span>
                 <h1 style="margin: 15px 0 5px 0; font-size: 2.2rem; color: var(--dark);">Konfirmasi <br><span class="text-gradient">Pembayaran.</span></h1>
                 <p style="color: #64748b; font-size: 0.9rem;">Otorisasi kartu untuk penerbitan Diamond Royal.</p>
             </header>
 
-            <div class="input-group">
-                <label>NOMOR KARTU SUMBER DANA</label>
-                <input type="number" id="cardInput" placeholder="Masukkan Nomor Kartu BDN">
+            <div style="margin-bottom: 1.5rem; text-align: left;">
+                <label style="font-size: 0.75rem; font-weight: 800; color: #94a3b8; display: block; margin-bottom: 8px;">NOMOR KARTU SUMBER DANA</label>
+                <input type="number" id="cardInput" placeholder="Masukkan Nomor Kartu">
             </div>
 
             <div class="order-summary">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem;">
-                    <span style="color: #64748b;">Instrumen:</span> 
-                    <strong style="color: var(--dark);">Diamond Royal Elite</strong>
+                    <span style="color: #64748b;">Instrumen:</span> <strong style="color: var(--dark);">Diamond Royal Elite</strong>
                 </div>
                 <div style="border-top: 1px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: 700; color: var(--dark);">Total Tagihan:</span>
+                    <span style="font-weight: 700; color: var(--dark);">Total:</span>
                     <span style="font-size: 1.5rem; font-weight: 800; color: var(--gold);">$50,000.00</span>
                 </div>
             </div>
 
             <button class="btn-primary" id="btnPay">BAYAR & AKTIVASI SEKARANG</button>
-            <p id="loader">MENGHUBUNGKAN KE SERVER SECURE...</p>
+            <p id="loader" style="display:none; text-align: center; margin-top: 15px; font-size: 0.8rem; font-weight: 700; color: var(--gold);">MENGHUBUNGKAN KE SERVER...</p>
         </div>
     </main>
 
     <script type="module">
-        // SEMUA LOGIKA FIREBASE DALAM SATU TEMPAT
+        // PANGGIL LIBRARY LANGSUNG DARI GOOGLE (ANTI 404)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.12/firebase-app.js";
         import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.10.12/firebase-database.js";
 
+        // CONFIG FIREBASE MILIK ANDA
         const firebaseConfig = {
             apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
             authDomain: "wifist-d3588.firebaseapp.com",
@@ -170,43 +70,29 @@
 
         const btnPay = document.getElementById('btnPay');
         const loader = document.getElementById('loader');
-        const cardInput = document.getElementById('cardInput');
 
         btnPay.addEventListener('click', async () => {
-            const cardNum = cardInput.value.trim();
-            
-            if (cardNum.length < 5) {
-                alert("Masukkan nomor kartu yang valid!");
-                return;
-            }
+            const cardNum = document.getElementById('cardInput').value;
+            if (cardNum.length < 5) return alert("Masukkan nomor kartu!");
 
-            // UI State: Loading
             loader.style.display = "block";
             btnPay.disabled = true;
 
             try {
-                const dbRef = ref(db);
-                // Langsung mencari ke path: nasabah/[nomor_kartu]
-                const snapshot = await get(child(dbRef, `nasabah/${cardNum}`));
-                
+                const snapshot = await get(child(ref(db), `nasabah/${cardNum}`));
                 if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    
-                    // Simpan data penting ke Session Storage agar bisa diambil di halaman Konfirmasi PIN
+                    const data = snapshot.val();
                     sessionStorage.setItem('pending_card', cardNum);
-                    sessionStorage.setItem('pending_pin', userData.pin);
-                    sessionStorage.setItem('pending_saldo', userData.saldo);
-                    
-                    // Alihkan ke folder sebelah (Konfirmasi PIN)
+                    sessionStorage.setItem('pending_pin', data.pin);
+                    sessionStorage.setItem('pending_saldo', data.saldo);
                     window.location.href = '../konfirmasi/';
                 } else {
-                    alert("KARTU TIDAK TERDAFTAR!\nSistem tidak menemukan data nomor ini di database.");
+                    alert("KARTU TIDAK DITEMUKAN!");
                     loader.style.display = "none";
                     btnPay.disabled = false;
                 }
-            } catch (error) {
-                console.error("Firebase Error:", error);
-                alert("Gangguan Koneksi: " + error.message);
+            } catch (e) {
+                alert("Error: " + e.message);
                 loader.style.display = "none";
                 btnPay.disabled = false;
             }
