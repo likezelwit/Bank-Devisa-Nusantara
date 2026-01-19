@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendaftaran Kartu Pintar | Bank Devisa Nusantara</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -29,8 +30,8 @@
             <div class="form-content">
                 <div class="step active" id="step1">
                     <div class="header-step">
-                        <h1>Identitas Pemegang Kartu</h1>
-                        <p>Pastikan nama sesuai dengan dokumen identitas resmi (KTP/SIM).</p>
+                        <h1>Identitas Pemegang</h1>
+                        <p>Input nama sesuai dokumen resmi pemerintah.</p>
                     </div>
                     <div class="input-group">
                         <label>Nama Lengkap</label>
@@ -41,27 +42,30 @@
 
                 <div class="step" id="step2">
                     <div class="header-step">
-                        <h1>Otorisasi Keamanan</h1>
-                        <p>Gunakan 6 digit angka rahasia untuk akses Dashboard.</p>
+                        <h1>Otorisasi PIN</h1>
+                        <p>PIN ini bersifat rahasia untuk akses Dashboard.</p>
                     </div>
                     <div class="input-group">
                         <label>Buat PIN 6 Digit</label>
-                        <input type="password" id="inputPW" maxlength="6" pattern="\d*" inputmode="numeric" placeholder="******">
+                        <input type="password" id="inputPW" maxlength="6" inputmode="numeric" placeholder="******">
                     </div>
                     <button class="btn-primary" onclick="nextStep(3)">Konfirmasi PIN</button>
                 </div>
 
                 <div class="step" id="step3">
                     <div class="header-step">
-                        <h1>Persetujuan & Deklarasi</h1>
-                        <p>Mohon tinjau kebijakan penggunaan kartu pintar 0810.</p>
+                        <h1>Persetujuan Layanan</h1>
+                        <p>Mohon tinjau kebijakan Bank Devisa Nusantara.</p>
                     </div>
                     <div class="agreement-box">
-                        <p>1. Kartu ini adalah properti simulasi Bank Devisa Nusantara.<br>
-                           2. Pengguna bertanggung jawab penuh atas kerahasiaan PIN.<br>
-                           3. Sistem mencatat waktu pendaftaran secara real-time.</p>
+                        <ul class="agreement-links">
+                            <li><a href="https://likezelwit.github.io/Bank-Devisa-Nusantara/PersyaratanBDN/" target="_blank">Persyaratan <span>Pemegang Kartu</span></a></li>
+                            <li><a href="#">Ketentuan <span>Pengamanan</span></a></li>
+                            <li><a href="#">Kebijakan <span>Privasi</span></a></li>
+                        </ul>
                         <label class="check-label">
-                            <input type="checkbox" id="checkAgree"> Saya setuju dengan seluruh ketentuan.
+                            <input type="checkbox" id="checkAgree"> 
+                            <span>Saya menyetujui seluruh syarat dan ketentuan.</span>
                         </label>
                     </div>
                     <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu</button>
@@ -70,10 +74,10 @@
                 <div class="step" id="step4">
                     <div class="success-header">
                         <div class="icon-success">✓</div>
-                        <h2>Penerbitan Selesai</h2>
+                        <h2>Penerbitan Berhasil</h2>
                     </div>
 
-                    <div class="card-display">
+                    <div id="captureArea" class="card-display">
                         <div class="card-top">
                             <span class="bank-name">BANK DEVISA NUSANTARA</span>
                             <span class="chip-card"></span>
@@ -90,11 +94,14 @@
                         </div>
                     </div>
 
-                    <div class="alert-box">
-                        PENTING: Jangan berikan nomor kartu ini kepada siapapun.
+                    <div class="action-buttons">
+                        <button class="btn-screenshot" onclick="takeScreenshot()">
+                            📸 Simpan Kartu ke Galeri
+                        </button>
+                        <button class="btn-primary" onclick="location.href='../Dashboard/'">
+                            Masuk ke Dashboard
+                        </button>
                     </div>
-                    
-                    <button class="btn-primary" onclick="location.href='../Dashboard/'">Akses Dashboard BDN</button>
                 </div>
             </div>
         </div>
