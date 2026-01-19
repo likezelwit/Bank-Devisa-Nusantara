@@ -1,17 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Bank Devisa Nusantara - Core System Active.");
+    console.log("BDN Main Portal - All Systems Synchronized.");
 
-    const recoveryBtn = document.getElementById('btn-recovery');
-    
-    if(recoveryBtn) {
-        recoveryBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Animasi sederhana daripada sekadar alert
-            recoveryBtn.style.opacity = "0.5";
-            setTimeout(() => {
-                alert("SISTEM INFORMASI: Layanan Pemulihan Akses saat ini hanya tersedia di Kantor Cabang BDN terdekat.");
-                recoveryBtn.style.opacity = "1";
-            }, 300);
+    // Menangani link agar memberikan feedback jika folder belum dibuat
+    const cards = document.querySelectorAll('.menu-card');
+    cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === "#") {
+                e.preventDefault();
+                alert("Modul ini sedang dalam pemeliharaan rutin. Silakan coba beberapa saat lagi.");
+            }
         });
-    }
+    });
 });
