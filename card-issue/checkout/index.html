@@ -3,41 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout | BDN Private Banking</title>
+    <title>Secure Checkout | BDN Private Banking</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <main class="card-container">
-        <div class="confirm-box">
+        <div class="confirm-box" style="max-width: 500px; margin: 0 auto; text-align: center;">
             <header class="step-header">
-                <span class="step-badge">ORDER REVIEW</span>
+                <span class="step-badge">TRANSACTION GATEWAY</span>
                 <h1>Konfirmasi <br><span class="text-gradient">Pembayaran.</span></h1>
-                <p>Anda telah memilih varian kartu paling eksklusif kami.</p>
+                <p>Silakan masukkan nomor kartu BDN Anda untuk memproses penerbitan varian Diamond Royal.</p>
             </header>
 
-            <div class="payment-card" style="background: white; padding: 2rem; border-radius: 24px; text-align: left; border: 1px solid #e2e8f0; margin-bottom: 2rem;">
+            <div class="payment-card" style="background: white; padding: 2rem; border-radius: 28px; text-align: left; border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.05);">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.75rem; font-weight: 800; color: #64748b; letter-spacing: 1px;">NOMOR KARTU SUMBER DANA</p>
+                    <input type="number" id="cardInput" placeholder="16 Digit Nomor Kartu" 
+                        style="width: 100%; padding: 1rem; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 1.1rem; margin-top: 8px;">
+                </div>
+
                 <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-                    <span>Varian Kartu:</span>
-                    <strong id="cardName">Diamond Royal</strong>
+                    <span>Produk:</span>
+                    <strong>Diamond Royal</strong>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-                    <span>Biaya Penerbitan:</span>
+                    <span>Biaya:</span>
                     <strong style="color: #16a34a;">$50,000.00</strong>
                 </div>
                 <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 1rem 0;">
-                <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 800;">
-                    <span>Total Tagihan:</span>
-                    <span>$50,000.00</span>
+                <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 800;">
+                    <span>Total:</span>
+                    <span class="text-gradient">$50,000.00</span>
                 </div>
             </div>
 
-            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 2rem;">
-                *Pembayaran akan dipotong langsung dari saldo rekening BDN utama Anda. 
-                Silakan lanjut untuk otorisasi transaksi menggunakan PIN Keamanan.
-            </p>
-
-            <button class="btn-primary" onclick="window.location.href='../konfirmasi/'">BAYAR & AKTIVASI SEKARANG</button>
+            <button class="btn-primary" id="btnPay" style="width: 100%; margin-top: 2rem;">BAYAR & AKTIVASI SEKARANG</button>
+            <p id="loader" style="display:none; margin-top: 15px; font-size: 0.8rem; font-weight: 700;">MENYAMBUNGKAN KE DATABASE PUSAT...</p>
         </div>
     </main>
+
+    <script type="module">
+        import { db } from "../../firebase.js";
+        import { ref, get, child } from "https://www.gstatic.com/firebasejs/9.x/firebase-database.js";
+
+        document.getElementById('btnPay').addEventListener('click', async () => {
+            const cardNum = document.getElementById('cardInput').value;
+            const loader = document.getElementById('loader');
+            
+            if (cardNum.length < 10) {
+                alert("Masukkan nomor kartu yang valid!");
+                return;
+            }
+
+            loader.style.display = "block";
+
+            try {
+                const dbRef = ref(db);
+                // Kita cari di folder 'nasabah' di Firebase kamu
+                const snapshot = await get(child(dbRef, `nasabah/${cardNum}`));
+                
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    // Simpan data sementara di session agar bisa divalidasi di halaman PIN
+                    sessionStorage.setItem('pending_card', cardNum);
+                    sessionStorage.setItem('pending_pin', userData.pin);
+                    sessionStorage.setItem('pending_saldo', userData.saldo);
+                    
+                    window.location.href = '../konfirmasi/';
+                } else {
+                    alert("DATA TIDAK DITEMUKAN: Nomor kartu tidak terdaftar di database BDN.");
+                    loader.style.display = "none";
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Error koneksi Firebase!");
+                loader.style.display = "none";
+            }
+        });
+    </script>
 </body>
 </html>
