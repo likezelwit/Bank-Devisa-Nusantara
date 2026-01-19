@@ -1,46 +1,47 @@
 :root {
     --navy: #0f172a; --gold: #b8924e; --blue: #4f46e5;
-    --bg: #f1f5f9; --white: #ffffff; --gray: #64748b;
+    --bg: #f8fafc; --white: #ffffff; --gray: #64748b;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--navy); }
 
-/* SELECTION CARDS */
-.selection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 2rem; }
-.select-card { border: 2px solid #e2e8f0; padding: 1.5rem; border-radius: 16px; cursor: pointer; transition: 0.3s; background: white; }
-.select-card:hover { border-color: var(--blue); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-.select-card .icon { font-size: 2.5rem; margin-bottom: 1rem; }
-.select-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
-.select-card p { font-size: 0.75rem; color: var(--gray); line-height: 1.4; }
+.navbar { display: flex; justify-content: space-between; padding: 1rem 10%; background: white; border-bottom: 1px solid #e2e8f0; }
+.logo { font-size: 1.5rem; font-weight: 800; } .logo span { color: var(--gold); }
+.btn-back { text-decoration: none; color: var(--gray); font-size: 0.8rem; font-weight: 700; }
 
-/* PROGRESS */
+.container { padding: 3rem 5%; display: flex; justify-content: center; }
+.form-wrapper { background: white; width: 100%; max-width: 500px; padding: 2.5rem; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); text-align: center; }
+
+/* PROGRESS TRACKER */
 .progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 3rem; }
-.progress-bar-bg { position: absolute; top: 10px; left: 0; width: 100%; height: 2px; background: #e2e8f0; z-index: 1; }
-.progress-line { width: 0%; height: 100%; background: var(--blue); transition: 0.5s; }
-.circle { width: 22px; height: 22px; background: white; border: 2px solid #e2e8f0; border-radius: 50%; z-index: 2; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.progress-bar-bg { position: absolute; top: 12px; left: 0; width: 100%; height: 2px; background: #e2e8f0; z-index: 1; }
+.progress-line { width: 0%; height: 100%; background: var(--blue); transition: 0.5s ease; }
+.circle { width: 26px; height: 26px; background: white; border: 2px solid #e2e8f0; border-radius: 50%; z-index: 2; font-size: 0.7rem; font-weight: bold; display: flex; align-items: center; justify-content: center; }
 .circle.active { border-color: var(--blue); color: var(--blue); }
 .circle.completed { background: var(--blue); border-color: var(--blue); color: white; }
 
-/* COMMON FORM STUFF */
-.form-wrapper { background: white; width: 100%; max-width: 600px; padding: 3rem; border-radius: 30px; margin: 2rem auto; box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
-.input-group { text-align: left; margin-bottom: 1.5rem; }
-.input-group label { display: block; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--gray); margin-bottom: 0.5rem; }
-.input-group input, .input-group select { width: 100%; padding: 1rem; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 1rem; }
-.btn-primary { width: 100%; padding: 1.1rem; background: var(--navy); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 1rem; }
+/* LOGIKA SEMBUNYI KONTEN (PENTING!) */
+.step { display: none; opacity: 0; transform: translateY(10px); }
+.step.active { display: block; opacity: 1; transform: translateY(0); animation: fadeIn 0.4s ease forwards; }
 
-/* LOADING SLIK */
-.loading-box { padding: 3rem; background: #f8fafc; border-radius: 20px; text-align: center; }
-.spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--blue); border-radius: 50%; animation: spin 1s infinite linear; margin: 0 auto 1rem; }
+@keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+
+.input-group { text-align: left; margin-bottom: 1.5rem; }
+.input-group label { display: block; font-size: 0.75rem; font-weight: 800; color: var(--gray); margin-bottom: 0.5rem; text-transform: uppercase; }
+.input-group input, .input-group select { width: 100%; padding: 1rem; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 1rem; outline: none; }
+.input-group input:focus { border-color: var(--blue); }
+
+.btn-primary { width: 100%; padding: 1.1rem; background: var(--navy); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+.btn-primary:hover { background: #1e293b; }
+.btn-screenshot { width: 100%; padding: 1.1rem; background: white; border: 2px solid var(--navy); border-radius: 12px; font-weight: 700; margin-bottom: 10px; cursor: pointer; }
+
+/* LOADING & CARD */
+.loading-box { padding: 2rem; background: #f8fafc; border-radius: 16px; margin-bottom: 1rem; }
+.spinner { width: 30px; height: 30px; border: 3px solid #e2e8f0; border-top-color: var(--blue); border-radius: 50%; animation: spin 1s infinite linear; margin: 0 auto 1rem; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* THE CARD */
-.card-display { background: linear-gradient(135deg, #0f172a, #1e293b); padding: 2.2rem; border-radius: 24px; color: white; position: relative; margin-top: 1rem; }
-#cardTypeHeader { font-size: 0.8rem; font-weight: 800; color: var(--gold); letter-spacing: 2px; }
-.chip-card { width: 45px; height: 35px; background: #94a3b8; border-radius: 6px; float: right; }
-.card-number { font-size: 1.5rem; margin: 2.5rem 0; letter-spacing: 3px; font-family: monospace; }
-
-@media (max-width: 600px) {
-    .selection-grid { grid-template-columns: 1fr; }
-    .form-wrapper { padding: 1.5rem; margin: 0; border-radius: 0; }
-}
+.card-display { background: linear-gradient(135deg, #0f172a, #1e293b); padding: 2rem; border-radius: 20px; color: white; text-align: left; margin-bottom: 2rem; }
+.bank-name { font-size: 0.7rem; font-weight: 700; color: var(--gold); letter-spacing: 2px; }
+.chip-card { width: 40px; height: 30px; background: #94a3b8; border-radius: 4px; float: right; }
+.card-number { font-size: 1.4rem; margin: 2.5rem 0; letter-spacing: 3px; font-family: monospace; }
