@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aktivasi PIN Aman | BDN</title>
+    <title>Otorisasi PIN | BDN</title>
     <link rel="stylesheet" href="../style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -16,9 +16,9 @@
     <main class="card-container">
         <div class="confirm-box" style="max-width: 400px; margin: 0 auto; text-align: center;">
             <header class="step-header">
-                <span class="step-badge">SECURE ACTIVATION</span>
-                <h1>Buat PIN <br><span class="text-gradient">Baru Anda.</span></h1>
-                <p>Otorisasi biometrik dan enkripsi PIN 6-digit diperlukan.</p>
+                <span class="step-badge">SECURE AUTHORIZATION</span>
+                <h1>Otorisasi <br><span class="text-gradient">PIN Keamanan.</span></h1>
+                <p>Transaksi sebesar <strong>$50,000.00</strong> memerlukan verifikasi PIN 6-digit Anda.</p>
             </header>
 
             <div class="pin-display" style="display: flex; justify-content: center; gap: 15px; margin-bottom: 3rem;">
@@ -30,47 +30,85 @@
                 <div class="dot"></div>
             </div>
             
-            <div class="numpad" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-                <button onclick="addPin(1)">1</button>
-                <button onclick="addPin(2)">2</button>
-                <button onclick="addPin(3)">3</button>
-                <button onclick="addPin(4)">4</button>
-                <button onclick="addPin(5)">5</button>
-                <button onclick="addPin(6)">6</button>
-                <button onclick="addPin(7)">7</button>
-                <button onclick="addPin(8)">8</button>
-                <button onclick="addPin(9)">9</button>
-                <button onclick="resetPin()" style="color: #ef4444; font-weight: 800;">DEL</button>
-                <button onclick="addPin(0)">0</button>
-                <button onclick="finishProcess()" style="background: var(--gold); color: white; font-weight: 800;">OK</button>
+            <div class="numpad" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 10px;">
+                <button class="num-btn" data-val="1">1</button>
+                <button class="num-btn" data-val="2">2</button>
+                <button class="num-btn" data-val="3">3</button>
+                <button class="num-btn" data-val="4">4</button>
+                <button class="num-btn" data-val="5">5</button>
+                <button class="num-btn" data-val="6">6</button>
+                <button class="num-btn" data-val="7">7</button>
+                <button class="num-btn" data-val="8">8</button>
+                <button class="num-btn" data-val="9">9</button>
+                <button onclick="clearPin()" style="color: #ef4444; font-weight: 800; background: #fff1f2;">DEL</button>
+                <button class="num-btn" data-val="0">0</button>
+                <button id="submitBtn" style="background: var(--gold); color: white; font-weight: 800;">OK</button>
             </div>
         </div>
     </main>
 
-    <script>
-        let pinCount = 0;
+    <script type="module">
+        import { db } from "../../firebase.js";
+        import { ref, update } from "https://www.gstatic.com/firebasejs/9.x/firebase-database.js";
+
+        let inputPin = "";
         const dots = document.querySelectorAll('.dot');
+        const numBtns = document.querySelectorAll('.num-btn');
 
-        function addPin(num) {
-            if(pinCount < 6) {
-                dots[pinCount].classList.add('active');
-                pinCount++;
-            }
-        }
+        numBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (inputPin.length < 6) {
+                    inputPin += btn.getAttribute('data-val');
+                    dots[inputPin.length - 1].classList.add('active');
+                }
+            });
+        });
 
-        function resetPin() {
-            pinCount = 0;
+        window.clearPin = () => {
+            inputPin = "";
             dots.forEach(dot => dot.classList.remove('active'));
-        }
+        };
 
-        function finishProcess() {
-            if(pinCount === 6) {
-                alert("PIN Terverifikasi secara Enkripsi. Menghubungkan ke Server Pusat...");
-                window.location.href = '../sukses/'; 
-            } else {
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            if (inputPin.length !== 6) {
                 alert("Harap masukkan 6 digit PIN!");
+                return;
             }
-        }
+
+            const pinBenar = sessionStorage.getItem('pending_pin');
+            const cardNum = sessionStorage.getItem('pending_card');
+            const saldoSkrg = parseFloat(sessionStorage.getItem('pending_saldo'));
+            const harga = 50000;
+
+            if (inputPin === pinBenar) {
+                if (saldoSkrg >= harga) {
+                    const saldoBaru = saldoSkrg - harga;
+
+                    try {
+                        // Update saldo di Firebase
+                        const updates = {};
+                        updates[`nasabah/${cardNum}/saldo`] = saldoBaru;
+                        updates[`nasabah/${cardNum}/cardStatus`] = "Diamond Royal Active";
+
+                        await update(ref(db), updates);
+                        
+                        // Tandai kartu terbeli di browser lokal
+                        localStorage.setItem('diamond_active', 'true');
+                        
+                        alert("PEMBAYARAN BERHASIL!\nSisa Saldo: $" + saldoBaru.toLocaleString());
+                        window.location.href = '../sukses/';
+                    } catch (e) {
+                        alert("Gagal memproses ke server.");
+                    }
+                } else {
+                    alert("TRANSAKSI GAGAL: Saldo Anda tidak mencukupi untuk Diamond Royal ($50,000).");
+                    window.location.href = '../';
+                }
+            } else {
+                alert("PIN SALAH! Otorisasi ditolak.");
+                clearPin();
+            }
+        });
     </script>
 </body>
 </html>
