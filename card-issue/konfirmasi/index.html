@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktivasi PIN Aman | BDN</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">BDN<span>.</span></div>
+    </nav>
+
+    <main class="card-container">
+        <div class="confirm-box">
+            <header class="step-header">
+                <span class="step-badge">PENGAMANAN KARTU</span>
+                <h1>Buat PIN <br><span class="text-gradient">Baru Anda.</span></h1>
+                <p>Gunakan 6 digit angka yang sulit ditebak untuk keamanan transaksi.</p>
+            </header>
+
+            <div class="pin-display">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            
+            <div class="numpad">
+                <button onclick="addPin(1)">1</button>
+                <button onclick="addPin(2)">2</button>
+                <button onclick="addPin(3)">3</button>
+                <button onclick="addPin(4)">4</button>
+                <button onclick="addPin(5)">5</button>
+                <button onclick="addPin(6)">6</button>
+                <button onclick="addPin(7)">7</button>
+                <button onclick="addPin(8)">8</button>
+                <button onclick="addPin(9)">9</button>
+                <button onclick="resetPin()" style="color: #ef4444;">DEL</button>
+                <button onclick="addPin(0)">0</button>
+                <button onclick="finishProcess()" class="btn-ok">OK</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let pinCount = 0;
+        const dots = document.querySelectorAll('.dot');
+
+        function addPin(num) {
+            if(pinCount < 6) {
+                dots[pinCount].classList.add('active');
+                pinCount++;
+            }
+        }
+
+        function resetPin() {
+            pinCount = 0;
+            dots.forEach(dot => dot.classList.remove('active'));
+        }
+
+        function finishProcess() {
+            if(pinCount === 6) {
+                // Kamu bisa arahkan ke folder sukses nanti: ../sukses/
+                alert("PIN Terverifikasi. Menghubungkan ke Jaringan Secure...");
+                window.location.href = '../sukses/'; 
+            } else {
+                alert("PIN harus 6 digit lengkap!");
+            }
+        }
+    </script>
+</body>
+</html>
