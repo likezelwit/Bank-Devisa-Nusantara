@@ -1,65 +1,66 @@
-let appType = ''; // DEBIT atau KREDIT
-let currentStep = 0;
+let currentStep = 1;
 const totalSteps = 8;
 
-// Init Progress Circles
-const pContainer = document.getElementById('pContainer');
-for(let i=1; i<=totalSteps; i++) {
-    pContainer.innerHTML += `<div class="circle" id="c${i}">${i}</div>`;
-}
-
-function startApp(type) {
-    appType = type;
-    document.getElementById('cardTypeHeader').innerText = type === 'DEBIT' ? 'DEBIT CARD' : 'CREDIT CARD';
-    nextStep(1);
-}
-
 function nextStep(s) {
-    // Validasi Dasar
-    if(s === 2 && document.getElementById('inputNama').value === "") return alert("Nama wajib diisi!");
-    if(s === 6 && document.getElementById('inputPW').value.length < 6) return alert("PIN wajib 6 digit!");
+    // Validasi Identitas
+    if (s === 2) {
+        const nama = document.getElementById('inputNama').value.trim();
+        const nik = document.getElementById('inputNIK').value.trim();
+        if (nama === "" || nik.length < 16) return alert("Lengkapi Nama dan 16 digit NIK!");
+    }
+    
+    // Validasi PIN
+    if (s === 6) {
+        if (document.getElementById('inputPW').value.length < 6) return alert("PIN harus 6 angka!");
+    }
 
     currentStep = s;
     updateUI(s);
 
-    // Simulasi SLIK OJK di Tahap 6
-    if(s === 6) {
-        simulasiSlik();
-    }
+    if (s === 6) simulasiAnalisis();
 }
 
 function updateUI(s) {
-    document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
+    // Sembunyikan semua step
+    document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+    // Tampilkan step tujuan
     document.getElementById('step' + s).classList.add('active');
 
-    // Progress Bar
+    // Update Progress Line
     const percent = ((s - 1) / (totalSteps - 1)) * 100;
     document.getElementById('progressLine').style.width = percent + "%";
 
-    // Circles
-    for(let i=1; i<=totalSteps; i++) {
-        const c = document.getElementById('c'+i);
-        if(i < s) { c.classList.add('completed'); c.innerHTML = '✓'; }
-        else if(i === s) { c.classList.add('active'); c.innerHTML = i; }
-    }
+    // Update Circle visual
+    document.querySelectorAll('.circle').forEach((c, i) => {
+        if (i < s - 1) {
+            c.classList.add('completed');
+            c.innerHTML = "✓";
+        } else if (i === s - 1) {
+            c.classList.add('active');
+            c.classList.remove('completed');
+            c.innerHTML = i + 1;
+        } else {
+            c.classList.remove('active', 'completed');
+            c.innerHTML = i + 1;
+        }
+    });
 }
 
-function simulasiSlik() {
-    const statusText = document.getElementById('slikStatus');
+function simulasiAnalisis() {
+    const status = document.getElementById('slikStatus');
     const btn = document.getElementById('btnSlik');
-    
-    setTimeout(() => { statusText.innerText = "Memeriksa riwayat kredit di database BI/SLIK..."; }, 1000);
+    setTimeout(() => { status.innerText = "Memeriksa riwayat finansial di BI/SLIK..."; }, 1500);
     setTimeout(() => { 
-        statusText.innerHTML = "<b style='color:green'>SKOR KREDIT: A1 (Sangat Baik)</b><br>Identitas terverifikasi. Pengajuan dapat dilanjutkan.";
+        status.innerHTML = "<b style='color:green'>VERIFIKASI BERHASIL</b><br>Skor Kredit: A+ (Sangat Layak)"; 
         btn.style.display = "block";
-    }, 3000);
+    }, 4000);
 }
 
 async function generateFinal() {
-    if(!document.getElementById('checkAgree').checked) return alert("Setujui deklarasi!");
-    
+    if (!document.getElementById('checkAgree').checked) return alert("Setujui pernyataan!");
+
     const btn = document.getElementById('btnGenerate');
-    btn.disabled = true; btn.innerText = "MENERBITKAN KARTU...";
+    btn.disabled = true; btn.innerText = "MENGIRIM DATA...";
 
     const nama = document.getElementById('inputNama').value;
     const pin = document.getElementById('inputPW').value;
@@ -71,21 +72,23 @@ async function generateFinal() {
             nama: nama,
             nomor_kartu: fullNo,
             pin: pin,
-            tipe: appType,
             saldo: 0,
-            tgl: new Date().toISOString()
+            tgl_daftar: new Date().toISOString()
         });
 
         document.getElementById('displayNo').innerText = fullNo.match(/.{1,4}/g).join(" ");
         document.getElementById('displayName').innerText = nama.toUpperCase();
         updateUI(8);
-    } catch(e) { alert("Error!"); btn.disabled = false; }
+    } catch (e) {
+        alert("Gagal koneksi server!");
+        btn.disabled = false;
+    }
 }
 
 function takeScreenshot() {
     html2canvas(document.getElementById('captureArea'), {scale: 3}).then(canvas => {
         const link = document.createElement('a');
-        link.download = `BDN-${appType}.png`;
+        link.download = 'BDN-Card.png';
         link.href = canvas.toDataURL();
         link.click();
     });
