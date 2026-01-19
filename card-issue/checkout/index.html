@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | BDN Private Banking</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <main class="card-container">
+        <div class="confirm-box">
+            <header class="step-header">
+                <span class="step-badge">ORDER REVIEW</span>
+                <h1>Konfirmasi <br><span class="text-gradient">Pembayaran.</span></h1>
+                <p>Anda telah memilih varian kartu paling eksklusif kami.</p>
+            </header>
+
+            <div class="payment-card" style="background: white; padding: 2rem; border-radius: 24px; text-align: left; border: 1px solid #e2e8f0; margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span>Varian Kartu:</span>
+                    <strong id="cardName">Diamond Royal</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span>Biaya Penerbitan:</span>
+                    <strong style="color: #16a34a;">$50,000.00</strong>
+                </div>
+                <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 1rem 0;">
+                <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 800;">
+                    <span>Total Tagihan:</span>
+                    <span>$50,000.00</span>
+                </div>
+            </div>
+
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 2rem;">
+                *Pembayaran akan dipotong langsung dari saldo rekening BDN utama Anda. 
+                Silakan lanjut untuk otorisasi transaksi menggunakan PIN Keamanan.
+            </p>
+
+            <button class="btn-primary" onclick="window.location.href='../konfirmasi/'">BAYAR & AKTIVASI SEKARANG</button>
+        </div>
+    </main>
+</body>
+</html>
