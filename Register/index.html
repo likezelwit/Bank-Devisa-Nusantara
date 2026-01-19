@@ -3,105 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendaftaran Kartu Pintar | Bank Devisa Nusantara</title>
+    <title>Sistem Registrasi Pusat | BDN</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="../firebase.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
-        <a href="../" class="btn-back">← Batal</a>
+        <a href="../" class="btn-back">PEMBATALAN</a>
     </nav>
 
     <main class="container">
         <div class="form-wrapper">
             <div class="progress-container">
-                <div class="progress-bar-bg">
-                    <div class="progress-line" id="progressLine"></div>
-                </div>
-                <div class="circle active" data-title="Data">1</div>
-                <div class="circle" data-title="PIN">2</div>
-                <div class="circle" data-title="Syarat">3</div>
-                <div class="circle" data-title="Hasil">4</div>
+                <div class="progress-bar-bg"><div class="progress-line" id="progressLine"></div></div>
+                <div class="circle active" data-step="1"></div>
+                <div class="circle" data-step="2"></div>
+                <div class="circle" data-step="3"></div>
+                <div class="circle" data-step="4"></div>
+                <div class="circle" data-step="5"></div>
+                <div class="circle" data-step="6"></div>
+                <div class="circle" data-step="7"></div>
+                <div class="circle" data-step="8"></div>
             </div>
 
             <div class="form-content">
                 <div class="step active" id="step1">
-                    <div class="header-step">
-                        <h1>Identitas Pemegang</h1>
-                        <p>Input nama sesuai dokumen resmi pemerintah.</p>
-                    </div>
+                    <h2>01. Identitas Utama</h2>
                     <div class="input-group">
-                        <label>Nama Lengkap</label>
+                        <label>Nama Lengkap (Sesuai KTP)</label>
                         <input type="text" id="inputNama" placeholder="Contoh: RADEN ARYA">
                     </div>
                     <button class="btn-primary" onclick="nextStep(2)">Lanjutkan</button>
                 </div>
 
                 <div class="step" id="step2">
-                    <div class="header-step">
-                        <h1>Otorisasi PIN</h1>
-                        <p>PIN ini bersifat rahasia untuk akses Dashboard.</p>
-                    </div>
+                    <h2>02. Informasi Kontak</h2>
                     <div class="input-group">
-                        <label>Buat PIN 6 Digit</label>
-                        <input type="password" id="inputPW" maxlength="6" inputmode="numeric" placeholder="******">
+                        <label>Nomor WhatsApp Aktif</label>
+                        <input type="tel" placeholder="0812xxxx">
                     </div>
-                    <button class="btn-primary" onclick="nextStep(3)">Konfirmasi PIN</button>
+                    <button class="btn-primary" onclick="nextStep(3)">Lanjutkan</button>
                 </div>
 
                 <div class="step" id="step3">
-                    <div class="header-step">
-                        <h1>Persetujuan Layanan</h1>
-                        <p>Mohon tinjau kebijakan Bank Devisa Nusantara.</p>
+                    <h2>03. Profil Pekerjaan</h2>
+                    <div class="input-group">
+                        <label>Bidang Pekerjaan</label>
+                        <select><option>Swasta</option><option>PNS</option><option>Wiraswasta</option></select>
                     </div>
-                    <div class="agreement-box">
-                        <ul class="agreement-links">
-                            <li><a href="https://likezelwit.github.io/Bank-Devisa-Nusantara/PersyaratanBDN/" target="_blank">Persyaratan <span>Pemegang Kartu</span></a></li>
-                            <li><a href="#">Ketentuan <span>Pengamanan</span></a></li>
-                            <li><a href="#">Kebijakan <span>Privasi</span></a></li>
-                        </ul>
-                        <label class="check-label">
-                            <input type="checkbox" id="checkAgree"> 
-                            <span>Saya menyetujui seluruh syarat dan ketentuan.</span>
-                        </label>
-                    </div>
-                    <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu</button>
+                    <button class="btn-primary" onclick="nextStep(4)">Lanjutkan</button>
                 </div>
 
                 <div class="step" id="step4">
-                    <div class="success-header">
-                        <div class="icon-success">✓</div>
-                        <h2>Penerbitan Berhasil</h2>
+                    <h2>04. Kontak Darurat</h2>
+                    <div class="input-group">
+                        <label>Nama Keluarga Dekat</label>
+                        <input type="text" placeholder="Nama Ibu/Ayah">
                     </div>
+                    <button class="btn-primary" onclick="nextStep(5)">Lanjutkan</button>
+                </div>
 
+                <div class="step" id="step5">
+                    <h2>05. Otorisasi PIN</h2>
+                    <div class="input-group">
+                        <label>Buat 6 Digit PIN</label>
+                        <input type="password" id="inputPW" maxlength="6">
+                    </div>
+                    <button class="btn-primary" onclick="nextStep(6)">Verifikasi PIN</button>
+                </div>
+
+                <div class="step" id="step6">
+                    <h2>06. Pernyataan Nasabah</h2>
+                    <div class="agreement-box">
+                        <p>Saya menyatakan data ini benar untuk pembukaan akses Kartu 0810.</p>
+                    </div>
+                    <button class="btn-primary" onclick="nextStep(7)">Saya Setuju</button>
+                </div>
+
+                <div class="step" id="step7">
+                    <h2>07. Finalisasi Data</h2>
+                    <div class="agreement-box">
+                        <ul class="agreement-links">
+                            <li><a href="https://likezelwit.github.io/Bank-Devisa-Nusantara/PersyaratanBDN/" target="_blank">Persyaratan <span>Pemegang Kartu</span></a></li>
+                        </ul>
+                        <label class="check-label">
+                            <input type="checkbox" id="checkAgree"> Konfirmasi pendaftaran.
+                        </label>
+                    </div>
+                    <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Sekarang</button>
+                </div>
+
+                <div class="step" id="step8">
                     <div id="captureArea" class="card-display">
-                        <div class="card-top">
-                            <span class="bank-name">BANK DEVISA NUSANTARA</span>
-                            <span class="chip-card"></span>
-                        </div>
-                        <div class="card-mid">
-                            <div class="card-number" id="displayNo">0810 0000 0000 0000</div>
-                        </div>
+                        <div class="card-top"><span class="bank-name">BANK DEVISA NUSANTARA</span><span class="chip-card"></span></div>
+                        <div class="card-mid"><div class="card-number" id="displayNo">0810 0000 0000 0000</div></div>
                         <div class="card-bottom">
-                            <div class="card-info">
-                                <small>NAMA PEMEGANG</small>
-                                <div id="displayName">NAMA LENGKAP</div>
-                            </div>
+                            <div class="card-info"><small>PEMEGANG</small><div id="displayName">NAMA</div></div>
                             <div class="card-series">SERI 0810</div>
                         </div>
                     </div>
-
-                    <div class="action-buttons">
-                        <button class="btn-screenshot" onclick="takeScreenshot()">
-                            📸 Simpan Kartu ke Galeri
-                        </button>
-                        <button class="btn-primary" onclick="location.href='../Dashboard/'">
-                            Masuk ke Dashboard
-                        </button>
-                    </div>
+                    <button class="btn-screenshot" onclick="takeScreenshot()">📸 Simpan Gambar</button>
+                    <button class="btn-primary" onclick="location.href='../Dashboard/'">Ke Dashboard</button>
                 </div>
             </div>
         </div>
