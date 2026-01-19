@@ -9,62 +9,91 @@
 body { 
     font-family: 'Plus Jakarta Sans', sans-serif; 
     background: var(--bg); 
-    color: var(--navy); 
+    color: var(--navy);
+    overflow-x: hidden;
 }
 
 /* NAVBAR */
 .navbar {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 1.5rem 8%; background: white; border-bottom: 1px solid #e2e8f0;
+    padding: 1.2rem 8%; background: white; border-bottom: 1px solid #e2e8f0;
 }
 .logo { font-size: 1.5rem; font-weight: 800; }
 .logo span { color: var(--gold); }
-.btn-back { font-size: 0.75rem; font-weight: 700; color: var(--navy); text-decoration: none; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px; }
+.btn-back { font-size: 0.7rem; font-weight: 700; color: var(--navy); text-decoration: none; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px; transition: 0.3s; }
+.btn-back:hover { background: #f1f5f9; }
 
 /* CONTAINER */
-.card-container { max-width: 900px; margin: 0 auto; padding: 4rem 5%; }
-.step-header { margin-bottom: 3rem; text-align: center; }
-.step-badge { font-size: 0.7rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
-h1 { font-size: 2.5rem; margin: 1rem 0; }
+.card-container { max-width: 1100px; margin: 0 auto; padding: 4rem 5%; }
+.step-header { margin-bottom: 3.5rem; text-align: center; }
+.step-badge { font-size: 0.7rem; font-weight: 800; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+h1 { font-size: clamp(2rem, 5vw, 2.8rem); margin: 0.8rem 0; line-height: 1.2; }
 .text-gradient { background: linear-gradient(90deg, var(--navy), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-/* SELECTION GRID (Responsive) */
-.selection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+/* GRID SYSTEM */
+.selection-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+    gap: 1.5rem; 
+    margin-bottom: 4rem; 
+}
 
+/* CARD OPTION BOX */
 .card-option { 
-    background: white; border: 2px solid #e2e8f0; border-radius: 24px; padding: 1.5rem; 
-    cursor: pointer; transition: 0.3s; 
+    background: white; border: 2px solid #f1f5f9; border-radius: 28px; padding: 1.2rem; 
+    cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.card-option.active { border-color: var(--gold); background: #fdfaf3; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(184, 146, 78, 0.1); }
+.card-option:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+.card-option.active { border-color: var(--gold); background: #fdfaf3; box-shadow: 0 20px 40px rgba(184, 146, 78, 0.15); }
 
-/* CARD PREVIEW */
+/* CARD VISUALS */
 .card-preview { 
-    height: 180px; width: 100%; border-radius: 16px; margin-bottom: 1.5rem; 
-    position: relative; padding: 1.5rem; color: white; overflow: hidden;
+    height: 160px; width: 100%; border-radius: 18px; margin-bottom: 1.5rem; 
+    position: relative; padding: 1.2rem; color: white; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: space-between;
 }
-.card-preview.platinum { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
-.card-preview.black { background: linear-gradient(135deg, #2d3436 0%, #000000 100%); }
 
-.card-chip { width: 45px; height: 35px; background: #e2e8f0; border-radius: 6px; margin-bottom: 2rem; }
-.card-chip.gold { background: var(--gold); }
-.card-brand { font-size: 0.8rem; font-weight: 700; opacity: 0.8; }
-.card-number { font-size: 1.1rem; letter-spacing: 2px; margin-top: 10px; }
+.card-chip { width: 40px; height: 30px; border-radius: 6px; }
+.card-chip.silver { background: linear-gradient(135deg, #bdc3c7, #2c3e50); }
+.card-chip.gold { background: linear-gradient(135deg, #f1c40f, #f39c12); box-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
 
-.option-details h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-.option-details p { font-size: 0.85rem; color: #64748b; margin-bottom: 1rem; }
-.price { font-size: 0.75rem; font-weight: 800; color: #16a34a; }
+/* VARIAN WARNA KARTU */
+.platinum { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+.gold-card { background: linear-gradient(135deg, #b8924e 0%, #78350f 100%); }
+.black { background: radial-gradient(circle at top right, #333, #000); }
+.emerald { background: linear-gradient(135deg, #064e3b 0%, #10b981 100%); position: relative; }
 
-/* FOOTER ACTION */
-.action-footer { text-align: center; }
+/* Efek Kilau Emerald */
+.emerald::after {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(45deg); animation: shine 3s infinite;
+}
+@keyframes shine { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
+
+.card-brand { font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; }
+.card-number { font-size: 0.9rem; letter-spacing: 2.5px; opacity: 0.8; }
+
+/* TEXT DETAILS */
+.option-details h3 { font-size: 1rem; margin-bottom: 0.4rem; color: var(--navy); }
+.option-details p { font-size: 0.8rem; color: #64748b; line-height: 1.4; margin-bottom: 1rem; }
+.price-tag { font-size: 0.7rem; font-weight: 800; color: var(--navy); background: #f1f5f9; padding: 4px 10px; border-radius: 6px; display: inline-block; }
+.price-tag.special { color: #064e3b; background: #d1fae5; }
+
+/* FOOTER */
+.action-footer { text-align: center; padding-top: 2rem; }
 .btn-primary { 
-    background: var(--navy); color: white; border: none; padding: 1rem 3rem; 
-    font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; transition: 0.3s;
+    background: var(--navy); color: white; border: none; padding: 1.2rem 4rem; 
+    font-size: 1rem; font-weight: 800; border-radius: 16px; cursor: pointer; transition: 0.3s;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2); width: auto;
 }
-.btn-primary:hover { background: var(--gold); }
+.btn-primary:hover { background: var(--gold); transform: translateY(-3px); box-shadow: 0 15px 30px rgba(184, 146, 78, 0.3); }
 
-/* MOBILE F12 MODE */
+/* MOBILE F12 FIX */
 @media (max-width: 600px) {
+    .card-container { padding: 2rem 5%; }
     h1 { font-size: 1.8rem; }
-    .card-preview { height: 160px; }
+    .selection-grid { grid-template-columns: 1fr; } /* Kartu numpuk vertikal biar gak gepeng */
+    .card-preview { height: 180px; }
     .btn-primary { width: 100%; }
 }
