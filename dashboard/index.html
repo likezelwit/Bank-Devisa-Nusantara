@@ -3,33 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check Balance | BDN</title>
+    <title>Check Balance | BDN Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="balance-container">
-        <div class="balance-card">
+    <div class="checker-wrapper">
+        <div class="header">
             <div class="logo">BDN<span>.</span></div>
-            
-            <div class="info-section">
-                <p class="label">NOMOR REKENING</p>
-                <h3 id="displayAcc">---- ---- ----</h3>
-            </div>
-
-            <div class="amount-section">
-                <p class="label">SALDO TERSEDIA</p>
-                <h1 id="displaySaldo">Rp 0</h1>
-            </div>
-
-            <div class="status-footer">
-                <span class="dot"></span> Real-time Secure Connection
-            </div>
+            <p>Private Banking Inquiry</p>
         </div>
-        
-        <button class="btn-refresh" onclick="location.reload()">REFRESH DATA</button>
-        <a href="../" class="back-link">Kembali ke Dashboard</a>
+
+        <div class="input-card" id="inputView">
+            <label>Masukkan Nomor Kartu/Rekening</label>
+            <input type="text" id="cardInput" placeholder="8820 XXXX XXXX" maxlength="16">
+            <button id="checkBtn">CEK SALDO SEKARANG</button>
+            <div id="errorMsg" class="error-text"></div>
+        </div>
+
+        <div class="result-card" id="resultView" style="display: none;">
+            <p class="label">SALDO ANDA SAAT INI</p>
+            <h1 id="saldoValue">Rp 0</h1>
+            <div class="divider"></div>
+            <div class="account-info">
+                <span>Pemilik:</span>
+                <b id="ownerName">-</b>
+            </div>
+            <button class="btn-back" onclick="resetView()">KEMBALI</button>
+        </div>
+
+        <div class="footer-note">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            End-to-End Encrypted Session
+        </div>
     </div>
 
     <script type="module" src="main.js"></script>
