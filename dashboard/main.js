@@ -12,22 +12,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Pastikan ID ini SAMA PERSIS dengan yang ada di HTML kamu
 const checkBtn = document.getElementById('checkBtn');
 const cardInput = document.getElementById('cardInput');
-const errorMsg = document.getElementById('errorMsg');
 const inputView = document.getElementById('inputView');
 const resultView = document.getElementById('resultView');
 
 checkBtn.addEventListener('click', async () => {
     const cardNumber = cardInput.value.trim();
 
-    if (cardNumber === "") {
-        showError("Nomor kartu tidak boleh kosong!");
+    if (!cardNumber) {
+        alert("Masukkan nomor kartu!");
         return;
     }
-
-    checkBtn.innerText = "MENCARI...";
-    checkBtn.disabled = true;
 
     try {
         const userRef = ref(db, 'nasabah/' + cardNumber);
@@ -36,33 +33,28 @@ checkBtn.addEventListener('click', async () => {
         if (snapshot.exists()) {
             const data = snapshot.val();
             
-            // Isi Data ke Tampilan Hasil
-            document.getElementById('saldoValue').innerText = new Intl.NumberFormat('id-ID', {
+            // Format Rupiah
+            const formatted = new Intl.NumberFormat('id-ID', {
                 style: 'currency', currency: 'IDR', minimumFractionDigits: 0
             }).format(data.saldo || 0);
-            
+
+            // Update UI
+            document.getElementById('saldoValue').innerText = formatted;
             document.getElementById('ownerName').innerText = data.nama || "Nasabah BDN";
 
-            // Switch View
+            // Pindah Tampilan
             inputView.style.display = "none";
             resultView.style.display = "block";
         } else {
-            showError("Nomor kartu tidak terdaftar!");
+            alert("Nomor kartu tidak ditemukan!");
         }
     } catch (e) {
-        showError("Koneksi gagal. Coba lagi.");
-    } finally {
-        checkBtn.innerText = "CEK SALDO SEKARANG";
-        checkBtn.disabled = false;
+        console.error(e);
+        alert("Terjadi kesalahan koneksi.");
     }
 });
 
-function showError(msg) {
-    errorMsg.innerText = msg;
-    errorMsg.style.display = "block";
-    setTimeout(() => { errorMsg.style.display = "none"; }, 3000);
-}
-
+// Pasang fungsi reset ke window agar bisa dipanggil onclick di HTML
 window.resetView = () => {
     resultView.style.display = "none";
     inputView.style.display = "block";
