@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout | BDN Pay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="payment-wrapper">
+        <div class="order-summary">
+            <div class="brand">BDN<span>Pay.</span></div>
+            <div class="merchant-info">
+                <p>Membayar ke:</p>
+                <h3 id="merchantName">Luxury Store Global</h3>
+            </div>
+            
+            <div class="price-display">
+                <span class="currency">IDR</span>
+                <h1 id="totalAmount">0</h1>
+            </div>
+
+            <div class="order-details">
+                <div class="item">
+                    <span>ID Transaksi</span>
+                    <b id="trxID">#TRX-88291</b>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-form">
+            <h2>Konfirmasi Pembayaran</h2>
+            <p class="subtitle">Silakan masukkan detail akun BDN Anda.</p>
+
+            <div class="input-group">
+                <label>Nomor Rekening/Kartu BDN</label>
+                <input type="text" id="accNumber" placeholder="Contoh: 8820XXXX" maxlength="16">
+            </div>
+
+            <div class="input-group">
+                <label>PIN Transaksi (6 Digit)</label>
+                <input type="password" id="accPin" placeholder="••••••" maxlength="6">
+            </div>
+
+            <div id="errorMessage" class="error-msg"></div>
+
+            <button id="payBtn" class="btn-pay">Bayar Sekarang</button>
+            
+            <div class="security-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Terproteksi oleh BDN Secure Encryption
+            </div>
+        </div>
+    </div>
+
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">✓</div>
+            <h2>Pembayaran Berhasil</h2>
+            <p>Saldo Anda telah dipotong. Anda akan diarahkan kembali ke toko.</p>
+        </div>
+    </div>
+
+    <script type="module" src="pay.js"></script>
+</body>
+</html>
