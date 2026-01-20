@@ -1,103 +1,54 @@
 :root {
     --gold: #b5985a;
     --dark: #0f172a;
+    --border: #e2e8f0;
 }
 
 body {
-    margin: 0;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background: #f8fafc;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f8fafc; height: 100vh; display: flex; align-items: center; justify-content: center;
 }
 
-.balance-container {
-    width: 90%;
-    max-width: 450px;
-    text-align: center;
-}
+.checker-wrapper { width: 100%; max-width: 400px; padding: 20px; text-align: center; }
 
-.balance-card {
-    background: white;
-    padding: 40px;
-    border-radius: 40px;
-    box-shadow: 0 30px 60px rgba(15, 23, 42, 0.1);
-    text-align: left;
-    margin-bottom: 25px;
-    position: relative;
-    overflow: hidden;
-}
-
-.logo {
-    font-weight: 800;
-    font-size: 1.5rem;
-    margin-bottom: 40px;
-    letter-spacing: -1px;
-}
-
+.header { margin-bottom: 30px; }
+.logo { font-weight: 800; font-size: 2rem; margin-bottom: 5px; }
 .logo span { color: var(--gold); }
+.header p { color: #94a3b8; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; }
 
-.label {
-    font-size: 0.7rem;
-    font-weight: 800;
-    color: #94a3b8;
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
+/* Card Styling */
+.input-card, .result-card {
+    background: white; padding: 40px; border-radius: 35px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+    text-align: left; animation: slideUp 0.4s ease-out;
 }
 
-.info-section h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    color: var(--dark);
-    margin-bottom: 30px;
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
-.amount-section h1 {
-    margin: 0;
-    font-size: 2.5rem;
-    color: var(--dark);
-    font-weight: 800;
-}
+label { display: block; font-size: 0.75rem; font-weight: 800; color: #64748b; margin-bottom: 12px; }
 
-.status-footer {
-    margin-top: 40px;
-    font-size: 0.75rem;
-    color: #64748b;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+input {
+    width: 100%; padding: 18px; border-radius: 15px; border: 2px solid var(--border);
+    font-size: 1.1rem; box-sizing: border-box; margin-bottom: 20px; transition: 0.3s;
 }
+input:focus { border-color: var(--gold); outline: none; }
 
-.dot {
-    width: 8px;
-    height: 8px;
-    background: #22c55e;
-    border-radius: 50%;
-    display: inline-block;
+button {
+    width: 100%; padding: 18px; border-radius: 100px; border: none;
+    background: var(--dark); color: white; font-weight: 800; cursor: pointer; transition: 0.3s;
 }
+button:hover { background: #1e293b; transform: scale(1.02); }
 
-.btn-refresh {
-    width: 100%;
-    padding: 18px;
-    border-radius: 15px;
-    border: none;
-    background: var(--dark);
-    color: white;
-    font-weight: 800;
-    cursor: pointer;
-    transition: 0.3s;
-}
+/* Result View Styling */
+.label { font-size: 0.7rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+h1 { font-size: 2.2rem; margin: 10px 0 25px 0; color: var(--dark); font-weight: 800; }
+.divider { height: 1px; background: #f1f5f9; margin-bottom: 20px; }
+.account-info { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 0.9rem; }
 
-.btn-refresh:hover { background: #1e293b; }
+.btn-back { background: #f1f5f9; color: #64748b; margin-top: 10px; }
 
-.back-link {
-    display: block;
-    margin-top: 20px;
-    color: #94a3b8;
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
+.error-text { color: #ef4444; font-size: 0.8rem; font-weight: 700; margin-top: 10px; display: none; }
+.footer-note { margin-top: 30px; font-size: 0.7rem; color: #cbd5e1; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; }
