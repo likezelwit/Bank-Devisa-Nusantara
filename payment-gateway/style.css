@@ -1,0 +1,53 @@
+:root {
+    --gold: #b5985a;
+    --dark: #0f172a;
+    --border: #e2e8f0;
+}
+
+body {
+    margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f1f5f9; display: flex; align-items: center; justify-content: center; height: 100vh;
+}
+
+.payment-wrapper {
+    display: flex; width: 900px; background: white; border-radius: 32px;
+    overflow: hidden; box-shadow: 0 50px 100px rgba(0,0,0,0.1);
+}
+
+/* Kiri: Order Info */
+.order-summary {
+    flex: 1; background: var(--dark); color: white; padding: 60px;
+}
+.brand { font-weight: 800; font-size: 1.5rem; margin-bottom: 60px; }
+.brand span { color: var(--gold); }
+.price-display { margin: 40px 0; border-top: 1px solid #1e293b; padding-top: 40px; }
+.price-display h1 { font-size: 3rem; margin: 0; }
+.currency { color: var(--gold); font-weight: 800; }
+
+/* Kanan: Form */
+.payment-form { flex: 1.2; padding: 60px; }
+.payment-form h2 { margin-top: 0; font-size: 1.8rem; }
+.subtitle { color: #64748b; margin-bottom: 40px; }
+
+.input-group { margin-bottom: 25px; }
+.input-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+.input-group input {
+    width: 100%; padding: 15px; border-radius: 12px; border: 1.5px solid var(--border);
+    font-size: 1rem; box-sizing: border-box; transition: 0.3s;
+}
+.input-group input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 4px rgba(181,152,90,0.1); }
+
+.btn-pay {
+    width: 100%; background: var(--dark); color: white; border: none; padding: 18px;
+    border-radius: 14px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+}
+.btn-pay:hover { background: #1e293b; transform: translateY(-2px); }
+
+.error-msg { color: #ef4444; font-size: 0.85rem; font-weight: 600; margin-bottom: 20px; display: none; }
+
+.security-badge { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 30px; font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
+
+/* Modal */
+.modal { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.9); z-index: 100; align-items: center; justify-content: center; }
+.modal-content { background: white; padding: 50px; border-radius: 40px; text-align: center; max-width: 400px; }
+.success-icon { width: 80px; height: 80px; background: #22c55e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 25px; }
