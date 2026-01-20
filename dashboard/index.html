@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Vault | BDN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">BDN<span>.</span></div>
+            <nav>
+                <a href="#" class="active">Vault</a>
+                <a href="../produk/">Produk</a>
+                <a href="../topup/">Isi Saldo</a>
+                <a href="../edukasi/">Edukasi</a>
+            </nav>
+            <button class="logout" onclick="logout()">LOGOUT</button>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <div>
+                    <h1>Selamat Datang, <span id="userName">Nasabah</span></h1>
+                    <p id="accNumberDisplay">Acc: 0000 0000 0000</p>
+                </div>
+                <div class="status-badge" id="membershipBadge">REGULAR</div>
+            </header>
+
+            <section class="vault-grid">
+                <div class="balance-card">
+                    <p>TOTAL SALDO TERSEDIA</p>
+                    <h2 id="userBalance">Rp 0</h2>
+                    <div class="card-footer">
+                        <span>Real-time Protected</span>
+                        <button onclick="location.href='../topup/'">+ Top Up</button>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <p>Status Kartu Aktif</p>
+                    <h3 id="activeCardName">Belum Ada</h3>
+                    <small id="cardStatus">Non-Active</small>
+                </div>
+            </section>
+
+            <div class="action-grid">
+                <div class="action-box" onclick="location.href='../card-issue/'">
+                    <h4>Upgrade Keanggotaan</h4>
+                    <p>Dapatkan kartu elite dengan limit lebih tinggi.</p>
+                </div>
+                <div class="action-box" onclick="location.href='../payment-gateway/'">
+                    <h4>BDN Pay</h4>
+                    <p>Gunakan saldo untuk pembayaran global.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
