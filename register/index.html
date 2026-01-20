@@ -26,7 +26,7 @@
                 <div class="step active" id="step1">
                     <h2>01. Identitas Personal</h2>
                     <div class="input-group"><label>Nama Lengkap</label><input type="text" id="inputNama" placeholder="Contoh: RADEN ARYA"></div>
-                    <div class="input-group"><label>NIK (16 Digit)</label><input type="number" id="inputNIK" placeholder="3201xxxxxxxxxxxx"></div>
+                    <div class="input-group"><label>NIK (16 Digit)</label><input type="text" id="inputNIK" maxlength="16" placeholder="3201xxxxxxxxxxxx"></div>
                     <button class="btn-primary" onclick="nextStep(2)">Lanjutkan</button>
                 </div>
 
@@ -69,18 +69,19 @@
                     <h2>07. Konfirmasi Akhir</h2>
                     <div class="agreement-box">
                         <p>Saya menyatakan data yang diinput adalah benar dan bersedia mematuhi syarat & ketentuan Bank Devisa Nusantara.</p>
-                        <label class="check-label"><input type="checkbox" id="checkAgree"> Saya Setuju</label>
+                        <label class="check-label"><input type="checkbox" id="checkAgree"> Saya Setuju & Bertanggung Jawab</label>
                     </div>
-                    <button class="btn-primary" id="btnGenerate">Terbitkan Kartu Digital</button>
+                    <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu Digital</button>
                 </div>
 
                 <div class="step" id="step8">
                     <div id="processingArea">
-                        <h1>Proses Enkripsi</h1>
+                        <h1>Antrean Enkripsi</h1>
                         <div class="loading-box">
                             <div class="spinner-large"></div>
                             <div class="progress-loader-container"><div id="fillBar" class="progress-loader-fill"></div></div>
                             <div id="queueStatus" class="queue-status">Menghitung Antrean...</div>
+                            <div id="timerDisplay" class="timer-display">Estimasi: Menghitung...</div>
                         </div>
                     </div>
 
@@ -103,7 +104,6 @@
             </div>
         </div>
     </main>
-
     <script type="module" src="script.js"></script>
 </body>
 </html>
