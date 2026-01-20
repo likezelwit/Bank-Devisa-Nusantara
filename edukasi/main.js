@@ -1,28 +1,57 @@
 const articles = [
     {
         id: 1,
-        title: "Strategi Diversifikasi Aset di Era Volatilitas Tinggi",
-        desc: "Bagaimana mengamankan portofolio Anda dari inflasi global dengan instrumen safe-haven.",
-        content: "Diversifikasi bukan sekadar membagi uang Anda ke berbagai tempat, melainkan seni menyeimbangkan risiko. Di tahun 2026 ini, ketegangan geopolitik membuat aset seperti Emas dan Devisa Valuta Asing menjadi primadona. BDN menyarankan alokasi 30% pada instrumen likuid tinggi untuk menjaga ketahanan finansial keluarga Anda dalam jangka panjang.",
-        category: "STRATEGY",
-        featured: true,
-        thumbColor: "#1e293b"
+        title: "Navigasi Kekayaan di Era Ekonomi Digital 2026",
+        category: "MACRO STRATEGY",
+        desc: "Bagaimana teknologi blockchain dan AI mendefinisikan ulang cara miliarder dunia menyimpan aset mereka.",
+        content: `
+            <h4>Pendahuluan</h4>
+            <p>Memasuki tahun 2026, lanskap ekonomi global telah berubah secara drastis. Inflasi yang fluktuatif dan munculnya mata uang digital bank sentral (CBDC) menuntut nasabah untuk berpikir lebih jauh dari sekadar tabungan konvensional.</p>
+            
+            <h4>Diversifikasi Agresif</h4>
+            <p>Nasabah BDN Private Banking kini mulai mengalokasikan 15-20% aset mereka ke dalam infrastruktur teknologi hijau dan aset digital yang teregulasi. Ini bukan lagi soal spekulasi, melainkan tentang ketahanan (resilience) jangka panjang terhadap guncangan mata uang fiat.</p>
+
+            <h4>Peran Emas dan Devisa</h4>
+            <p>Meskipun dunia semakin digital, emas tetap menjadi 'Ultimate Safe Haven'. Kami merekomendasikan penyimpanan emas fisik di Safe Deposit Box BDN yang terintegrasi dengan asuransi internasional, dikombinasikan dengan simpanan devisa kuat seperti CHF (Swiss Franc) dan SGD.</p>
+
+            <p>Kesimpulannya, strategi terbaik di tahun ini adalah tetap likuid namun terdiversifikasi secara global.</p>
+        `,
+        icon: "🏛️",
+        featured: true
     },
     {
         id: 2,
-        title: "Mengenal Suku Bunga Devisa",
-        desc: "Panduan lengkap mengenai pengaruh suku bunga terhadap tabungan valuta asing Anda.",
-        content: "Suku bunga devisa ditentukan oleh pergerakan pasar global. Memahami kapan harus menyimpan dalam USD atau EUR adalah kunci keuntungan nasabah Private Banking. Di BDN, kami memberikan update harian untuk memastikan kurs yang Anda dapatkan adalah yang terbaik di kelasnya.",
-        category: "BASIC",
-        thumbColor: "#f1f5f9"
+        title: "Pentingnya Family Office & Trust",
+        category: "FAMILY LEGACY",
+        desc: "Menjaga warisan keluarga agar tidak habis di generasi ketiga dengan sistem hukum yang kuat.",
+        content: `
+            <h4>Filosofi Warisan</h4>
+            <p>Statistik menunjukkan bahwa 70% kekayaan keluarga hilang di generasi kedua, dan 90% hilang di generasi ketiga. Mengapa hal ini terjadi? Karena kurangnya struktur hukum dan edukasi finansial bagi penerus.</p>
+            
+            <h4>Layanan Trust BDN</h4>
+            <p>Melalui BDN Trust Services, Anda dapat membuat instruksi yang mengikat secara hukum mengenai bagaimana aset Anda dikelola bahkan setelah Anda tidak ada. Ini mencakup dana pendidikan untuk cucu, pembagian laba bisnis, hingga pengelolaan properti internasional.</p>
+
+            <p>Jangan biarkan kerja keras Anda hilang begitu saja. Mulailah menyusun Family Office Anda hari ini bersama Relationship Manager kami.</p>
+        `,
+        icon: "📜",
+        featured: false
     },
     {
         id: 3,
-        title: "Preservasi Kekayaan Antar Generasi",
-        desc: "Pentingnya Will & Trust Management dalam menjaga warisan keluarga tetap utuh.",
-        content: "Banyak kekayaan keluarga hilang pada generasi ketiga. Melalui layanan Trust BDN, Anda bisa mengatur pembagian aset secara hukum yang kuat, memastikan anak cucu Anda tetap menikmati fasilitas hidup yang sama tanpa risiko sengketa hukum di masa depan.",
-        category: "LEGACY",
-        thumbColor: "#fff7ed"
+        title: "Investasi Properti Global 101",
+        category: "REAL ESTATE",
+        desc: "Membedah pasar properti di London, Dubai, dan Singapura untuk nasabah prioritas.",
+        content: `
+            <h4>Mengapa Properti Internasional?</h4>
+            <p>Memiliki properti di pusat finansial dunia bukan hanya soal gaya hidup, tapi soal diversifikasi mata uang dan hak residensi. London tetap menjadi favorit karena stabilitas hukumnya, sementara Dubai menawarkan keuntungan pajak yang luar biasa.</p>
+            
+            <h4>Kemudahan Pembiayaan BDN</h4>
+            <p>BDN memberikan fasilitas kredit lintas negara. Anda bisa menjaminkan aset di Indonesia untuk mendapatkan pinjaman pembelian apartemen di Singapura dengan bunga yang sangat kompetitif.</p>
+
+            <p>Dapatkan akses eksklusif ke listing properti 'Off-Market' melalui jaringan mitra global kami.</p>
+        `,
+        icon: "🏢",
+        featured: false
     }
 ];
 
@@ -31,56 +60,46 @@ const articleGrid = document.getElementById('articleGrid');
 const modal = document.getElementById('articleModal');
 const modalBody = document.getElementById('modalBody');
 
-// Fungsi Render
-function renderEducation() {
+function render() {
     const featured = articles.find(a => a.featured);
     const others = articles.filter(a => !a.featured);
 
     featuredSection.innerHTML = `
-        <div class="featured-content">
-            <span style="color:var(--gold); font-weight:800;">ARTICLE OF THE MONTH</span>
+        <div class="featured-article">
+            <span class="category">${featured.category}</span>
             <h2>${featured.title}</h2>
             <p>${featured.desc}</p>
-            <button onclick="openArticle(${featured.id})" style="padding:15px 30px; border-radius:12px; border:none; background:var(--gold); color:white; font-weight:700; cursor:pointer;">Baca Sekarang</button>
+            <button onclick="openArticle(${featured.id})" style="width:fit-content; padding:15px 35px; border-radius:100px; border:none; background:var(--gold); color:white; font-weight:800; cursor:pointer;">BACA ANALISIS</button>
         </div>
     `;
 
     articleGrid.innerHTML = others.map(a => `
         <div class="article-card" onclick="openArticle(${a.id})">
-            <div class="article-thumb" style="background: ${a.thumbColor}">
-                <span class="category-tag">${a.category}</span>
-            </div>
+            <div class="article-thumb">${a.icon}</div>
+            <span class="category">${a.category}</span>
             <h3>${a.title}</h3>
             <p>${a.desc}</p>
-            <span class="read-more">BACA SELENGKAPNYA →</span>
         </div>
     `).join('');
 }
 
-// Fungsi Buka Artikel
-window.openArticle = function(id) {
-    const article = articles.find(a => a.id === id);
+window.openArticle = (id) => {
+    const a = articles.find(art => art.id === id);
     modalBody.innerHTML = `
-        <span class="meta-info">${article.category}</span>
-        <h2>${article.title}</h2>
-        <div class="full-text">
-            <p>${article.content}</p>
-            <p>Untuk konsultasi lebih lanjut mengenai topik ini, silakan hubungi Relationship Manager BDN Anda melalui layanan 24/7 Priority Concierge.</p>
-        </div>
+        <span class="category">${a.category}</span>
+        <h2 style="font-size: 2.5rem; margin: 15px 0;">${a.title}</h2>
+        <div class="full-text">${a.content}</div>
     `;
     modal.style.display = "block";
-    document.body.style.overflow = "hidden"; // Kunci scroll latar belakang
+    document.body.style.overflow = "hidden";
 };
 
-// Fungsi Tutup Artikel
-window.closeArticle = function() {
+window.closeArticle = () => {
     modal.style.display = "none";
-    document.body.style.overflow = "auto"; // Aktifkan scroll lagi
+    document.body.style.overflow = "auto";
 };
 
-// Klik di luar modal untuk menutup
-window.onclick = function(event) {
-    if (event.target == modal) closeArticle();
-};
+// Tutup modal jika klik di area gelap
+window.onclick = (e) => { if(e.target == modal) closeArticle(); };
 
-renderEducation();
+render();
