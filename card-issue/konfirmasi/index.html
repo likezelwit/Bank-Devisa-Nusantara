@@ -4,48 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Otorisasi PIN | BDN</title>
-    <link rel="stylesheet" href="../style.css">
     <style>
-        body { background: #f8fafc; overflow: hidden; }
+        :root { --gold: #b5985a; --dark: #1e293b; }
+        body { margin: 0; padding: 0; background: #f8fafc; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
         .card-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .confirm-box { width: 100%; max-width: 400px; }
+        .confirm-box { width: 100%; max-width: 400px; background: white; padding: 2rem; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; }
         
-        .pin-display { gap: 12px; margin: 2rem 0; }
+        .pin-display { display: flex; justify-content: center; gap: 12px; margin: 2rem 0; }
         .dot { 
             width: 16px; height: 16px; border: 2px solid #cbd5e1; border-radius: 50%; 
             transition: all 0.2s ease;
         }
-        .dot.active { background: #b5985a; border-color: #b5985a; transform: scale(1.2); box-shadow: 0 0 10px rgba(181, 152, 90, 0.4); }
+        .dot.active { background: var(--gold); border-color: var(--gold); transform: scale(1.2); box-shadow: 0 0 10px rgba(181, 152, 90, 0.4); }
 
         .numpad { 
             display: grid; grid-template-columns: repeat(3, 1fr); 
-            gap: 12px; max-width: 320px; margin: 0 auto;
+            gap: 15px; max-width: 300px; margin: 0 auto;
         }
         .numpad button {
             aspect-ratio: 1/1; border-radius: 50%; border: 1px solid #e2e8f0;
-            background: white; font-size: 1.4rem; font-weight: 700; color: #1e293b;
-            cursor: pointer; transition: all 0.2s;
+            background: white; font-size: 1.5rem; font-weight: 700; color: #1e293b;
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
         }
         .numpad button:active { background: #f1f5f9; transform: scale(0.9); }
-        #submitBtn { background: #1e293b !important; color: white !important; border: none; font-size: 1rem; }
-        
-        @media (max-width: 380px) {
-            .numpad { gap: 8px; }
-            .numpad button { font-size: 1.2rem; }
-            .step-header h1 { font-size: 1.5rem; }
-        }
+        #submitBtn { background: var(--dark) !important; color: white !important; border: none; font-size: 1rem; }
+        #delBtn { background: #fff1f2 !important; color: #ef4444 !important; font-size: 0.9rem; border: 1px solid #fecaca; }
+
+        .step-header h1 { margin: 10px 0; font-size: 1.8rem; color: var(--dark); }
+        .text-gold { color: var(--gold); font-weight: 800; }
     </style>
 </head>
 <body>
     <main class="card-container">
         <div class="confirm-box">
             <header class="step-header">
-                <span class="step-badge" style="background: #1e293b; color: white; padding: 5px 12px; border-radius: 100px; font-size: 0.65rem;">SECURE PIN</span>
-                <h1 style="margin: 15px 0 5px 0;">Otorisasi PIN</h1>
-                <p style="font-size: 0.85rem; color: #64748b;">Konfirmasi transaksi <strong>$50,000.00</strong></p>
+                <span style="background: #1e293b; color: white; padding: 5px 12px; border-radius: 100px; font-size: 0.65rem; font-weight: 800;">SECURE PIN</span>
+                <h1>Otorisasi PIN</h1>
+                <p style="font-size: 0.9rem; color: #64748b;">Konfirmasi transaksi <br><span class="text-gold">$50,000.00</span></p>
             </header>
 
-            <div class="pin-display" style="display: flex; justify-content: center;">
+            <div class="pin-display">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div>
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
@@ -60,7 +58,7 @@
                 <button class="num-btn" data-val="7">7</button>
                 <button class="num-btn" data-val="8">8</button>
                 <button class="num-btn" data-val="9">9</button>
-                <button onclick="clearPin()" style="background: #fff1f2 !important; color: #ef4444 !important; font-size: 0.9rem;">DEL</button>
+                <button id="delBtn">DEL</button>
                 <button class="num-btn" data-val="0">0</button>
                 <button id="submitBtn">OK</button>
             </div>
@@ -68,53 +66,90 @@
     </main>
 
     <script type="module">
-        import { db } from "../../firebase.js";
-        import { ref, update } from "https://www.gstatic.com/firebasejs/9.10.12/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+        import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js";
+
+        // CONFIG WAJIB SAMA DENGAN CHECKOUT (SINGAPORE)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
+            authDomain: "wifist-d3588.firebaseapp.com",
+            databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/", 
+            projectId: "wifist-d3588",
+            storageBucket: "wifist-d3588.firebasestorage.app",
+            messagingSenderId: "460842291436",
+            appId: "1:460842291436:web:f82e6f0c7fc668fc72d5c9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
         let inputPin = "";
         const dots = document.querySelectorAll('.dot');
         const numBtns = document.querySelectorAll('.num-btn');
 
+        // Fungsi input angka
         numBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 if (inputPin.length < 6) {
                     inputPin += btn.getAttribute('data-val');
-                    dots[inputPin.length - 1].classList.add('active');
+                    updateDots();
                 }
             });
         });
 
-        window.clearPin = () => {
-            inputPin = "";
-            dots.forEach(dot => dot.classList.remove('active'));
-        };
+        // Fungsi hapus (DEL)
+        document.getElementById('delBtn').addEventListener('click', () => {
+            inputPin = inputPin.slice(0, -1);
+            updateDots();
+        });
 
+        function updateDots() {
+            dots.forEach((dot, index) => {
+                if (index < inputPin.length) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // Fungsi Submit (OK)
         document.getElementById('submitBtn').addEventListener('click', async () => {
-            if (inputPin.length !== 6) return alert("Harap masukkan 6 digit PIN!");
-
             const pinBenar = sessionStorage.getItem('pending_pin');
             const cardNum = sessionStorage.getItem('pending_card');
             const saldoSkrg = parseFloat(sessionStorage.getItem('pending_saldo'));
             const harga = 50000;
 
+            if (inputPin.length !== 6) {
+                alert("Harap masukkan 6 digit PIN!");
+                return;
+            }
+
             if (inputPin === pinBenar) {
                 if (saldoSkrg >= harga) {
                     const saldoBaru = saldoSkrg - harga;
                     try {
+                        // Update saldo di Firebase Realtime Database
                         const updates = {};
                         updates[`nasabah/${cardNum}/saldo`] = saldoBaru;
-                        updates[`nasabah/${cardNum}/cardStatus`] = "Diamond Royal Active";
+                        
                         await update(ref(db), updates);
-                        localStorage.setItem('diamond_active', 'true');
-                        window.location.href = '../sukses/';
-                    } catch (e) { alert("Server Busy. Coba lagi."); }
+                        
+                        alert("PEMBAYARAN BERHASIL!\nSaldo Anda telah dipotong $50,000.");
+                        sessionStorage.clear();
+                        window.location.href = 'https://www.google.com'; // Ganti ke halaman suksesmu
+                    } catch (e) {
+                        console.error(e);
+                        alert("Gagal menghubungi server. Cek koneksi internet.");
+                    }
                 } else {
-                    alert("Saldo Tidak Cukup ($50,000 Required)");
-                    window.location.href = '../';
+                    alert("Transaksi Gagal: Saldo Tidak Mencukupi!");
+                    window.location.href = '../checkout/';
                 }
             } else {
-                alert("PIN Salah!");
-                clearPin();
+                alert("PIN Salah! Akses ditolak.");
+                inputPin = "";
+                updateDots();
             }
         });
     </script>
