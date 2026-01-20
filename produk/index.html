@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Instruments | BDN Private Banking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">BDN<span>.</span></div>
+        <div class="nav-links">
+            <a href="../">Dashboard</a>
+            <a href="#" class="active">Produk</a>
+            <a href="../card-issue/" class="btn-cta">Apply Card</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <span class="badge">CURATED SOLUTIONS</span>
+        <h1>Pilih Instrumen <br><span class="text-gradient">Masa Depan Anda.</span></h1>
+    </header>
+
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="filterTab('cards')">Elite Cards</button>
+        <button class="tab-btn" onclick="filterTab('wealth')">Wealth Management</button>
+        <button class="tab-btn" onclick="filterTab('lifestyle')">Lifestyle Privilege</button>
+    </div>
+
+    <main class="container">
+        <div class="product-grid" id="productGrid">
+            </div>
+    </main>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
