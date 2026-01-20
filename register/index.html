@@ -6,9 +6,6 @@
     <title>Registrasi Nasabah Baru | BDN</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="../firebase.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -29,7 +26,7 @@
                 <div class="step active" id="step1">
                     <h2>01. Identitas Personal</h2>
                     <div class="input-group"><label>Nama Lengkap</label><input type="text" id="inputNama" placeholder="Contoh: RADEN ARYA"></div>
-                    <div class="input-group"><label>NIK (16 Digit)</label><input type="text" id="inputNIK" maxlength="16" placeholder="3201xxxxxxxxxxxx"></div>
+                    <div class="input-group"><label>NIK (16 Digit)</label><input type="number" id="inputNIK" placeholder="3201xxxxxxxxxxxx"></div>
                     <button class="btn-primary" onclick="nextStep(2)">Lanjutkan</button>
                 </div>
 
@@ -64,27 +61,26 @@
 
                 <div class="step" id="step6">
                     <h2>06. Analisis Database Pusat</h2>
-                    <div class="loading-box"><div class="spinner"></div><p id="slikStatus">Menghubungkan ke server OJK...</p></div>
+                    <div class="loading-box"><div class="spinner-large"></div><p id="slikStatus">Menghubungkan ke server OJK...</p></div>
                     <button class="btn-primary" id="btnSlik" style="display:none" onclick="nextStep(7)">Lihat Hasil Analisis</button>
                 </div>
 
                 <div class="step" id="step7">
                     <h2>07. Konfirmasi Akhir</h2>
                     <div class="agreement-box">
-                        <p>Saya menyatakan data yang diinput adalah benar dan bersedia mematuhi syarat & ketentuan Bank Devisa Nusantara. Segala bentuk pemalsuan data akan diproses secara hukum.</p>
-                        <label class="check-label"><input type="checkbox" id="checkAgree"> Saya Setuju & Bertanggung Jawab</label>
+                        <p>Saya menyatakan data yang diinput adalah benar dan bersedia mematuhi syarat & ketentuan Bank Devisa Nusantara.</p>
+                        <label class="check-label"><input type="checkbox" id="checkAgree"> Saya Setuju</label>
                     </div>
-                    <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu Digital</button>
+                    <button class="btn-primary" id="btnGenerate">Terbitkan Kartu Digital</button>
                 </div>
 
                 <div class="step" id="step8">
                     <div id="processingArea">
-                        <h1>Antrean Enkripsi</h1>
+                        <h1>Proses Enkripsi</h1>
                         <div class="loading-box">
                             <div class="spinner-large"></div>
                             <div class="progress-loader-container"><div id="fillBar" class="progress-loader-fill"></div></div>
                             <div id="queueStatus" class="queue-status">Menghitung Antrean...</div>
-                            <div id="timerDisplay" class="timer-display">Estimasi: Menghitung...</div>
                         </div>
                     </div>
 
@@ -93,7 +89,7 @@
                         <div class="reveal-text" id="rev2" style="color:var(--gold)">MENYIAPKAN SMART CHIP... [OK]</div>
                         <div class="reveal-text" id="rev3" style="color:#22c55e; font-weight:800;">STATUS KARTU : AKTIF</div>
                         
-                        <div id="captureArea" class="card-display" style="opacity:0; transform:scale(0.8); transition: 1.5s all ease;">
+                        <div id="captureArea" class="card-display">
                             <div class="card-top"><span class="bank-name">BANK DEVISA NUSANTARA</span><span class="chip-card"></span></div>
                             <div class="card-mid"><div class="card-number" id="displayNo">0000 0000 0000 0000</div></div>
                             <div class="card-bottom">
@@ -107,6 +103,7 @@
             </div>
         </div>
     </main>
-    <script src="script.js"></script>
+
+    <script type="module" src="script.js"></script>
 </body>
 </html>
