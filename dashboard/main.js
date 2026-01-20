@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
@@ -12,32 +12,59 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Ambil nomor rekening dari login (localStorage)
-const loggedAcc = localStorage.getItem('nomorKartu') || "88201234";
+const checkBtn = document.getElementById('checkBtn');
+const cardInput = document.getElementById('cardInput');
+const errorMsg = document.getElementById('errorMsg');
+const inputView = document.getElementById('inputView');
+const resultView = document.getElementById('resultView');
 
-function checkBalance() {
-    const userRef = ref(db, 'nasabah/' + loggedAcc);
-    
-    // onValue membuat tampilan update otomatis jika saldo berubah di database
-    onValue(userRef, (snapshot) => {
+checkBtn.addEventListener('click', async () => {
+    const cardNumber = cardInput.value.trim();
+
+    if (cardNumber === "") {
+        showError("Nomor kartu tidak boleh kosong!");
+        return;
+    }
+
+    checkBtn.innerText = "MENCARI...";
+    checkBtn.disabled = true;
+
+    try {
+        const userRef = ref(db, 'nasabah/' + cardNumber);
+        const snapshot = await get(userRef);
+
         if (snapshot.exists()) {
             const data = snapshot.val();
             
-            // Format rekening: 8820 1234 5678
-            document.getElementById('displayAcc').innerText = loggedAcc.replace(/(.{4})/g, '$1 ').trim();
-            
-            // Format Rupiah
-            const formattedSaldo = new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
+            // Isi Data ke Tampilan Hasil
+            document.getElementById('saldoValue').innerText = new Intl.NumberFormat('id-ID', {
+                style: 'currency', currency: 'IDR', minimumFractionDigits: 0
             }).format(data.saldo || 0);
             
-            document.getElementById('displaySaldo').innerText = formattedSaldo;
+            document.getElementById('ownerName').innerText = data.nama || "Nasabah BDN";
+
+            // Switch View
+            inputView.style.display = "none";
+            resultView.style.display = "block";
         } else {
-            document.getElementById('displaySaldo').innerText = "Account Error";
+            showError("Nomor kartu tidak terdaftar!");
         }
-    });
+    } catch (e) {
+        showError("Koneksi gagal. Coba lagi.");
+    } finally {
+        checkBtn.innerText = "CEK SALDO SEKARANG";
+        checkBtn.disabled = false;
+    }
+});
+
+function showError(msg) {
+    errorMsg.innerText = msg;
+    errorMsg.style.display = "block";
+    setTimeout(() => { errorMsg.style.display = "none"; }, 3000);
 }
 
-checkBalance();
+window.resetView = () => {
+    resultView.style.display = "none";
+    inputView.style.display = "block";
+    cardInput.value = "";
+};
