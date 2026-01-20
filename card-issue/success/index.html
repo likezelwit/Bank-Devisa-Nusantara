@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success | BDN Private Banking</title>
+    <style>
+        body { margin: 0; background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .success-box { padding: 40px; background: #1e293b; border-radius: 40px; border: 1px solid #b5985a; box-shadow: 0 0 50px rgba(181, 152, 90, 0.2); max-width: 400px; }
+        .check-icon { width: 80px; height: 80px; background: #b5985a; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 40px; }
+        h1 { margin: 0 0 10px; color: #b5985a; }
+        p { color: #94a3b8; line-height: 1.6; }
+        .btn-finish { display: inline-block; margin-top: 30px; padding: 15px 40px; background: white; color: #0f172a; text-decoration: none; border-radius: 15px; font-weight: 800; }
+    </style>
+</head>
+<body>
+    <div class="success-box">
+        <div class="check-icon">✓</div>
+        <h1>Penerbitan Berhasil</h1>
+        <p>Instrumen finansial Anda telah berhasil diaktivasi secara global. Silakan kembali ke dashboard utama.</p>
+        <a href="../../" class="btn-finish">SELESAI</a>
+    </div>
+    <script>
+        // Bersihkan session agar tidak bisa di-back untuk bayar lagi
+        sessionStorage.clear();
+    </script>
+</body>
+</html>
