@@ -12,39 +12,32 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Ambil nomor kartu dari localStorage (didapat saat login)
-const loggedAcc = localStorage.getItem('nomorKartu') || "88201234"; 
+// Ambil nomor rekening dari login (localStorage)
+const loggedAcc = localStorage.getItem('nomorKartu') || "88201234";
 
-function fetchUserData() {
+function checkBalance() {
     const userRef = ref(db, 'nasabah/' + loggedAcc);
     
-    // Gunakan onValue agar saldo terupdate secara otomatis (real-time) tanpa refresh
+    // onValue membuat tampilan update otomatis jika saldo berubah di database
     onValue(userRef, (snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.val();
             
-            // Update UI
-            document.getElementById('userName').innerText = data.nama || "Nasabah BDN";
-            document.getElementById('accNumberDisplay').innerText = "Acc: " + loggedAcc.replace(/(.{4})/g, '$1 ');
-            document.getElementById('userBalance').innerText = "Rp " + (data.saldo || 0).toLocaleString('id-ID');
+            // Format rekening: 8820 1234 5678
+            document.getElementById('displayAcc').innerText = loggedAcc.replace(/(.{4})/g, '$1 ').trim();
             
-            // Update Status Kartu
-            if (data.cardStatus === "Active") {
-                document.getElementById('activeCardName').innerText = data.activeVariant;
-                document.getElementById('cardStatus').innerText = "Status: Terverifikasi";
-                document.getElementById('membershipBadge').innerText = "ELITE MEMBER";
-                document.getElementById('membershipBadge').style.background = "#b5985a";
-            }
+            // Format Rupiah
+            const formattedSaldo = new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(data.saldo || 0);
+            
+            document.getElementById('displaySaldo').innerText = formattedSaldo;
         } else {
-            alert("Sesi berakhir, silakan login kembali.");
-            window.location.href = "../"; 
+            document.getElementById('displaySaldo').innerText = "Account Error";
         }
     });
 }
 
-window.logout = () => {
-    localStorage.clear();
-    window.location.href = "../";
-};
-
-fetchUserData();
+checkBalance();
