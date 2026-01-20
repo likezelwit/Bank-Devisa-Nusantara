@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit Funds | BDN Private Banking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="topup-container">
+        <div class="topup-card">
+            <div class="header">
+                <div class="logo">BDN<span>.</span></div>
+                <p>Secure Deposit Portal</p>
+            </div>
+
+            <div class="form-section">
+                <div class="input-box">
+                    <label>Nomor Rekening Tujuan</label>
+                    <input type="text" id="targetAcc" placeholder="Masukkan Nomor Rekening BDN" maxlength="16">
+                </div>
+
+                <div class="input-box">
+                    <label>Pilih Nominal Deposit (IDR)</label>
+                    <div class="quick-amounts">
+                        <button onclick="setAmount(5000000)">5jt</button>
+                        <button onclick="setAmount(10000000)">10jt</button>
+                        <button onclick="setAmount(50000000)">50jt</button>
+                    </div>
+                    <input type="number" id="topupAmount" placeholder="Atau ketik nominal lainnya">
+                </div>
+
+                <div class="info-alert">
+                    Dana akan langsung dikreditkan ke saldo real-time setelah verifikasi PIN.
+                </div>
+
+                <button id="processBtn" class="btn-confirm">PROSES DEPOSIT</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pinModal" class="modal">
+        <div class="modal-content">
+            <h3>Konfirmasi Keamanan</h3>
+            <p>Masukkan PIN 6-digit akun Anda</p>
+            <input type="password" id="securePin" maxlength="6" placeholder="••••••">
+            <div id="errorMsg" class="error"></div>
+            <button id="finalConfirm" class="btn-confirm">KONFIRMASI</button>
+            <button class="btn-cancel" onclick="closeModal()">Batal</button>
+        </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
