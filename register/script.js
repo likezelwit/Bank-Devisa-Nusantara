@@ -1,21 +1,29 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
+    authDomain: "wifist-d3588.firebaseapp.com",
+    databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/", 
+    projectId: "wifist-d3588",
+    storageBucket: "wifist-d3588.firebasestorage.app",
+    messagingSenderId: "460842291436",
+    appId: "1:460842291436:web:f82e6f0c7fc668fc72d5c9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 let currentStep = 1;
 const totalSteps = 8;
 
-function nextStep(s) {
-    // VALIDASI KETAT: Field tidak boleh kosong!
+// Jadikan global agar bisa dipanggil dari HTML
+window.nextStep = function(s) {
     if (s === 2) {
-        if (document.getElementById('inputNama').value.trim().length < 3) return alert("Isi Nama Lengkap dengan benar!");
-        if (document.getElementById('inputNIK').value.length < 16) return alert("NIK harus 16 digit!");
-    } else if (s === 3) {
-        if (!document.getElementById('inputWA').value.startsWith('08')) return alert("Gunakan nomor WhatsApp valid (08...)!");
-        if (!document.getElementById('inputEmail').value.includes('@')) return alert("Email tidak valid!");
-    } else if (s === 4) {
-        if (document.getElementById('jobType').value === "") return alert("Pilih Pekerjaan Anda!");
-        if (document.getElementById('income').value === "") return alert("Isi Pendapatan bulanan!");
-    } else if (s === 5) {
-        if (document.getElementById('emergencyName').value.trim() === "") return alert("Isi Nama Kontak Darurat!");
+        if (document.getElementById('inputNama').value.trim().length < 3) return alert("Isi Nama Lengkap!");
+        if (document.getElementById('inputNIK').value.length < 16) return alert("NIK 16 digit!");
     } else if (s === 6) {
-        if (document.getElementById('inputPW').value.length < 6) return alert("PIN Keamanan wajib 6 digit angka!");
+        if (document.getElementById('inputPW').value.length < 6) return alert("PIN 6 digit!");
     }
 
     currentStep = s;
@@ -28,11 +36,6 @@ function updateUI(s) {
     document.getElementById('step' + s).classList.add('active');
     const percent = ((s - 1) / (totalSteps - 1)) * 100;
     document.getElementById('progressLine').style.width = percent + "%";
-    document.querySelectorAll('.circle').forEach((c, i) => {
-        if (i < s-1) { c.classList.add('completed'); c.innerHTML = "✓"; }
-        else if (i === s-1) { c.classList.add('active'); c.innerHTML = i+1; }
-        else { c.classList.remove('active', 'completed'); c.innerHTML = i+1; }
-    });
 }
 
 function simulasiAnalisis() {
@@ -40,115 +43,81 @@ function simulasiAnalisis() {
     const btn = document.getElementById('btnSlik');
     setTimeout(() => status.innerText = "Sinkronisasi BI-Checking...", 1500);
     setTimeout(() => {
-        status.innerHTML = "<b style='color:green'>IDENTITAS TERVERIFIKASI</b><br>Skor Kredit: A (Sangat Baik)";
+        status.innerHTML = "<b style='color:green'>TERVERIFIKASI</b>";
         btn.style.display = "block";
-    }, 3500);
+    }, 3000);
 }
 
-async function generateFinal() {
-    if (!document.getElementById('checkAgree').checked) return alert("Harap setujui pernyataan tanggung jawab!");
+document.getElementById('btnGenerate').addEventListener('click', async () => {
+    if (!document.getElementById('checkAgree').checked) return alert("Setujui syarat!");
     
-    // VALIDASI DUPLIKAT REAL-TIME KE FIREBASE
-    const nik = document.getElementById('inputNIK').value;
-    const btn = document.getElementById('btnGenerate');
-    btn.disabled = true;
-    btn.innerText = "MENGECEK DATABASE...";
-
-    try {
-        const check = await db.collection("nasabah").where("nik", "==", nik).get();
-        if (!check.empty) {
-            alert("MAAF: NIK Anda sudah terdaftar dalam sistem kami.");
-            location.reload(); return;
-        }
-        updateUI(8);
-        initQueue();
-    } catch(e) { alert("Server Sibuk!"); btn.disabled = false; }
-}
-
-function initQueue() {
-    // Simpan target waktu di localStorage agar walau tab ditutup waktu tetap jalan
-    const duration = 120; // 2 Menit
-    const targetTime = Date.now() + (duration * 1000);
-    localStorage.setItem('bdn_target_time', targetTime);
-    runQueue();
-}
-
-function runQueue() {
-    const qStatus = document.getElementById('queueStatus');
-    const tDisplay = document.getElementById('timerDisplay');
-    const fillBar = document.getElementById('fillBar');
-    
-    const interval = setInterval(() => {
-        const now = Date.now();
-        const target = localStorage.getItem('bdn_target_time');
-        const diff = Math.ceil((target - now) / 1000);
-
-        if (diff <= 0) {
-            clearInterval(interval);
-            tDisplay.innerText = "Estimasi: Selesai";
-            fillBar.style.width = "100%";
-            finalRevealProcess();
-            return;
-        }
-
-        const progress = ((120 - diff) / 120) * 100;
-        fillBar.style.width = progress + "%";
-
-        // Logic Hilangkan "0 Min"
-        const m = Math.floor(diff / 60);
-        const s = diff % 60;
-        tDisplay.innerText = m > 0 ? `Estimasi: ${m} Min ${s} Detik` : `Estimasi: ${s} Detik`;
-
-        if (diff > 80) qStatus.innerText = "Enkripsi Protokol Keamanan...";
-        else if (diff > 40) qStatus.innerText = "Verifikasi Database Nasional...";
-        else qStatus.innerText = "Menerbitkan Sertifikat Digital...";
-    }, 1000);
-}
-
-function finalRevealProcess() {
-    document.getElementById('processingArea').style.display = 'none';
-    document.getElementById('finalReveal').style.display = 'block';
-
-    // Sequence Tampilan Perlahan
-    setTimeout(() => document.getElementById('rev1').classList.add('show'), 1000);
-    setTimeout(() => document.getElementById('rev2').classList.add('show'), 2500);
-    setTimeout(() => document.getElementById('rev3').classList.add('show'), 4000);
-    
-    setTimeout(async () => {
-        await saveToFirebase(); // Simpan saat semua OK
-        const card = document.getElementById('captureArea');
-        card.style.opacity = "1";
-        card.style.transform = "scale(1)";
-        document.getElementById('btnDownload').style.display = "block";
-    }, 5500);
-}
-
-async function saveToFirebase() {
-    const nama = document.getElementById('inputNama').value;
+    // Generate nomor kartu 16 digit (awalan 0810)
     const fullNo = "0810" + Array.from({length: 12}, () => Math.floor(Math.random() * 10)).join('');
+    
+    updateUI(8);
+    startQueue(fullNo);
+});
+
+function startQueue(cardNo) {
+    let progress = 0;
+    const fillBar = document.getElementById('fillBar');
+    const qStatus = document.getElementById('queueStatus');
+
+    const interval = setInterval(() => {
+        progress += 2;
+        fillBar.style.width = progress + "%";
+        
+        if (progress > 80) qStatus.innerText = "Menerbitkan Kartu...";
+        else if (progress > 40) qStatus.innerText = "Enkripsi Data...";
+
+        if (progress >= 100) {
+            clearInterval(interval);
+            saveToRealtime(cardNo);
+        }
+    }, 100);
+}
+
+async function saveToRealtime(cardNo) {
+    const nama = document.getElementById('inputNama').value.toUpperCase();
+    const pin = document.getElementById('inputPW').value;
 
     try {
-        await db.collection("nasabah").add({
-            nama: nama.toUpperCase(),
-            nik: document.getElementById('inputNIK').value,
-            wa: document.getElementById('inputWA').value,
-            email: document.getElementById('inputEmail').value,
-            pin: document.getElementById('inputPW').value,
-            nomor_kartu: fullNo,
-            saldo: 0,
-            tgl_daftar: new Date().toISOString()
+        // SIMPAN KE REALTIME DATABASE (Folder Nasabah)
+        await set(ref(db, 'nasabah/' + cardNo), {
+            nama: nama,
+            pin: pin,
+            saldo: 500000, // Saldo awal otomatis
+            cardStatus: "Platinum Active",
+            nik: document.getElementById('inputNIK').value
         });
 
-        document.getElementById('displayNo').innerText = fullNo.match(/.{1,4}/g).join(" ");
-        document.getElementById('displayName').innerText = nama.toUpperCase();
-    } catch(e) { console.log(e); }
+        // Tampilkan ke Kartu
+        document.getElementById('displayNo').innerText = cardNo.match(/.{1,4}/g).join(" ");
+        document.getElementById('displayName').innerText = nama;
+        
+        revealCard();
+    } catch(e) { alert("Gagal Simpan Database!"); }
 }
 
-function takeScreenshot() {
-    html2canvas(document.getElementById('captureArea'), { scale: 3, backgroundColor: null }).then(canvas => {
+function revealCard() {
+    document.getElementById('processingArea').style.display = 'none';
+    document.getElementById('finalReveal').style.display = 'block';
+    
+    setTimeout(() => document.getElementById('rev1').style.opacity = 1, 500);
+    setTimeout(() => document.getElementById('rev2').style.opacity = 1, 1000);
+    setTimeout(() => {
+        document.getElementById('rev3').style.opacity = 1;
+        document.getElementById('captureArea').style.opacity = 1;
+        document.getElementById('captureArea').style.transform = "scale(1)";
+        document.getElementById('btnDownload').style.display = "block";
+    }, 1500);
+}
+
+window.takeScreenshot = function() {
+    html2canvas(document.getElementById('captureArea')).then(canvas => {
         const link = document.createElement('a');
-        link.download = `BDN-CARD-${document.getElementById('inputNama').value}.png`;
-        link.href = canvas.toDataURL("image/png");
+        link.download = 'Kartu-BDN.png';
+        link.href = canvas.toDataURL();
         link.click();
     });
 }
