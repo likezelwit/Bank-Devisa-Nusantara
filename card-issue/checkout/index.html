@@ -2,31 +2,27 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secure Checkout | BDN Private Banking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout | BDN</title>
     <style>
         :root { --gold: #b5985a; --dark: #1e293b; }
-        body { margin: 0; padding: 0; background: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; background: #f8fafc; font-family: 'Segoe UI', sans-serif; }
         .card-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .confirm-box { width: 100%; max-width: 450px; background: white; padding: 2.5rem 1.5rem; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; text-align: center; }
+        .confirm-box { width: 100%; max-width: 450px; background: white; padding: 2.5rem 1.5rem; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; }
         .text-gradient { background: linear-gradient(45deg, #b5985a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
         .order-summary { background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 20px; padding: 1.2rem; margin: 1.5rem 0; text-align: left; }
-        input#cardInput { width: 100%; padding: 1.2rem; border-radius: 15px; border: 2px solid #e2e8f0; font-size: 1.2rem; font-weight: 700; text-align: center; box-sizing: border-box; outline: none; transition: 0.3s; }
-        input#cardInput:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(181,152,90,0.1); }
-        .btn-primary { width: 100%; padding: 1.2rem; border-radius: 15px; background: var(--dark); color: white; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.3s; }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-        #loader { display: none; margin-top: 15px; font-size: 0.8rem; font-weight: 700; color: var(--gold); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        input#cardInput { width: 100%; padding: 1.2rem; border-radius: 15px; border: 2px solid #e2e8f0; font-size: 1.2rem; font-weight: 700; text-align: center; outline: none; }
+        .btn-primary { width: 100%; padding: 1.2rem; border-radius: 15px; background: var(--dark); color: white; border: none; font-weight: 700; cursor: pointer; }
+        #loader { display: none; margin-top: 15px; color: var(--gold); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
     <main class="card-container">
         <div class="confirm-box">
             <header>
-                <span style="color: var(--gold); font-size: 0.7rem; font-weight: 800; letter-spacing: 1px;">SECURE GATEWAY</span>
+                <span style="color: var(--gold); font-size: 0.7rem; font-weight: 800;">SECURE GATEWAY</span>
                 <h1 style="margin: 10px 0;">Konfirmasi <br><span class="text-gradient">Pembayaran.</span></h1>
-                <p style="color: #64748b; font-size: 0.9rem;">Masukkan nomor kartu untuk validasi akun.</p>
             </header>
 
             <div style="margin: 2rem 0; text-align: left;">
@@ -36,10 +32,10 @@
 
             <div class="order-summary">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: #64748b;">Produk:</span> <strong>Diamond Royal Elite</strong>
+                    <span style="color: #64748b;">Produk:</span> <strong id="prodName">...</strong>
                 </div>
-                <div style="border-top: 1px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: 700;">Total:</span> <span class="text-gradient" style="font-size: 1.4rem;">$50,000.00</span>
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between;">
+                    <span style="font-weight: 700;">Total:</span> <span class="text-gradient" id="prodPrice" style="font-size: 1.4rem;">$0</span>
                 </div>
             </div>
 
@@ -52,7 +48,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
         import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js";
 
-        // CONFIG SUDAH DIUPDATE KE SERVER SINGAPORE (ASIA-SOUTHEAST1)
         const firebaseConfig = {
             apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
             authDomain: "wifist-d3588.firebaseapp.com",
@@ -66,44 +61,35 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const btnPay = document.getElementById('btnPay');
-        const loader = document.getElementById('loader');
+        const prod = sessionStorage.getItem('selected_variant');
+        const price = sessionStorage.getItem('selected_price');
 
+        if(!prod) window.location.href = '../';
+        document.getElementById('prodName').innerText = prod;
+        document.getElementById('prodPrice').innerText = "$" + parseInt(price).toLocaleString();
+
+        const btnPay = document.getElementById('btnPay');
         btnPay.addEventListener('click', async () => {
             const cardNum = document.getElementById('cardInput').value.trim();
-            
-            if (!cardNum || cardNum.length < 10) {
-                alert("Masukkan nomor kartu yang valid!");
-                return;
-            }
+            if (cardNum.length < 10) return alert("Nomor kartu tidak valid!");
 
-            loader.style.display = "block";
+            document.getElementById('loader').style.display = "block";
             btnPay.disabled = true;
 
             try {
-                const dbRef = ref(db);
-                const snapshot = await get(child(dbRef, `nasabah/${cardNum}`));
-                
+                const snapshot = await get(child(ref(db), `nasabah/${cardNum}`));
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     sessionStorage.setItem('pending_card', cardNum);
                     sessionStorage.setItem('pending_pin', data.pin);
                     sessionStorage.setItem('pending_saldo', data.saldo);
-                    
-                    setTimeout(() => {
-                        window.location.href = '../konfirmasi/';
-                    }, 800);
+                    window.location.href = '../konfirmasi/';
                 } else {
-                    alert("Nomor kartu tidak terdaftar di sistem kami!");
-                    loader.style.display = "none";
+                    alert("Kartu tidak terdaftar!");
                     btnPay.disabled = false;
+                    document.getElementById('loader').style.display = "none";
                 }
-            } catch (err) {
-                console.error("Database Error:", err);
-                alert("Gagal terhubung ke database. Pastikan URL Singapore sudah benar.");
-                loader.style.display = "none";
-                btnPay.disabled = false;
-            }
+            } catch (err) { alert("Koneksi gagal!"); }
         });
     </script>
 </body>
