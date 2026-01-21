@@ -3,51 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Registrasi Nasabah Baru | BDN</title>
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Registrasi Nasabah | BDN</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Tambahan CSS inline singkat untuk merapikan field dinamis */
-        .emergency-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-        }
-        .btn-add {
-            background: transparent;
-            color: var(--gold, #d4af37);
-            border: 2px dashed var(--gold, #d4af37);
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            margin-bottom: 20px;
-            transition: 0.3s;
-        }
-        .btn-add:hover {
-            background: rgba(212, 175, 55, 0.1);
-        }
-        .btn-remove {
-            background: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 5px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
-        <a href="../" class="btn-back">BATALKAN</a>
+        <a href="../" class="btn-back">BATAL</a>
     </nav>
 
     <main class="container">
@@ -62,7 +28,7 @@
                 <div class="step active" id="step1">
                     <h2>01. Identitas Personal</h2>
                     <div class="input-group"><label>Nama Lengkap</label><input type="text" id="inputNama" placeholder="Contoh: RADEN ARYA"></div>
-                    <div class="input-group"><label>NIK (16 Digit)</label><input type="text" id="inputNIK" maxlength="16" placeholder="3201xxxxxxxxxxxx"></div>
+                    <div class="input-group"><label>NIK (16 Digit)</label><input type="tel" id="inputNIK" maxlength="16" placeholder="3201xxxxxxxxxxxx"></div>
                     <button class="btn-primary" onclick="nextStep(2)">Lanjutkan</button>
                 </div>
 
@@ -85,14 +51,13 @@
                             <option>Profesional</option>
                         </select>
                     </div>
-                    <div class="input-group"><label>Pendapatan (Angka Saja)</label><input type="number" id="income" placeholder="Rp"></div>
+                    <div class="input-group"><label>Pendapatan (Angka Saja)</label><input type="tel" id="income" placeholder="Rp"></div>
                     <button class="btn-primary" onclick="nextStep(4)">Validasi Data</button>
                 </div>
 
                 <div class="step" id="step4">
                     <h2>04. Kontak Darurat</h2>
-                    <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">Tambahkan minimal 1, maksimal 5 anggota keluarga.</p>
-                    
+                    <p style="font-size: 11px; color: #64748b; margin-bottom: 12px; text-align: left;">Tambahkan minimal 1, maksimal 5 anggota keluarga.</p>
                     <div id="emergencyContainer">
                         <div class="emergency-item">
                             <div class="input-group">
@@ -105,8 +70,7 @@
                             </div>
                         </div>
                     </div>
-
-                    <button type="button" class="btn-add" onclick="addEmergencyField()">+ Tambah Anggota Keluarga</button>
+                    <button type="button" class="btn-add" onclick="addEmergencyField()">+ Tambah Keluarga</button>
                     <button class="btn-primary" onclick="nextStep(5)">Lanjutkan</button>
                 </div>
 
@@ -120,13 +84,16 @@
                 </div>
 
                 <div class="step" id="step6">
-                    <h2>06. Analisis Database Pusat</h2>
-                    <div class="loading-box"><div class="spinner-large"></div><p id="slikStatus">Menghubungkan ke server OJK...</p></div>
+                    <h2>06. Analisis Database</h2>
+                    <div class="loading-box">
+                        <div class="spinner-large"></div>
+                        <p id="slikStatus" style="font-size: 0.9rem; font-weight: 600;">Menghubungkan ke server OJK...</p>
+                    </div>
                     <button class="btn-primary" id="btnSlik" style="display:none" onclick="nextStep(7)">Lihat Hasil Analisis</button>
                 </div>
 
                 <div class="step" id="step7">
-                    <h2>07. Konfirmasi Akhir</h2>
+                    <h2>07. Konfirmasi</h2>
                     <div class="agreement-box">
                         <p>Saya menyatakan data yang diinput adalah benar dan bersedia mematuhi syarat & ketentuan Bank Devisa Nusantara.</p>
                         <label class="check-label"><input type="checkbox" id="checkAgree"> Saya Setuju & Bertanggung Jawab</label>
@@ -136,7 +103,7 @@
 
                 <div class="step" id="step8">
                     <div id="processingArea">
-                        <h1>Antrean Enkripsi</h1>
+                        <h1 style="font-size: 1.2rem; margin-bottom: 1rem;">Antrean Enkripsi</h1>
                         <div class="loading-box">
                             <div class="spinner-large"></div>
                             <div class="progress-loader-container"><div id="fillBar" class="progress-loader-fill"></div></div>
@@ -147,15 +114,23 @@
 
                     <div id="finalReveal" style="display:none;">
                         <div class="reveal-text" id="rev1">PENGECEKAN ULANG SERVER... [OK]</div>
-                        <div class="reveal-text" id="rev2" style="color:#d4af37">MENYIAPKAN SMART CHIP... [OK]</div>
+                        <div class="reveal-text" id="rev2" style="color:#b8924e">MENYIAPKAN SMART CHIP... [OK]</div>
                         <div class="reveal-text" id="rev3" style="color:#22c55e; font-weight:800;">STATUS KARTU : AKTIF</div>
                         
-                        <div id="captureArea" class="card-display">
-                            <div class="card-top"><span class="bank-name">BANK DEVISA NUSANTARA</span><span class="chip-card"></span></div>
-                            <div class="card-mid"><div class="card-number" id="displayNo">0000 0000 0000 0000</div></div>
+                        <div id="captureArea" class="card-display" style="opacity: 0; transform: scale(0.9);">
+                            <div class="card-top">
+                                <span class="bank-name">BANK DEVISA NUSANTARA</span>
+                                <div class="chip-card"></div>
+                            </div>
+                            <div class="card-mid">
+                                <div class="card-number" id="displayNo">0000 0000 0000 0000</div>
+                            </div>
                             <div class="card-bottom">
-                                <div class="card-info"><small>CARD HOLDER</small><div id="displayName">NAME</div></div>
-                                <div class="card-series">PLATINUM 0810</div>
+                                <div class="card-info">
+                                    <small style="font-size: 0.5rem; opacity: 0.7;">CARD HOLDER</small>
+                                    <div id="displayName">NAME</div>
+                                </div>
+                                <div class="card-series">PLATINUM</div>
                             </div>
                         </div>
                         <button class="btn-primary" id="btnDownload" style="display:none; margin-top:20px; background:#22c55e;" onclick="takeScreenshot()">📸 SIMPAN GAMBAR KARTU</button>
