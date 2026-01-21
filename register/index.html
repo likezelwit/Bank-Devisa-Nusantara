@@ -64,7 +64,7 @@
                             <option>Pelajar/Mahasiswa</option>
                         </select>
                     </div>
-                    <div class="input-group"><label>Pendapatan</label><input type="tel" id="income" placeholder="Rp"></div>
+                    <div class="input-group"><label>Pendapatan</label><input type="tel" id="income" placeholder="Contoh: 10000000"></div>
                     <div class="nav-buttons-split">
                         <button class="btn-alt" onclick="prevStep()">< Kembali</button>
                         <button class="btn-primary" onclick="nextStep(4)">Validasi Data</button>
@@ -139,25 +139,33 @@
                         <div class="card-scene">
                             <div class="card-inner" id="cardInner">
                                 <div id="captureArea" class="card-face card-front">
-                                    <div class="card-top">
+                                    <div class="card-header">
                                         <span class="bank-name">BANK DEVISA NUSANTARA</span>
                                         <div class="chip-card"></div>
                                     </div>
-                                    <div class="card-mid">
+                                    
+                                    <div class="card-body">
                                         <div class="card-number" id="displayNo">0000 0000 0000 0000</div>
                                     </div>
-                                    <div class="card-bottom">
-                                        <div class="card-info">
+                                    
+                                    <div class="card-footer">
+                                        <div class="footer-left">
                                             <small>CARD HOLDER</small>
-                                            <div id="displayName">NAME</div>
+                                            <div id="displayName" class="name-display">NAME</div>
                                         </div>
-                                        <div class="card-series">PLATINUM</div>
+                                        <div class="footer-right">
+                                            <div class="card-series">PLATINUM</div>
+                                        </div>
                                     </div>
                                 </div>
+
                                 <div class="card-face card-back">
                                     <div class="mag-stripe"></div>
-                                    <div class="cvv-area">
-                                        <span class="cvv-code">***</span>
+                                    <div class="signature-bar">
+                                        <div class="cvv-box">
+                                            <span class="cvv-label">CVV</span>
+                                            <span class="cvv-code">***</span>
+                                        </div>
                                     </div>
                                     <div class="card-terms">
                                         Kartu ini adalah milik Bank Devisa Nusantara. Segala bentuk penyalahgunaan akan diproses sesuai hukum negara.
@@ -168,7 +176,7 @@
 
                         <div class="button-group-final">
                             <button class="btn-primary btn-save" id="btnDownload" onclick="takeScreenshot()">📸 SIMPAN GAMBAR KARTU</button>
-                            <button class="btn-flip" onclick="toggleFlip()">🔄 PUTAR KARTU</button>
+                            <button class="btn-flip" id="btnFlip" onclick="toggleFlip()">🔄 PUTAR KARTU</button>
                         </div>
                     </div>
                 </div>
