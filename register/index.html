@@ -104,14 +104,16 @@
                         <div class="card-scene">
                             <div class="card-inner" id="cardInner">
                                 <div id="captureArea" class="card-face card-front">
-                                    <div class="card-top">
+                                    <div class="card-header-content">
                                         <span class="bank-name">BANK DEVISA NUSANTARA</span>
                                         <div class="chip-card"></div>
                                     </div>
-                                    <div class="card-mid">
+                                    
+                                    <div class="card-mid-content">
                                         <div class="card-number" id="displayNo">0000 0000 0000 0000</div>
                                     </div>
-                                    <div class="card-bottom">
+                                    
+                                    <div class="card-footer-content">
                                         <div class="card-info">
                                             <small>CARD HOLDER</small>
                                             <div id="displayName">NAME</div>
@@ -119,6 +121,7 @@
                                         <div class="card-series">PLATINUM</div>
                                     </div>
                                 </div>
+
                                 <div class="card-face card-back">
                                     <div class="mag-stripe"></div>
                                     <div class="cvv-area">
@@ -143,7 +146,6 @@
     </main>
     <script type="module" src="script.js"></script>
     <script>
-        // Fungsi flip diletakkan global agar bisa dipanggil onclick
         window.toggleFlip = () => {
             document.getElementById('cardInner').classList.toggle('is-flipped');
         };
