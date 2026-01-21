@@ -12,15 +12,13 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let currentStep = 1;
-let isFlipLocked = false; // Untuk handle delay balik kartu
+let isFlipLocked = false;
 
-// --- SELEKSI INPUT ---
 const inputNama = document.getElementById('inputNama');
 const inputNIK = document.getElementById('inputNIK');
 const inputWA = document.getElementById('inputWA');
 const inputPW = document.getElementById('inputPW');
 
-// --- VALIDASI REALTIME ---
 inputNama.addEventListener('input', (e) => {
     e.target.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, "");
 });
@@ -31,7 +29,6 @@ inputNama.addEventListener('input', (e) => {
     });
 });
 
-// --- NAVIGASI ---
 window.nextStep = (s) => {
     if (s > currentStep && !validateFields(currentStep)) return;
     currentStep = s;
@@ -76,25 +73,12 @@ function updateUI(s) {
     });
 }
 
-// --- STEP 6: ANALISIS SKORING ---
 async function prosesAnalisisSistem() {
     const status = document.getElementById('slikStatus');
     const btnNext = document.getElementById('btnSlik');
     const errAct = document.getElementById('errorActions');
     status.innerHTML = "Mengecek integritas data...";
-
-    const namaValue = inputNama.value;
     const nikValue = inputNIK.value;
-
-    const isSequential = (str) => /(.)\1{5,}/.test(str);
-    const kasar = ["ANJING", "KONTOL", "MEMEK", "GOBLOK", "ASU", "ADMIN", "TEST", "CASH"];
-    const isKasar = kasar.some(k => namaValue.includes(k));
-
-    let skor = "A+";
-    let pesan = "";
-
-    if (isSequential(nikValue)) { skor = "E"; pesan = "Data terdeteksi SPAM/Beruntun."; }
-    else if (isKasar) { skor = "D"; pesan = "Nama mengandung kata tidak pantas."; }
 
     try {
         const snapshot = await get(child(ref(db), 'nasabah'));
@@ -102,20 +86,17 @@ async function prosesAnalisisSistem() {
             const data = snapshot.val();
             for (let id in data) {
                 if (data[id].nik === nikValue) {
-                    skor = "E"; pesan = "NIK sudah terdaftar di sistem.";
+                    status.innerHTML = `<b style="color:red">SKOR E: DITOLAK</b><br>NIK sudah terdaftar.`;
+                    errAct.style.display = "block";
+                    return;
                 }
             }
         }
     } catch (e) { console.error("DB Error"); }
 
     setTimeout(() => {
-        if (skor === "E" || skor === "D") {
-            status.innerHTML = `<b style="color:red">SKOR ${skor}: DITOLAK</b><br>${pesan}`;
-            errAct.style.display = "block";
-        } else {
-            status.innerHTML = `<b style="color:#22c55e">SKOR ${skor}: TERVERIFIKASI</b>`;
-            btnNext.style.display = "flex";
-        }
+        status.innerHTML = `<b style="color:#22c55e">SKOR A+: TERVERIFIKASI</b>`;
+        btnNext.style.display = "flex";
     }, 2500);
 }
 
@@ -138,47 +119,41 @@ function initQueue() {
     }, 1000);
 }
 
-// --- STEP 8: PENERBITAN & SIMPAN SESUAI GAMBAR ---
 async function finalRevealProcess() {
     document.getElementById('processingArea').style.display = 'none';
     document.getElementById('finalReveal').style.display = 'block';
     document.querySelector('.card-scene').classList.add('final-glow');
 
-    // Generate Nomor & CVV
-    const cardNoRaw = "001031" + Math.floor(Math.random() * 899999 + 100000) + "1785"; // Simulasi format mirip gambar
+    const cardNoRaw = "001031" + Math.floor(Math.random() * 899999 + 100000) + "1785";
     const cardNoFormatted = cardNoRaw.match(/.{1,4}/g).join(" ");
     const cvvRandom = Math.floor(Math.random() * 899 + 100);
     
-    // Update UI Kartu
     document.getElementById('displayNo').innerText = cardNoFormatted;
     document.getElementById('displayName').innerText = inputNama.value;
     document.querySelector('.cvv-code').innerText = cvvRandom;
 
-    // --- STRUKTUR DATA IDENTIK DENGAN GAMBAR (ILHAM PRAYUDA) ---
     const nasabahData = {
-        activeVariant: "Platinum", // Sesuai gambar
-        cardStatus: "Active",             // Sesuai gambar
+        activeVariant: "Platinum",
+        cardStatus: "Active",
         email: document.getElementById('inputEmail').value,
-        kontak_darurat: {                // Mengelompokkan kontak darurat
+        kontak_darurat: {
             nama_keluarga: document.querySelector('.em-name')?.value || "-",
             nomor_hp: document.querySelector('.em-phone')?.value || "-"
         },
         name: inputNama.value,
         nik: inputNIK.value,
-        nomor_kartu: cardNoRaw,          // Tanpa spasi sesuai permintaan
+        nomor_kartu: cardNoRaw, 
         pekerjaan: document.getElementById('jobType').value,
         pendapatan: document.getElementById('income').value,
         pin: inputPW.value,
-        saldo: 1,                  // Default saldo sesuai gambar
-        tgl_daftar: new Date().toISOString(), // Format ISO sesuai gambar
+        saldo: 1, 
+        tgl_daftar: new Date().toISOString(),
         wa: inputWA.value
     };
 
     try {
         await set(ref(db, 'nasabah/' + cardNoRaw), nasabahData);
-    } catch (e) {
-        console.error("Gagal sinkronisasi database");
-    }
+    } catch (e) { console.error("Sync Error"); }
 
     for(let i=1; i<=3; i++) {
         await new Promise(r => setTimeout(r, 600));
@@ -186,23 +161,15 @@ async function finalRevealProcess() {
     }
 }
 
-// --- FITUR BALIK KARTU DENGAN COOLDOWN 5 DETIK ---
 window.toggleFlip = () => {
-    if (isFlipLocked) {
-        alert("Mohon tunggu 5 detik sebelum membalik kartu kembali.");
-        return;
-    }
-
+    if (isFlipLocked) { alert("Tunggu 5 detik..."); return; }
     const card = document.getElementById('cardInner');
     card.classList.toggle('is-flipped');
-    
     if (navigator.vibrate) navigator.vibrate(25);
 
-    // Kunci tombol selama 5 detik
     isFlipLocked = true;
     const flipBtn = document.querySelector('.btn-flip');
     const originalText = flipBtn.innerText;
-    
     let countdown = 5;
     const timer = setInterval(() => {
         countdown--;
