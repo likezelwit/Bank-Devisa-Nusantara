@@ -1,0 +1,35 @@
+:root {
+    --bg: #f8fafc; --navy: #0f172a; --gold: #b8924e;
+    --white: #ffffff; --text: #1e293b; --muted: #64748b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+
+.login-card { background: var(--white); padding: 2.5rem; border-radius: 24px; width: 100%; max-width: 400px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
+.hidden { display: none; }
+
+.logo { font-weight: 800; font-size: 1.5rem; color: var(--navy); margin-bottom: 1rem; }
+.logo span { color: var(--gold); }
+h2 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--navy); }
+p { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+.input-group { text-align: left; margin-bottom: 1rem; }
+label { display: block; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; color: var(--navy); }
+input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 1rem; outline: none; transition: 0.3s; }
+input:focus { border-color: var(--gold); background: #fffbeb; }
+
+.btn-main { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--navy); color: white; font-weight: 700; cursor: pointer; transition: 0.3s; }
+.btn-main:hover { background: var(--gold); }
+
+/* PIN Styles */
+.pin-display { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.5rem; }
+.dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #cbd5e1; }
+.dot.active { background: var(--gold); border-color: var(--gold); }
+
+.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.numpad button { padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; font-weight: 700; font-size: 1.1rem; cursor: pointer; }
+.numpad button:active { background: #f1f5f9; }
+.numpad .ok { background: var(--navy); color: white; border: none; font-size: 0.8rem; }
+.numpad .clear { color: #ef4444; }
+
+.error { color: #ef4444; font-size: 0.75rem; margin-top: 10px; font-weight: 600; }
