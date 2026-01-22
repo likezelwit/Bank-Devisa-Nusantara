@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Up | Bank Devisa Nusantara</title>
+    <link rel="stylesheet" href="../../../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #b8924e; --dark: #0f172a; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; margin: 0; padding: 20px; }
+        
+        .tab-menu { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { padding: 10px 20px; border-radius: 20px; border: 1px solid #e2e8f0; background: white; white-space: nowrap; cursor: pointer; font-weight: 700; font-size: 0.8rem; transition: 0.3s; }
+        .tab-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+        .topup-card { background: white; padding: 25px; border-radius: 25px; border: 1px solid #e2e8f0; box-shadow: 0 10px 20px rgba(0,0,0,0.02); }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
+        .input-group input, .input-group select { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 1rem; box-sizing: border-box; outline: none; }
+        
+        .denom-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .denom-item { padding: 15px; border: 1px solid #e2e8f0; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .denom-item:hover { border-color: var(--accent); background: #fefcf8; }
+        .denom-item.selected { border-color: var(--accent); background: #fefcf8; box-shadow: 0 0 0 2px var(--accent); }
+        .denom-item h4 { margin: 0; font-size: 0.9rem; color: var(--dark); }
+        .denom-item p { margin: 5px 0 0; font-size: 0.7rem; color: #64748b; }
+
+        .btn-pay { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--dark); color: white; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 25px; }
+    </style>
+</head>
+<body>
+
+    <script>
+        if(sessionStorage.getItem('isAuth') !== 'true') window.location.href = '../../index.html';
+    </script>
+
+    <div style="max-width: 500px; margin: auto;">
+        <header style="display: flex; align-items: center; margin-bottom: 25px;">
+            <a href="../index.html" style="text-decoration: none; font-size: 1.5rem; margin-right: 15px;">⬅️</a>
+            <h2 style="margin: 0; font-size: 1.3rem; font-weight: 800; color: var(--dark);">Top Up & Pulsa</h2>
+        </header>
+
+        <div class="tab-menu">
+            <button class="tab-btn active" onclick="switchTab('pulsa')">Pulsa</button>
+            <button class="tab-btn" onclick="switchTab('ewallet')">E-Wallet</button>
+            <button class="tab-btn" onclick="switchTab('data')">Paket Data</button>
+        </div>
+
+        <div class="topup-card">
+            <div class="input-group">
+                <label id="labelNomor">Nomor Handphone</label>
+                <input type="number" id="phoneNo" placeholder="08xxxxxxxxxx">
+            </div>
+
+            <div id="walletSelect" class="input-group" style="display: none;">
+                <label>Pilih E-Wallet</label>
+                <select id="walletType">
+                    <option value="DANA">DANA</option>
+                    <option value="OVO">OVO</option>
+                    <option value="GoPay">GoPay</option>
+                    <option value="ShopeePay">ShopeePay</option>
+                </select>
+            </div>
+
+            <label style="font-size: 0.75rem; font-weight: 800; color: #64748b;">PILIH NOMINAL</label>
+            <div class="denom-grid" id="denomContainer">
+                </div>
+
+            <button id="btnPay" class="btn-pay">Bayar Sekarang</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, get, child, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
+            databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "wifist-d3588"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let selectedAmount = 0;
+        let currentTab = 'pulsa';
+
+        const denoms = {
+            pulsa: [
+                {label: "10.000", price: 11500},
+                {label: "25.000", price: 26500},
+                {label: "50.000", price: 51500},
+                {label: "100.000", price: 101500}
+            ],
+            ewallet: [
+                {label: "20.000", price: 21000},
+                {label: "50.000", price: 51000},
+                {label: "100.000", price: 101000},
+                {label: "200.000", price: 201000}
+            ]
+        };
+
+        window.switchTab = (tab) => {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('walletSelect').style.display = (tab === 'ewallet') ? 'block' : 'none';
+            document.getElementById('labelNomor').innerText = (tab === 'ewallet') ? 'Nomor Akun / HP' : 'Nomor Handphone';
+            
+            renderDenoms();
+        };
+
+        function renderDenoms() {
+            const container = document.getElementById('denomContainer');
+            container.innerHTML = '';
+            const list = denoms[currentTab] || denoms.pulsa;
+            
+            list.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'denom-item';
+                div.innerHTML = `<h4>Rp ${item.label}</h4><p>Harga: Rp ${item.price.toLocaleString()}</p>`;
+                div.onclick = () => {
+                    document.querySelectorAll('.denom-item').forEach(d => d.classList.remove('selected'));
+                    div.classList.add('selected');
+                    selectedAmount = item.price;
+                };
+                container.appendChild(div);
+            });
+        }
+
+        document.getElementById('btnPay').onclick = async () => {
+            const phone = document.getElementById('phoneNo').value;
+            const myCard = sessionStorage.getItem('userCard');
+
+            if (!phone || selectedAmount === 0) return alert("Lengkapi data dan pilih nominal!");
+
+            try {
+                const snap = await get(child(ref(db), `nasabah/${myCard}`));
+                const myData = snap.val();
+
+                if (myData.saldo < selectedAmount) return alert("Saldo tidak mencukupi!");
+
+                const pin = prompt(`Konfirmasi Pembayaran Rp ${selectedAmount.toLocaleString()}\nMasukkan PIN Anda:`);
+                if (pin !== String(myData.pin)) return alert("PIN Salah!");
+
+                // Potong Saldo
+                await update(ref(db, `nasabah/${myCard}`), {
+                    saldo: myData.saldo - selectedAmount
+                });
+
+                alert("TOP UP BERHASIL!\nPulsa/Saldo akan segera masuk.");
+                window.location.href = "../index.html";
+
+            } catch (e) {
+                alert("Gagal memproses transaksi.");
+            }
+        };
+
+        renderDenoms(); // Initial load
+    </script>
+</body>
+</html>
