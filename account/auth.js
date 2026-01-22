@@ -92,7 +92,7 @@ document.getElementById('btnPin').onclick = () => {
         if (currentPin === String(dbPin)) {
             sessionStorage.setItem('isAuth', 'true');
             sessionStorage.setItem('userCard', document.getElementById('cardNo').value.replace(/\s/g, ''));
-            window.location.href = 'main.html';
+            window.location.href = 'MyAccount/index.html';
         } else {
             document.getElementById('err2').innerText = "PIN salah!";
             clr();
