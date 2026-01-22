@@ -14,18 +14,15 @@ const db = getDatabase(app);
 let currentStep = 1;
 let isFlipLocked = false;
 
-// Elements
 const inputNama = document.getElementById('inputNama');
 const inputNIK = document.getElementById('inputNIK');
 const inputWA = document.getElementById('inputWA');
 const inputPW = document.getElementById('inputPW');
 
-// Formatting: Nama Otomatis Huruf Kapital
 inputNama.addEventListener('input', (e) => {
     e.target.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, "");
 });
 
-// Formatting: Hanya Angka
 [inputNIK, inputWA, inputPW].forEach(el => {
     el.addEventListener('input', (e) => {
         e.target.value = e.target.value.replace(/[^0-9]/g, "");
@@ -61,10 +58,10 @@ function validateFields(step) {
         alert("PIN harus 6 digit!"); return false;
     }
     if (step === 7 && !document.getElementById('checkAgree').checked) {
-        alert("Harap centang persetujuan tanggung jawab!"); return false;
+        alert("Harap centang persetujuan!"); return false;
     }
-    if (step === 8) {
-        if (document.getElementById('countrySelect').value === "") { alert("Pilih negara domisili!"); return false; }
+    if (step === 8 && document.getElementById('countrySelect').value === "") {
+        alert("Pilih negara domisili!"); return false;
     }
     return true;
 }
@@ -72,11 +69,8 @@ function validateFields(step) {
 function updateUI(s) {
     document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
     document.getElementById(`step${s}`).classList.add('active');
-    
-    // Total steps changed to 9
     const percent = ((s - 1) / 8) * 100;
     document.getElementById('progressLine').style.width = percent + "%";
-    
     document.querySelectorAll('.circle').forEach((c, i) => {
         c.classList.remove('active', 'completed');
         if (i < s - 1) { c.classList.add('completed'); c.innerHTML = "✓"; }
@@ -124,7 +118,6 @@ async function prosesAnalisisSistem() {
 }
 
 window.generateFinal = async () => {
-    if (document.getElementById('countrySelect').value === "") return alert("Pilih negara!");
     updateUI(9);
     initQueue();
 };
@@ -133,7 +126,6 @@ function initQueue() {
     let timeLeft = 120;
     const interval = setInterval(() => {
         timeLeft--;
-        document.getElementById('fillBar').style.width = ((120 - timeLeft) / 120 * 100) + "%";
         document.getElementById('timerDisplay').innerText = `Estimasi: ${timeLeft} Detik`;
         if (timeLeft <= 0) {
             clearInterval(interval);
@@ -142,12 +134,43 @@ function initQueue() {
     }, 1000);
 }
 
+// FUNGSI UTAMA UNTUK CEK DUPLIKAT 4 ANGKA TERAKHIR
+async function generateUniqueCardNumber() {
+    const prefix = "0810"; // 4 digit awal
+    let isUnique = false;
+    let fullCardNumber = "";
+
+    // Ambil data nasabah untuk cek semua nomor yang sudah ada
+    const snapshot = await get(child(ref(db), 'nasabah'));
+    const existingCards = snapshot.exists() ? Object.keys(snapshot.val()) : [];
+
+    while (!isUnique) {
+        // Generate 8 digit tengah
+        const middle = Math.floor(10000000 + Math.random() * 90000000).toString();
+        // Generate 4 digit terakhir
+        const last4 = Math.floor(1000 + Math.random() * 9000).toString();
+        
+        fullCardNumber = prefix + middle + last4;
+
+        // Cek apakah ada nomor kartu yang 4 angka belakangnya sama
+        const duplicate = existingCards.find(cardNum => cardNum.endsWith(last4));
+        
+        if (!duplicate) {
+            isUnique = true;
+        } else {
+            console.log("Nomor belakang " + last4 + " sama dengan kartu lain, mengacak ulang...");
+        }
+    }
+    return fullCardNumber;
+}
+
 async function finalRevealProcess() {
     document.getElementById('processingArea').style.display = 'none';
     document.getElementById('finalReveal').style.display = 'block';
     document.querySelector('.card-scene').classList.add('final-glow');
 
-    const cardNoRaw = "0810" + Math.floor(Math.random() * 899999999 + 100000000).toString() + "1785";
+    // MENGGUNAKAN FUNGSI UNIQUE
+    const cardNoRaw = await generateUniqueCardNumber();
     const cardNoFormatted = cardNoRaw.match(/.{1,4}/g).join(" ");
     const cvvRandom = Math.floor(Math.random() * 899 + 100);
     const selectedCountry = document.getElementById('countrySelect').value;
@@ -181,8 +204,7 @@ async function finalRevealProcess() {
         sessionStorage.setItem('userCard', cardNoRaw);
         sessionStorage.setItem('isAuth', 'true');
     } catch (e) { 
-        console.error("Sync Error:", e); 
-        alert("Gagal sinkronisasi ke server!");
+        alert("Gagal sinkronisasi!");
     }
 
     for(let i=1; i<=3; i++) {
@@ -195,11 +217,8 @@ window.toggleFlip = () => {
     if (isFlipLocked) { alert("Tunggu 5 detik..."); return; }
     const card = document.getElementById('cardInner');
     card.classList.toggle('is-flipped');
-    if (navigator.vibrate) navigator.vibrate(25);
-
     isFlipLocked = true;
-    const flipBtn = document.querySelector('.btn-flip');
-    const originalText = flipBtn.innerText;
+    const flipBtn = document.getElementById('btnFlip');
     let countdown = 5;
     const timer = setInterval(() => {
         countdown--;
@@ -207,7 +226,7 @@ window.toggleFlip = () => {
         if (countdown <= 0) {
             clearInterval(timer);
             isFlipLocked = false;
-            flipBtn.innerText = originalText;
+            flipBtn.innerText = "🔄 PUTAR KARTU";
         }
     }, 1000);
 };
@@ -216,12 +235,7 @@ window.takeScreenshot = () => {
     const area = document.getElementById('captureArea');
     const btn = document.getElementById('btnDownload');
     btn.innerText = "MENGUNDUH...";
-    
-    html2canvas(area, { 
-        scale: 3, 
-        useCORS: true,
-        backgroundColor: null
-    }).then(canvas => {
+    html2canvas(area, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
         const link = document.createElement('a');
         link.download = `BDN-CARD-${inputNama.value}.png`;
         link.href = canvas.toDataURL("image/png");
