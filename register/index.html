@@ -21,6 +21,7 @@
                 <div class="progress-bar-bg"><div class="progress-line" id="progressLine"></div></div>
                 <div class="circle active">1</div><div class="circle">2</div><div class="circle">3</div><div class="circle">4</div>
                 <div class="circle">5</div><div class="circle">6</div><div class="circle">7</div><div class="circle">8</div>
+                <div class="circle">9</div>
             </div>
 
             <div class="form-content">
@@ -117,15 +118,32 @@
                     </div>
                     <div class="nav-buttons-split">
                         <button class="btn-alt" onclick="prevStep()">< Kembali</button>
-                        <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu</button>
+                        <button class="btn-primary" onclick="nextStep(8)">Lanjutkan</button>
                     </div>
                 </div>
 
                 <div class="step" id="step8">
+                    <h2>08. Lokasi & Mata Uang</h2>
+                    <div class="input-group">
+                        <label>Pilih Negara Domisili</label>
+                        <select id="countrySelect">
+                            <option value="">-- Pilih Negara --</option>
+                            <option value="ID">Indonesia (IDR)</option>
+                            <option value="US">Amerika Serikat (USD)</option>
+                            <option value="ING">Inggris (GBP/USD International)</option>
+                        </select>
+                    </div>
+                    <div class="nav-buttons-split">
+                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
+                        <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu</button>
+                    </div>
+                </div>
+
+                <div class="step" id="step9">
                     <div id="processingArea">
                         <div class="loading-box">
                             <div class="spinner-large"></div>
-                            <div class="progress-loader-container"><div id="fillBar" class="progress-loader-fill"></div></div>
+                            <div class="progress-loader-container"><div id="fillBar" class="progress-loader-fill" style="width:0%; height:4px; background: #4f46e5;"></div></div>
                             <div id="queueStatus">Proses Enkripsi...</div>
                             <div id="timerDisplay">Estimasi: --</div>
                         </div>
@@ -143,11 +161,9 @@
                                         <span class="bank-name">BANK DEVISA NUSANTARA</span>
                                         <div class="chip-card"></div>
                                     </div>
-                                    
                                     <div class="card-body">
                                         <div class="card-number" id="displayNo">0000 0000 0000 0000</div>
                                     </div>
-                                    
                                     <div class="card-footer">
                                         <div class="footer-left">
                                             <small>CARD HOLDER</small>
@@ -161,10 +177,10 @@
 
                                 <div class="card-face card-back">
                                     <div class="mag-stripe"></div>
-                                    <div class="signature-bar">
+                                    <div class="signature-bar" style="background:#eee; margin: 10px 20px; height:30px; display:flex; justify-content:flex-end; align-items:center; padding-right:10px;">
                                         <div class="cvv-box">
-                                            <span class="cvv-label">CVV</span>
-                                            <span class="cvv-code">***</span>
+                                            <span class="cvv-label" style="color:#000; font-size:0.6rem;">CVV</span>
+                                            <span class="cvv-code" style="color:#000; font-weight:bold; margin-left:5px;">***</span>
                                         </div>
                                     </div>
                                     <div class="card-terms">
@@ -183,7 +199,6 @@
             </div>
         </div>
     </main>
-
     <script type="module" src="script.js"></script>
 </body>
 </html>
