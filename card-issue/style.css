@@ -5,59 +5,176 @@
     --bg: #f8fafc;
     --rose: #fb7185;
     --emerald: #10b981;
+    --border: #e2e8f0;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--navy); }
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    -webkit-tap-highlight-color: transparent; 
+}
 
-.navbar { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 8%; background: white; border-bottom: 1px solid #e2e8f0; }
-.logo { font-size: 1.5rem; font-weight: 800; }
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background: var(--bg); 
+    color: var(--navy); 
+    line-height: 1.5;
+}
+
+/* NAVIGATION */
+.navbar { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 1rem 5%; 
+    background: white; 
+    border-bottom: 1px solid var(--border); 
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.logo { font-size: 1.2rem; font-weight: 800; }
 .logo span { color: var(--gold); }
-.btn-back { font-size: 0.7rem; font-weight: 800; color: #ef4444; text-decoration: none; border: 1px solid #fee2e2; padding: 8px 16px; border-radius: 8px; }
+.btn-back { 
+    font-size: 0.65rem; 
+    font-weight: 800; 
+    color: #ef4444; 
+    text-decoration: none; 
+    border: 1.5px solid #fee2e2; 
+    padding: 6px 12px; 
+    border-radius: 8px; 
+}
 
-.card-container { max-width: 1200px; margin: 0 auto; padding: 4rem 5%; }
-.step-header { text-align: center; margin-bottom: 3rem; }
-.step-badge { font-size: 0.7rem; font-weight: 800; color: var(--gold); letter-spacing: 2px; }
-h1 { font-size: 2.8rem; margin: 10px 0; }
-.text-gradient { background: linear-gradient(90deg, var(--navy), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+/* CONTAINER */
+.card-container { 
+    width: 100%;
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 2rem 5% 6rem; /* Padding bawah lebih besar untuk tombol melayang */
+}
 
-/* GRID */
-.selection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+.step-header { text-align: left; margin-bottom: 2rem; }
+.step-badge { 
+    font-size: 0.6rem; 
+    font-weight: 800; 
+    color: var(--gold); 
+    letter-spacing: 1.5px; 
+    text-transform: uppercase;
+}
+h1 { font-size: 1.8rem; margin: 8px 0; line-height: 1.2; }
+.text-gradient { 
+    background: linear-gradient(90deg, var(--navy), var(--gold)); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+}
+.step-header p { font-size: 0.9rem; color: #64748b; }
 
-.card-option { background: white; border: 2px solid #e2e8f0; border-radius: 28px; padding: 1.5rem; cursor: pointer; transition: 0.4s; }
-.card-option.active { border-color: var(--gold); background: #fdfaf3; transform: translateY(-10px); box-shadow: 0 20px 40px rgba(184, 146, 78, 0.2); }
+/* GRID SELECTION */
+.selection-grid { 
+    display: grid; 
+    grid-template-columns: 1fr; /* Default 1 kolom untuk Mobile */
+    gap: 1.2rem; 
+}
 
-/* VISUAL KARTU */
-.card-preview { height: 180px; border-radius: 20px; padding: 1.5rem; color: white; margin-bottom: 1.5rem; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
-.card-chip { width: 45px; height: 35px; border-radius: 6px; }
-.card-chip.silver { background: #bdc3c7; }
+/* Responsive Tablet/Desktop */
+@media (min-width: 768px) {
+    .selection-grid { grid-template-columns: repeat(2, 1fr); }
+    h1 { font-size: 2.5rem; }
+}
+@media (min-width: 1024px) {
+    .selection-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* CARD OPTION BOX */
+.card-option { 
+    background: white; 
+    border: 2px solid var(--border); 
+    border-radius: 24px; 
+    padding: 1.2rem; 
+    cursor: pointer; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+.card-option.active { 
+    border-color: var(--gold); 
+    background: #fdfaf3; 
+    transform: scale(1.02);
+    box-shadow: 0 15px 30px rgba(184, 146, 78, 0.15); 
+}
+
+/* VISUAL PREVIEW KARTU */
+.card-preview { 
+    height: 160px; 
+    border-radius: 16px; 
+    padding: 1.2rem; 
+    color: white; 
+    margin-bottom: 1rem; 
+    position: relative; 
+    overflow: hidden; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between; 
+}
+.card-chip { width: 40px; height: 30px; border-radius: 5px; }
+.card-chip.silver { background: linear-gradient(135deg, #e2e8f0, #94a3b8); }
 .card-chip.gold { background: linear-gradient(135deg, #facc15, #b8924e); }
 
-/* GRADIENT VARIAN */
+/* VARIANT COLORS */
 .platinum { background: linear-gradient(135deg, #334155, #0f172a); }
 .gold-card { background: linear-gradient(135deg, #fbbf24, #b8924e); }
 .rose-gold { background: linear-gradient(135deg, #fda4af, #e11d48); }
 .black { background: radial-gradient(circle at top right, #444, #000); }
 .emerald { background: linear-gradient(135deg, #059669, #064e3b); }
-.diamond { background: linear-gradient(135deg, #e2e8f0, #94a3b8); border: 1px solid rgba(255,255,255,0.5); }
+.diamond { background: linear-gradient(135deg, #cbd5e1, #64748b); }
 
-/* ANIMASI KILAU DIAMOND & EMERALD */
+/* SHINE ANIMATION */
 .diamond::before, .emerald::before {
     content: ''; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
-    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-    transform: rotate(45deg); animation: shine 4s infinite;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: rotate(45deg); animation: shine 5s infinite;
 }
 @keyframes shine { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
 
-.card-brand { font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; }
-.card-number { letter-spacing: 3px; font-size: 1rem; opacity: 0.8; }
+.card-brand { font-weight: 800; font-size: 0.75rem; letter-spacing: 1.5px; }
 
-.option-details h3 { font-size: 1.2rem; margin-bottom: 8px; }
-.option-details p { font-size: 0.85rem; color: #64748b; margin-bottom: 15px; }
-.price-tag { font-weight: 800; background: #f1f5f9; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; }
+/* DETAILS */
+.option-details h3 { font-size: 1.1rem; margin-bottom: 4px; }
+.option-details p { font-size: 0.8rem; color: #64748b; margin-bottom: 12px; }
+.price-tag { 
+    font-weight: 800; 
+    background: #f1f5f9; 
+    padding: 4px 10px; 
+    border-radius: 6px; 
+    font-size: 0.75rem; 
+    display: inline-block;
+}
 .price-tag.special { background: #fef3c7; color: #92400e; }
 
-.btn-primary { background: var(--navy); color: white; border: none; padding: 1.2rem 4rem; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; width: 100%; max-width: 400px; }
-.btn-primary:hover { background: var(--gold); transform: scale(1.05); }
+/* FOOTER ACTION (Sticky on Mobile) */
+.action-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 1rem 5%;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    z-index: 99;
+}
 
-@media (max-width: 768px) { .selection-grid { grid-template-columns: 1fr; } }
+.btn-primary { 
+    background: var(--navy); 
+    color: white; 
+    border: none; 
+    padding: 1rem; 
+    border-radius: 14px; 
+    font-weight: 800; 
+    cursor: pointer; 
+    width: 100%; 
+    max-width: 500px;
+    font-size: 1rem;
+    transition: 0.3s; 
+}
+.btn-primary:active { transform: scale(0.95); background: var(--gold); }
