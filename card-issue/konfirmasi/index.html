@@ -2,42 +2,67 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Otorisasi PIN | BDN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verifikasi PIN | BDN Secure</title>
     <style>
-        :root { --gold: #b5985a; --dark: #1e293b; }
-        body { margin: 0; background: #f8fafc; font-family: 'Segoe UI', sans-serif; }
-        .card-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .confirm-box { width: 100%; max-width: 400px; background: white; padding: 2rem; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; }
-        .pin-display { display: flex; justify-content: center; gap: 12px; margin: 2rem 0; }
-        .dot { width: 16px; height: 16px; border: 2px solid #cbd5e1; border-radius: 50%; transition: 0.2s; }
-        .dot.active { background: var(--gold); border-color: var(--gold); transform: scale(1.2); }
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 300px; margin: 0 auto; }
-        .numpad button { aspect-ratio: 1/1; border-radius: 50%; border: 1px solid #e2e8f0; background: white; font-size: 1.5rem; font-weight: 700; cursor: pointer; }
-        #submitBtn { background: var(--dark) !important; color: white !important; }
+        :root { --gold: #b5985a; --dark: #0f172a; --bg: #f8fafc; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--bg); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            display: flex; align-items: center; justify-content: center; min-height: 100vh; 
+        }
+
+        .confirm-box { 
+            width: 90%; max-width: 400px; background: white; padding: 2.5rem 1.5rem; 
+            border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; 
+        }
+
+        .pin-container {
+            display: flex; justify-content: space-between; gap: 8px; margin: 2rem 0;
+        }
+
+        .pin-input {
+            width: 50px; height: 60px; border: 2px solid #e2e8f0; border-radius: 12px;
+            text-align: center; font-size: 1.5rem; font-weight: 800; background: #f8fafc;
+            transition: 0.3s; outline: none;
+        }
+
+        .pin-input:focus { border-color: var(--gold); background: white; }
+
+        .btn-confirm { 
+            width: 100%; padding: 1.2rem; border-radius: 16px; background: var(--dark); 
+            color: white; border: none; font-weight: 700; cursor: pointer; font-size: 1rem;
+        }
+
+        .btn-confirm:disabled { background: #94a3b8; }
+        
+        #statusMsg { margin-top: 15px; font-size: 0.8rem; font-weight: 600; min-height: 1.2rem; }
+        .error { color: #ef4444; }
+        .success { color: #22c55e; }
     </style>
 </head>
 <body>
-    <main class="card-container">
-        <div class="confirm-box">
-            <header>
-                <h1 style="font-size: 1.8rem;">Otorisasi PIN</h1>
-                <p>Konfirmasi transaksi <br><span style="color:var(--gold); font-weight:800;" id="confPrice">$0</span></p>
-            </header>
+    <div class="confirm-box">
+        <header>
+            <div style="font-size: 2rem; margin-bottom: 10px;">🔐</div>
+            <h1 style="font-size: 1.5rem; margin-bottom: 5px;">Verifikasi PIN</h1>
+            <p style="font-size: 0.85rem; color: #64748b;">Masukkan 6-digit PIN keamanan kartu Anda untuk melanjutkan aktivasi.</p>
+        </header>
 
-            <div class="pin-display">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-            </div>
-            
-            <div class="numpad">
-                <button class="num-btn" data-val="1">1</button><button class="num-btn" data-val="2">2</button><button class="num-btn" data-val="3">3</button>
-                <button class="num-btn" data-val="4">4</button><button class="num-btn" data-val="5">5</button><button class="num-btn" data-val="6">6</button>
-                <button class="num-btn" data-val="7">7</button><button class="num-btn" data-val="8">8</button><button class="num-btn" data-val="9">9</button>
-                <button id="delBtn">DEL</button><button class="num-btn" data-val="0">0</button><button id="submitBtn">OK</button>
-            </div>
+        <div class="pin-container" id="pinWrapper">
+            <input type="password" class="pin-input" maxlength="1" inputmode="numeric">
+            <input type="password" class="pin-input" maxlength="1" inputmode="numeric">
+            <input type="password" class="pin-input" maxlength="1" inputmode="numeric">
+            <input type="password" class="pin-input" maxlength="1" inputmode="numeric">
+            <input type="password" class="pin-input" maxlength="1" inputmode="numeric">
+            <input type="password" class="pin-input" maxlength="1" inputmode="numeric">
         </div>
-    </main>
+
+        <div id="statusMsg"></div>
+        <button class="btn-confirm" id="btnFinalPay" disabled>PROSES PEMBAYARAN</button>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
@@ -56,40 +81,68 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const harga = parseInt(sessionStorage.getItem('selected_price'));
-        const variant = sessionStorage.getItem('selected_variant');
-        document.getElementById('confPrice').innerText = "$" + harga.toLocaleString();
+        const inputs = document.querySelectorAll('.pin-input');
+        const btn = document.getElementById('btnFinalPay');
+        const status = document.getElementById('statusMsg');
 
-        let inputPin = "";
-        const dots = document.querySelectorAll('.dot');
-
-        document.querySelectorAll('.num-btn').forEach(b => {
-            b.onclick = () => { if(inputPin.length < 6) { inputPin += b.dataset.val; updateDots(); } }
+        // Logic Auto-focus PIN
+        inputs.forEach((input, index) => {
+            input.addEventListener('keyup', (e) => {
+                if (e.key >= 0 && e.key <= 9) {
+                    if (index < inputs.length - 1) inputs[index + 1].focus();
+                } else if (e.key === "Backspace") {
+                    if (index > 0) inputs[index - 1].focus();
+                }
+                checkFull();
+            });
         });
 
-        document.getElementById('delBtn').onclick = () => { inputPin = inputPin.slice(0, -1); updateDots(); }
+        function checkFull() {
+            const code = Array.from(inputs).map(i => i.value).join('');
+            btn.disabled = code.length !== 6;
+        }
 
-        function updateDots() { dots.forEach((d, i) => d.classList.toggle('active', i < inputPin.length)); }
-
-        document.getElementById('submitBtn').onclick = async () => {
-            const pinBenar = sessionStorage.getItem('pending_pin');
-            const saldo = parseFloat(sessionStorage.getItem('pending_saldo'));
+        btn.addEventListener('click', async () => {
+            const enteredPin = Array.from(inputs).map(i => i.value).join('');
+            const correctPin = sessionStorage.getItem('pending_pin');
             const cardNum = sessionStorage.getItem('pending_card');
+            const price = parseInt(sessionStorage.getItem('selected_price'));
+            const saldo = parseInt(sessionStorage.getItem('pending_saldo'));
+            const variant = sessionStorage.getItem('selected_variant');
 
-            if(inputPin !== pinBenar) return alert("PIN SALAH!");
-            if(saldo < harga) return alert("SALDO TIDAK CUKUP!");
+            if (enteredPin !== correctPin) {
+                status.innerText = "PIN SALAH! Silakan coba lagi.";
+                status.className = "error";
+                inputs.forEach(i => i.value = "");
+                inputs[0].focus();
+                return;
+            }
+
+            if (saldo < price) {
+                status.innerText = "SALDO TIDAK CUKUP!";
+                status.className = "error";
+                return;
+            }
+
+            btn.disabled = true;
+            status.innerText = "Memproses transaksi...";
+            status.className = "";
 
             try {
-                const updates = {};
-                updates[`nasabah/${cardNum}/saldo`] = saldo - harga;
-                updates[`nasabah/${cardNum}/cardStatus`] = "Active";
-                updates[`nasabah/${cardNum}/activeVariant`] = variant;
+                const newSaldo = saldo - price;
+                await update(ref(db, `nasabah/${cardNum}`), {
+                    saldo: newSaldo,
+                    cardStatus: "Active",
+                    activeVariant: variant,
+                    lastTransaction: new Date().toISOString()
+                });
                 
-                await update(ref(db), updates);
-                localStorage.setItem('nomorKartu', cardNum); // Kunci di index
-                window.location.href = '../success/';
-            } catch (e) { alert("Gagal proses!"); }
-        };
+                window.location.href = '../succes/';
+            } catch (err) {
+                alert("Gagal memproses. Coba lagi.");
+                btn.disabled = false;
+            }
+        });
     </script>
 </body>
 </html>
