@@ -14,15 +14,18 @@ const db = getDatabase(app);
 let currentStep = 1;
 let isFlipLocked = false;
 
+// Elements
 const inputNama = document.getElementById('inputNama');
 const inputNIK = document.getElementById('inputNIK');
 const inputWA = document.getElementById('inputWA');
 const inputPW = document.getElementById('inputPW');
 
+// Formatting: Nama Otomatis Huruf Kapital
 inputNama.addEventListener('input', (e) => {
     e.target.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, "");
 });
 
+// Formatting: Hanya Angka
 [inputNIK, inputWA, inputPW].forEach(el => {
     el.addEventListener('input', (e) => {
         e.target.value = e.target.value.replace(/[^0-9]/g, "");
@@ -47,7 +50,7 @@ window.prevStep = () => {
 
 function validateFields(step) {
     if (step === 1) {
-        if (inputNama.value.length < 3) { alert("Nama lengkap minimal 3 huruf!"); return false; }
+        if (inputNama.value.trim().length < 3) { alert("Nama lengkap minimal 3 huruf!"); return false; }
         if (inputNIK.value.length !== 16) { alert("NIK harus 16 digit angka!"); return false; }
     }
     if (step === 2) {
@@ -124,37 +127,46 @@ async function finalRevealProcess() {
     document.getElementById('finalReveal').style.display = 'block';
     document.querySelector('.card-scene').classList.add('final-glow');
 
-    const cardNoRaw = "001031" + Math.floor(Math.random() * 899999 + 100000) + "1785";
+    // Generate Nomor Kartu & CVV
+    const cardNoRaw = "0810" + Math.floor(Math.random() * 899999999 + 100000000).toString() + "1785";
     const cardNoFormatted = cardNoRaw.match(/.{1,4}/g).join(" ");
     const cvvRandom = Math.floor(Math.random() * 899 + 100);
     
+    // Update Display DOM
     document.getElementById('displayNo').innerText = cardNoFormatted;
     document.getElementById('displayName').innerText = inputNama.value;
     document.querySelector('.cvv-code').innerText = cvvRandom;
 
+    // DATA SENSITIVE - STRUKTUR DISESUAIKAN PERSIS DENGAN FIREBASE USER
     const nasabahData = {
         activeVariant: "Platinum",
         cardStatus: "Active",
-        email: document.getElementById('inputEmail').value,
+        email: document.getElementById('inputEmail').value.trim(),
         kontak_darurat: {
             nama_keluarga: document.querySelector('.em-name')?.value || "-",
             nomor_hp: document.querySelector('.em-phone')?.value || "-"
         },
-        name: inputNama.value,
+        name: inputNama.value.trim(),
         nik: inputNIK.value,
         nomor_kartu: cardNoRaw, 
         pekerjaan: document.getElementById('jobType').value,
         pendapatan: document.getElementById('income').value,
         pin: inputPW.value,
-        saldo: 1, 
+        saldo: 1000000, 
         tgl_daftar: new Date().toISOString(),
         wa: inputWA.value
     };
 
     try {
+        // Simpan ke Firebase dengan ID nomor kartu
         await set(ref(db, 'nasabah/' + cardNoRaw), nasabahData);
-    } catch (e) { console.error("Sync Error"); }
+        console.log("Data berhasil disimpan!");
+    } catch (e) { 
+        console.error("Sync Error:", e); 
+        alert("Gagal sinkronisasi ke server!");
+    }
 
+    // Animasi Reveal Step by Step
     for(let i=1; i<=3; i++) {
         await new Promise(r => setTimeout(r, 600));
         document.getElementById(`rev${i}`).classList.add('show');
@@ -186,10 +198,15 @@ window.takeScreenshot = () => {
     const area = document.getElementById('captureArea');
     const btn = document.getElementById('btnDownload');
     btn.innerText = "MENGUNDUH...";
-    html2canvas(area, { scale: 3, useCORS: true }).then(canvas => {
+    
+    html2canvas(area, { 
+        scale: 3, 
+        useCORS: true,
+        backgroundColor: null
+    }).then(canvas => {
         const link = document.createElement('a');
         link.download = `BDN-CARD-${inputNama.value}.png`;
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL("image/png");
         link.click();
         btn.innerText = "📸 SIMPAN GAMBAR KARTU";
     });
