@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M-Transfer | Bank Devisa Nusantara</title>
+    <title>Multi-Currency Transfer | BDN</title>
     <link rel="stylesheet" href="../../../style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #b8924e; --dark: #0f172a; }
+        :root { --accent: #b8924e; --dark: #0f172a; --us-blue: #002868; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; margin: 0; padding: 20px; }
         .transfer-card { background: white; padding: 25px; border-radius: 25px; border: 1px solid #e2e8f0; box-shadow: 0 10px 20px rgba(0,0,0,0.02); }
         .input-group { margin-bottom: 20px; }
@@ -16,9 +16,13 @@
         .input-group input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(184, 146, 78, 0.1); }
         
         #boxPenerima { display: none; background: #f1f5f9; padding: 15px; border-radius: 15px; margin-bottom: 20px; border-left: 5px solid var(--accent); }
+        .badge-country { font-size: 0.6rem; padding: 2px 8px; border-radius: 5px; background: var(--dark); color: white; margin-left: 10px; vertical-align: middle; }
+        
+        #currencyPreview { display: none; background: #fffbeb; border: 1px dashed var(--accent); padding: 12px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
+        #convertedVal { font-weight: 800; color: #92400e; font-size: 1.1rem; }
+
         .btn-send { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--dark); color: white; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; }
         .btn-send:disabled { background: #cbd5e1; cursor: not-allowed; }
-        
         .loading-text { font-size: 0.7rem; color: var(--accent); font-weight: 600; display: none; margin-top: 5px; }
     </style>
 </head>
@@ -31,32 +35,35 @@
     <div style="max-width: 500px; margin: auto;">
         <header style="display: flex; align-items: center; margin-bottom: 25px;">
             <a href="../index.html" style="text-decoration: none; font-size: 1.5rem; margin-right: 15px;">⬅️</a>
-            <h2 style="margin: 0; font-size: 1.3rem; font-weight: 800; color: var(--dark);">M-Transfer</h2>
+            <h2 style="margin: 0; font-size: 1.3rem; font-weight: 800; color: var(--dark);">M-Transfer <small style="font-size: 0.6rem; opacity: 0.5;">International</small></h2>
         </header>
 
         <div class="transfer-card">
             <div class="input-group">
                 <label>Nomor Rekening Tujuan</label>
                 <input type="number" id="targetCard" placeholder="Masukkan 16 digit nomor kartu" autocomplete="off">
-                <div id="loader" class="loading-text">Mengecek rekening...</div>
+                <div id="loader" class="loading-text">Mengecek database internasional...</div>
             </div>
 
             <div id="boxPenerima">
-                <p style="margin: 0; font-size: 0.65rem; color: #64748b; font-weight: 700;">NAMA PENERIMA</p>
-                <p id="namaPenerima" style="margin: 5px 0 0; font-size: 1.1rem; font-weight: 800; color: var(--dark);"></p>
+                <p style="margin: 0; font-size: 0.65rem; color: #64748b; font-weight: 700;">PENERIMA TERDAFTAR</p>
+                <p style="margin: 5px 0 0; font-size: 1.1rem; font-weight: 800; color: var(--dark);">
+                    <span id="namaPenerima"></span>
+                    <span id="flagPenerima" class="badge-country"></span>
+                </p>
             </div>
 
             <div class="input-group">
-                <label>Nominal Transfer</label>
-                <input type="number" id="amount" placeholder="Rp 0">
+                <label id="labelNominal">Nominal Transfer</label>
+                <input type="number" step="any" id="amount" placeholder="0.00">
             </div>
 
-            <div class="input-group">
-                <label>Catatan (Opsional)</label>
-                <input type="text" id="note" placeholder="Contoh: Bayar Hutang">
+            <div id="currencyPreview">
+                <p style="margin: 0 0 5px; font-size: 0.65rem; color: #92400e; font-weight: 700; text-transform: uppercase;">Estimasi Dana Diterima</p>
+                <div id="convertedVal">...</div>
             </div>
 
-            <button id="btnProses" class="btn-send" disabled>Lanjut Transfer</button>
+            <button id="btnProses" class="btn-send" disabled>Lanjut Konfirmasi</button>
         </div>
     </div>
 
@@ -72,81 +79,114 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // KURS STATIS
+        const RATE_USD_TO_IDR = 16970.10; 
+
         const targetInput = document.getElementById('targetCard');
-        const boxPenerima = document.getElementById('boxPenerima');
-        const namaPenerima = document.getElementById('namaPenerima');
+        const amountInput = document.getElementById('amount');
         const btnProses = document.getElementById('btnProses');
-        const loader = document.getElementById('loader');
+        const previewBox = document.getElementById('currencyPreview');
+        const convertedText = document.getElementById('convertedVal');
 
-        let dataPenerimaGlobal = null;
+        let dataPenerima = null;
+        let dataPengirim = null;
 
-        // FITUR CEK NAMA OTOMATIS
+        // FORMATTER MATA UANG
+        const formatIDR = (val) => "Rp " + Number(val).toLocaleString('id-ID');
+        const formatUSD = (val) => "$ " + Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        // 1. CEK REKENING TUJUAN
         targetInput.oninput = async () => {
-            const val = targetInput.value;
-            if (val.length >= 15) { // Cek jika sudah mendekati 16 digit
-                loader.style.display = 'block';
-                const snap = await get(child(ref(db), `nasabah/${val}`));
+            if (targetInput.value.length >= 10) {
+                document.getElementById('loader').style.display = 'block';
+                const snap = await get(child(ref(db), `nasabah/${targetInput.value}`));
                 
                 if (snap.exists()) {
-                    dataPenerimaGlobal = snap.val();
-                    namaPenerima.innerText = dataPenerimaGlobal.nama;
-                    boxPenerima.style.display = 'block';
+                    dataPenerima = snap.val();
+                    document.getElementById('namaPenerima').innerText = dataPenerima.nama;
+                    document.getElementById('flagPenerima').innerText = dataPenerima.country || 'ID';
+                    document.getElementById('boxPenerima').style.display = 'block';
+                    document.getElementById('loader').style.display = 'none';
                     btnProses.disabled = false;
-                    loader.style.display = 'none';
-                } else {
-                    boxPenerima.style.display = 'none';
-                    btnProses.disabled = true;
-                    loader.innerText = "Rekening tidak ditemukan!";
+                    calculateExchange();
                 }
-            } else {
-                boxPenerima.style.display = 'none';
-                btnProses.disabled = true;
-                loader.style.display = 'none';
             }
         };
 
-        // EKSEKUSI TRANSFER
+        // 2. HITUNG KURS OTOMATIS
+        amountInput.oninput = calculateExchange;
+
+        async function calculateExchange() {
+            if (!dataPenerima) return;
+            
+            // Ambil data pengirim sekali saja
+            if (!dataPengirim) {
+                const myCard = sessionStorage.getItem('userCard');
+                const pSnap = await get(child(ref(db), `nasabah/${myCard}`));
+                dataPengirim = pSnap.val();
+            }
+
+            const amount = parseFloat(amountInput.value) || 0;
+            const cFrom = dataPengirim.country || 'ID';
+            const cTo = dataPenerima.country || 'ID';
+
+            // Logika Tampilan Preview
+            if (cFrom === 'ID' && (cTo === 'US' || cTo === 'ING')) {
+                // Rupiah ke Dollar
+                previewBox.style.display = 'block';
+                convertedText.innerText = formatUSD(amount / RATE_USD_TO_IDR);
+            } else if ((cFrom === 'US' || cFrom === 'ING') && cTo === 'ID') {
+                // Dollar ke Rupiah
+                previewBox.style.display = 'block';
+                convertedText.innerText = formatIDR(amount * RATE_USD_TO_IDR);
+            } else {
+                previewBox.style.display = 'none';
+            }
+        }
+
+        // 3. PROSES TRANSFER
         btnProses.onclick = async () => {
-            const amount = parseInt(document.getElementById('amount').value);
+            const amountSent = parseFloat(amountInput.value);
             const myCard = sessionStorage.getItem('userCard');
-
-            if (!amount || amount < 10000) return alert("Minimal transfer Rp 10.000");
-
-            btnProses.innerText = "Memproses...";
-            btnProses.disabled = true;
 
             try {
                 const mySnap = await get(child(ref(db), `nasabah/${myCard}`));
                 const myData = mySnap.val();
+                
+                const fromCountry = myData.country || 'ID';
+                const toCountry = dataPenerima.country || 'ID';
+                
+                let amountFinal = amountSent;
 
-                if (myData.saldo < amount) {
-                    alert("Saldo tidak cukup!");
-                    btnProses.innerText = "Lanjut Transfer";
-                    btnProses.disabled = false;
-                    return;
+                // Konversi nilai yang akan masuk ke database penerima
+                if (fromCountry === 'ID' && (toCountry === 'US' || toCountry === 'ING')) {
+                    amountFinal = amountSent / RATE_USD_TO_IDR;
+                } else if ((fromCountry === 'US' || fromCountry === 'ING') && toCountry === 'ID') {
+                    amountFinal = amountSent * RATE_USD_TO_IDR;
                 }
 
-                // PIN CONFIRMATION (Simple version)
-                const pinInput = prompt("Masukkan PIN Anda untuk konfirmasi:");
-                if (pinInput !== String(myData.pin)) {
-                    alert("PIN Salah! Transaksi Dibatalkan.");
-                    location.reload();
-                    return;
-                }
+                if (Number(myData.saldo) < amountSent) return alert("Saldo Anda tidak mencukupi untuk transaksi ini.");
 
-                // Update Saldo Pengirim & Penerima
+                const msg = `Konfirmasi Transfer:\n------------------\nDari: ${fromCountry}\nKe: ${toCountry}\nTotal Diterima: ${toCountry === 'ID' ? formatIDR(amountFinal) : formatUSD(amountFinal)}\n\nMasukkan PIN:`;
+                const pin = prompt(msg);
+
+                if (pin !== String(myData.pin)) return alert("PIN Keamanan Salah!");
+
+                btnProses.innerText = "Processing...";
+                btnProses.disabled = true;
+
                 const updates = {};
-                updates[`nasabah/${myCard}/saldo`] = myData.saldo - amount;
-                updates[`nasabah/${targetInput.value}/saldo`] = dataPenerimaGlobal.saldo + amount;
+                updates[`nasabah/${myCard}/saldo`] = Number(myData.saldo) - amountSent;
+                updates[`nasabah/${targetInput.value}/saldo`] = Number(dataPenerima.saldo) + amountFinal;
 
                 await update(ref(db), updates);
 
-                alert("TRANSFER BERHASIL!");
-                window.location.href = "../index.html"; // Balik ke dashboard
+                alert("TRANSAKSI INTERNASIONAL BERHASIL!");
+                window.location.href = "../index.html";
 
             } catch (e) {
-                console.error(e);
-                alert("Gagal melakukan transfer.");
+                alert("Koneksi gagal.");
+                btnProses.disabled = false;
             }
         };
     </script>
