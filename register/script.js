@@ -60,14 +60,23 @@ function validateFields(step) {
     if (step === 5 && inputPW.value.length !== 6) {
         alert("PIN harus 6 digit!"); return false;
     }
+    if (step === 7 && !document.getElementById('checkAgree').checked) {
+        alert("Harap centang persetujuan tanggung jawab!"); return false;
+    }
+    if (step === 8) {
+        if (document.getElementById('countrySelect').value === "") { alert("Pilih negara domisili!"); return false; }
+    }
     return true;
 }
 
 function updateUI(s) {
     document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
     document.getElementById(`step${s}`).classList.add('active');
-    const percent = ((s - 1) / 7) * 100;
+    
+    // Total steps changed to 9
+    const percent = ((s - 1) / 8) * 100;
     document.getElementById('progressLine').style.width = percent + "%";
+    
     document.querySelectorAll('.circle').forEach((c, i) => {
         c.classList.remove('active', 'completed');
         if (i < s - 1) { c.classList.add('completed'); c.innerHTML = "✓"; }
@@ -75,6 +84,17 @@ function updateUI(s) {
         else { c.innerHTML = i + 1; }
     });
 }
+
+window.addEmergencyField = () => {
+    const container = document.getElementById('emergencyContainer');
+    const newItem = document.createElement('div');
+    newItem.className = 'emergency-item';
+    newItem.innerHTML = `
+        <div class="input-group"><label>Nama Keluarga</label><input type="text" class="em-name"></div>
+        <div class="input-group"><label>Nomor HP</label><input type="tel" class="em-phone"></div>
+    `;
+    container.appendChild(newItem);
+};
 
 async function prosesAnalisisSistem() {
     const status = document.getElementById('slikStatus');
@@ -104,8 +124,8 @@ async function prosesAnalisisSistem() {
 }
 
 window.generateFinal = async () => {
-    if (!document.getElementById('checkAgree').checked) return alert("Harap centang persetujuan!");
-    updateUI(8);
+    if (document.getElementById('countrySelect').value === "") return alert("Pilih negara!");
+    updateUI(9);
     initQueue();
 };
 
@@ -127,20 +147,19 @@ async function finalRevealProcess() {
     document.getElementById('finalReveal').style.display = 'block';
     document.querySelector('.card-scene').classList.add('final-glow');
 
-    // Generate Nomor Kartu & CVV
     const cardNoRaw = "0810" + Math.floor(Math.random() * 899999999 + 100000000).toString() + "1785";
     const cardNoFormatted = cardNoRaw.match(/.{1,4}/g).join(" ");
     const cvvRandom = Math.floor(Math.random() * 899 + 100);
+    const selectedCountry = document.getElementById('countrySelect').value;
     
-    // Update Display DOM
     document.getElementById('displayNo').innerText = cardNoFormatted;
     document.getElementById('displayName').innerText = inputNama.value;
     document.querySelector('.cvv-code').innerText = cvvRandom;
 
-    // DATA SENSITIVE - STRUKTUR DISESUAIKAN PERSIS DENGAN FIREBASE USER
     const nasabahData = {
         activeVariant: "Platinum",
         cardStatus: "Active",
+        country: selectedCountry,
         email: document.getElementById('inputEmail').value.trim(),
         kontak_darurat: {
             nama_keluarga: document.querySelector('.em-name')?.value || "-",
@@ -152,21 +171,20 @@ async function finalRevealProcess() {
         pekerjaan: document.getElementById('jobType').value,
         pendapatan: document.getElementById('income').value,
         pin: inputPW.value,
-        saldo: 1000000, 
+        saldo: selectedCountry === 'ID' ? 1000000 : 100, 
         tgl_daftar: new Date().toISOString(),
         wa: inputWA.value
     };
 
     try {
-        // Simpan ke Firebase dengan ID nomor kartu
         await set(ref(db, 'nasabah/' + cardNoRaw), nasabahData);
-        console.log("Data berhasil disimpan!");
+        sessionStorage.setItem('userCard', cardNoRaw);
+        sessionStorage.setItem('isAuth', 'true');
     } catch (e) { 
         console.error("Sync Error:", e); 
         alert("Gagal sinkronisasi ke server!");
     }
 
-    // Animasi Reveal Step by Step
     for(let i=1; i<=3; i++) {
         await new Promise(r => setTimeout(r, 600));
         document.getElementById(`rev${i}`).classList.add('show');
