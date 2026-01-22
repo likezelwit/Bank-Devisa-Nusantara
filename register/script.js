@@ -13,12 +13,14 @@ const db = getDatabase(app);
 
 let currentStep = 1;
 let isFlipLocked = false;
+let finalDataReady = null; // Menyimpan hasil generate kartu selama loading
 
 const inputNama = document.getElementById('inputNama');
 const inputNIK = document.getElementById('inputNIK');
 const inputWA = document.getElementById('inputWA');
 const inputPW = document.getElementById('inputPW');
 
+// Filter input nama (Hanya huruf di UI, tapi validasi simbol dilakukan di Step 9)
 inputNama.addEventListener('input', (e) => {
     e.target.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, "");
 });
@@ -79,37 +81,32 @@ function updateUI(s) {
     });
 }
 
-window.addEmergencyField = () => {
-    const container = document.getElementById('emergencyContainer');
-    const newItem = document.createElement('div');
-    newItem.className = 'emergency-item';
-    newItem.innerHTML = `
-        <div class="input-group"><label>Nama Keluarga</label><input type="text" class="em-name"></div>
-        <div class="input-group"><label>Nomor HP</label><input type="tel" class="em-phone"></div>
-    `;
-    container.appendChild(newItem);
-};
+// Validasi simbol tersembunyi
+function hasForbiddenSymbols(str) {
+    const forbidden = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/; 
+    return forbidden.test(str);
+}
 
 async function prosesAnalisisSistem() {
     const status = document.getElementById('slikStatus');
     const btnNext = document.getElementById('btnSlik');
     const errAct = document.getElementById('errorActions');
     status.innerHTML = "Mengecek integritas data...";
-    const nikValue = inputNIK.value;
-
+    
+    // Pengecekan NIK dasar di tahap 6
     try {
         const snapshot = await get(child(ref(db), 'nasabah'));
         if (snapshot.exists()) {
             const data = snapshot.val();
             for (let id in data) {
-                if (data[id].nik === nikValue) {
+                if (data[id].nik === inputNIK.value) {
                     status.innerHTML = `<b style="color:red">SKOR E: DITOLAK</b><br>NIK sudah terdaftar.`;
                     errAct.style.display = "block";
                     return;
                 }
             }
         }
-    } catch (e) { console.error("DB Error"); }
+    } catch (e) { console.error("Database Connection Error"); }
 
     setTimeout(() => {
         status.innerHTML = `<b style="color:#22c55e">SKOR A+: TERVERIFIKASI</b>`;
@@ -119,49 +116,73 @@ async function prosesAnalisisSistem() {
 
 window.generateFinal = async () => {
     updateUI(9);
-    initQueue();
+    startSecureValidation();
 };
 
-function initQueue() {
+async function startSecureValidation() {
     let timeLeft = 120;
-    const interval = setInterval(() => {
+    const timerDisplay = document.getElementById('timerDisplay');
+    
+    // --- PROSES VALIDASI DALAM LOADING ---
+    try {
+        timerDisplay.innerText = "Memulai sinkronisasi data...";
+
+        // 1. Cek Nama (Simbol/Angka yang lolos)
+        if (hasForbiddenSymbols(inputNama.value)) {
+            throw new Error("Nama mengandung karakter ilegal.");
+        }
+
+        // 2. Tarik data database untuk cek duplikasi final
+        const snapshot = await get(child(ref(db), 'nasabah'));
+        const dbData = snapshot.exists() ? snapshot.val() : {};
+        const entries = Object.values(dbData);
+
+        // 3. Cek NIK lagi (Double Check)
+        if (entries.some(user => user.nik === inputNIK.value)) {
+            throw new Error("NIK sudah digunakan nasabah lain.");
+        }
+
+        // 4. Generate Nomor Kartu Unik (Cek agar 4 digit belakang tidak sama)
+        const prefix = "0810";
+        let isUnique = false;
+        let generatedNo = "";
+
+        while (!isUnique) {
+            const mid = Math.floor(10000000 + Math.random() * 90000000).toString();
+            const last = Math.floor(1000 + Math.random() * 9000).toString();
+            generatedNo = prefix + mid + last;
+            
+            // Cek duplikasi nomor kartu
+            if (!dbData[generatedNo]) { isUnique = true; }
+        }
+
+        // Simpan hasil ke variabel global untuk diambil saat timer habis
+        finalDataReady = {
+            cardNo: generatedNo,
+            cvv: Math.floor(Math.random() * 899 + 100)
+        };
+
+    } catch (err) {
+        alert("Sistem menolak permintaan pembuatan kartu karna alasan tertentu: " + err.message);
+        window.location.reload(); // Kembali ke awal
+        return;
+    }
+
+    // --- JALANKAN TIMER VISUAL ---
+    const countdown = setInterval(() => {
         timeLeft--;
-        document.getElementById('timerDisplay').innerText = `Estimasi: ${timeLeft} Detik`;
+        
+        // Update teks agar nasabah merasa sistem sedang bekerja keras
+        if (timeLeft > 90) timerDisplay.innerText = `Menghubungkan ke Server Pusat... (${timeLeft}s)`;
+        else if (timeLeft > 60) timerDisplay.innerText = `Memverifikasi NIK & Data Diri... (${timeLeft}s)`;
+        else if (timeLeft > 30) timerDisplay.innerText = `Menyusun Kunci Enkripsi Kartu... (${timeLeft}s)`;
+        else timerDisplay.innerText = `Finalisasi Pencetakan Digital... (${timeLeft}s)`;
+
         if (timeLeft <= 0) {
-            clearInterval(interval);
+            clearInterval(countdown);
             finalRevealProcess();
         }
     }, 1000);
-}
-
-// FUNGSI UTAMA UNTUK CEK DUPLIKAT 4 ANGKA TERAKHIR
-async function generateUniqueCardNumber() {
-    const prefix = "0810"; // 4 digit awal
-    let isUnique = false;
-    let fullCardNumber = "";
-
-    // Ambil data nasabah untuk cek semua nomor yang sudah ada
-    const snapshot = await get(child(ref(db), 'nasabah'));
-    const existingCards = snapshot.exists() ? Object.keys(snapshot.val()) : [];
-
-    while (!isUnique) {
-        // Generate 8 digit tengah
-        const middle = Math.floor(10000000 + Math.random() * 90000000).toString();
-        // Generate 4 digit terakhir
-        const last4 = Math.floor(1000 + Math.random() * 9000).toString();
-        
-        fullCardNumber = prefix + middle + last4;
-
-        // Cek apakah ada nomor kartu yang 4 angka belakangnya sama
-        const duplicate = existingCards.find(cardNum => cardNum.endsWith(last4));
-        
-        if (!duplicate) {
-            isUnique = true;
-        } else {
-            console.log("Nomor belakang " + last4 + " sama dengan kartu lain, mengacak ulang...");
-        }
-    }
-    return fullCardNumber;
 }
 
 async function finalRevealProcess() {
@@ -169,15 +190,14 @@ async function finalRevealProcess() {
     document.getElementById('finalReveal').style.display = 'block';
     document.querySelector('.card-scene').classList.add('final-glow');
 
-    // MENGGUNAKAN FUNGSI UNIQUE
-    const cardNoRaw = await generateUniqueCardNumber();
-    const cardNoFormatted = cardNoRaw.match(/.{1,4}/g).join(" ");
-    const cvvRandom = Math.floor(Math.random() * 899 + 100);
+    const { cardNo, cvv } = finalDataReady;
+    const cardFormatted = cardNo.match(/.{1,4}/g).join(" ");
     const selectedCountry = document.getElementById('countrySelect').value;
     
-    document.getElementById('displayNo').innerText = cardNoFormatted;
+    // Tampilkan ke kartu
+    document.getElementById('displayNo').innerText = cardFormatted;
     document.getElementById('displayName').innerText = inputNama.value;
-    document.querySelector('.cvv-code').innerText = cvvRandom;
+    document.querySelector('.cvv-code').innerText = cvv;
 
     const nasabahData = {
         activeVariant: "Platinum",
@@ -190,7 +210,7 @@ async function finalRevealProcess() {
         },
         name: inputNama.value.trim(),
         nik: inputNIK.value,
-        nomor_kartu: cardNoRaw, 
+        nomor_kartu: cardNo, 
         pekerjaan: document.getElementById('jobType').value,
         pendapatan: document.getElementById('income').value,
         pin: inputPW.value,
@@ -200,13 +220,15 @@ async function finalRevealProcess() {
     };
 
     try {
-        await set(ref(db, 'nasabah/' + cardNoRaw), nasabahData);
-        sessionStorage.setItem('userCard', cardNoRaw);
+        await set(ref(db, 'nasabah/' + cardNo), nasabahData);
+        sessionStorage.setItem('userCard', cardNo);
         sessionStorage.setItem('isAuth', 'true');
     } catch (e) { 
-        alert("Gagal sinkronisasi!");
+        alert("Koneksi terputus saat menyimpan data!");
+        window.location.reload();
     }
 
+    // Munculkan checklist detail satu per satu
     for(let i=1; i<=3; i++) {
         await new Promise(r => setTimeout(r, 600));
         document.getElementById(`rev${i}`).classList.add('show');
@@ -235,11 +257,27 @@ window.takeScreenshot = () => {
     const area = document.getElementById('captureArea');
     const btn = document.getElementById('btnDownload');
     btn.innerText = "MENGUNDUH...";
-    html2canvas(area, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
+    html2canvas(area, { 
+        scale: 3, 
+        useCORS: true, 
+        backgroundColor: null,
+        logging: false 
+    }).then(canvas => {
         const link = document.createElement('a');
         link.download = `BDN-CARD-${inputNama.value}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
         btn.innerText = "📸 SIMPAN GAMBAR KARTU";
     });
+};
+
+window.addEmergencyField = () => {
+    const container = document.getElementById('emergencyContainer');
+    const newItem = document.createElement('div');
+    newItem.className = 'emergency-item';
+    newItem.innerHTML = `
+        <div class="input-group"><label>Nama Keluarga</label><input type="text" class="em-name"></div>
+        <div class="input-group"><label>Nomor HP</label><input type="tel" class="em-phone"></div>
+    `;
+    container.appendChild(newItem);
 };
