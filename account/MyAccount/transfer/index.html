@@ -79,7 +79,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // KURS STATIS
         const RATE_USD_TO_IDR = 16970.10; 
 
         const targetInput = document.getElementById('targetCard');
@@ -87,15 +86,31 @@
         const btnProses = document.getElementById('btnProses');
         const previewBox = document.getElementById('currencyPreview');
         const convertedText = document.getElementById('convertedVal');
+        const labelNominal = document.getElementById('labelNominal');
 
         let dataPenerima = null;
         let dataPengirim = null;
 
-        // FORMATTER MATA UANG
         const formatIDR = (val) => "Rp " + Number(val).toLocaleString('id-ID');
         const formatUSD = (val) => "$ " + Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        // 1. CEK REKENING TUJUAN
+        // AMBIL DATA PENGIRIM SAAT HALAMAN DIBUKA
+        window.onload = async () => {
+            const myCard = sessionStorage.getItem('userCard');
+            const pSnap = await get(child(ref(db), `nasabah/${myCard}`));
+            if (pSnap.exists()) {
+                dataPengirim = pSnap.val();
+                // Adaptasi UI ke Pengirim
+                if (dataPengirim.country === 'US' || dataPengirim.country === 'ING') {
+                    labelNominal.innerText = "Nominal Transfer (USD)";
+                    amountInput.placeholder = "0.00";
+                } else {
+                    labelNominal.innerText = "Nominal Transfer (IDR)";
+                    amountInput.placeholder = "0";
+                }
+            }
+        };
+
         targetInput.oninput = async () => {
             if (targetInput.value.length >= 10) {
                 document.getElementById('loader').style.display = 'block';
@@ -109,34 +124,26 @@
                     document.getElementById('loader').style.display = 'none';
                     btnProses.disabled = false;
                     calculateExchange();
+                } else {
+                    document.getElementById('loader').innerText = "Rekening tidak ditemukan.";
+                    btnProses.disabled = true;
                 }
             }
         };
 
-        // 2. HITUNG KURS OTOMATIS
         amountInput.oninput = calculateExchange;
 
-        async function calculateExchange() {
-            if (!dataPenerima) return;
+        function calculateExchange() {
+            if (!dataPenerima || !dataPengirim) return;
             
-            // Ambil data pengirim sekali saja
-            if (!dataPengirim) {
-                const myCard = sessionStorage.getItem('userCard');
-                const pSnap = await get(child(ref(db), `nasabah/${myCard}`));
-                dataPengirim = pSnap.val();
-            }
-
             const amount = parseFloat(amountInput.value) || 0;
             const cFrom = dataPengirim.country || 'ID';
             const cTo = dataPenerima.country || 'ID';
 
-            // Logika Tampilan Preview
             if (cFrom === 'ID' && (cTo === 'US' || cTo === 'ING')) {
-                // Rupiah ke Dollar
                 previewBox.style.display = 'block';
                 convertedText.innerText = formatUSD(amount / RATE_USD_TO_IDR);
             } else if ((cFrom === 'US' || cFrom === 'ING') && cTo === 'ID') {
-                // Dollar ke Rupiah
                 previewBox.style.display = 'block';
                 convertedText.innerText = formatIDR(amount * RATE_USD_TO_IDR);
             } else {
@@ -144,48 +151,42 @@
             }
         }
 
-        // 3. PROSES TRANSFER
         btnProses.onclick = async () => {
             const amountSent = parseFloat(amountInput.value);
             const myCard = sessionStorage.getItem('userCard');
 
             try {
-                const mySnap = await get(child(ref(db), `nasabah/${myCard}`));
-                const myData = mySnap.val();
-                
-                const fromCountry = myData.country || 'ID';
+                const fromCountry = dataPengirim.country || 'ID';
                 const toCountry = dataPenerima.country || 'ID';
-                
                 let amountFinal = amountSent;
 
-                // Konversi nilai yang akan masuk ke database penerima
                 if (fromCountry === 'ID' && (toCountry === 'US' || toCountry === 'ING')) {
                     amountFinal = amountSent / RATE_USD_TO_IDR;
                 } else if ((fromCountry === 'US' || fromCountry === 'ING') && toCountry === 'ID') {
                     amountFinal = amountSent * RATE_USD_TO_IDR;
                 }
 
-                if (Number(myData.saldo) < amountSent) return alert("Saldo Anda tidak mencukupi untuk transaksi ini.");
+                if (Number(dataPengirim.saldo) < amountSent) return alert("Saldo Anda tidak mencukupi!");
 
-                const msg = `Konfirmasi Transfer:\n------------------\nDari: ${fromCountry}\nKe: ${toCountry}\nTotal Diterima: ${toCountry === 'ID' ? formatIDR(amountFinal) : formatUSD(amountFinal)}\n\nMasukkan PIN:`;
+                const msg = `Konfirmasi Transfer:\n------------------\nDari: ${fromCountry} (${fromCountry === 'ID' ? formatIDR(amountSent) : formatUSD(amountSent)})\nKe: ${toCountry}\nPenerima Mendapat: ${toCountry === 'ID' ? formatIDR(amountFinal) : formatUSD(amountFinal)}\n\nMasukkan PIN:`;
                 const pin = prompt(msg);
 
-                if (pin !== String(myData.pin)) return alert("PIN Keamanan Salah!");
+                if (pin !== String(dataPengirim.pin)) return alert("PIN Salah!");
 
-                btnProses.innerText = "Processing...";
+                btnProses.innerText = "Memproses...";
                 btnProses.disabled = true;
 
                 const updates = {};
-                updates[`nasabah/${myCard}/saldo`] = Number(myData.saldo) - amountSent;
+                updates[`nasabah/${myCard}/saldo`] = Number(dataPengirim.saldo) - amountSent;
                 updates[`nasabah/${targetInput.value}/saldo`] = Number(dataPenerima.saldo) + amountFinal;
 
                 await update(ref(db), updates);
 
-                alert("TRANSAKSI INTERNASIONAL BERHASIL!");
+                alert("BERHASIL! Saldo telah terkonversi otomatis.");
                 window.location.href = "../index.html";
 
             } catch (e) {
-                alert("Koneksi gagal.");
+                alert("Terjadi kesalahan sistem.");
                 btnProses.disabled = false;
             }
         };
