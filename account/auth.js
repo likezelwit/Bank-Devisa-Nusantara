@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+import { getDatabase, ref, get, child, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
@@ -10,7 +10,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// --- LOGIKA AUTO REDIRECT KE DASHBOARD ---
+// --- AUTO REDIRECT JIKA SUDAH LOGIN ---
 if (sessionStorage.getItem('isAuth') === 'true') {
     window.location.href = 'MyAccount/index.html';
 }
@@ -18,6 +18,7 @@ if (sessionStorage.getItem('isAuth') === 'true') {
 let currentPin = "";
 let userData = null;
 
+// STEP 1: VERIFIKASI KARTU & CVV
 document.getElementById('btnNext').onclick = async () => {
     const cardInput = document.getElementById('cardNo').value.replace(/\s/g, '');
     const cvvInput = document.getElementById('cvv').value.trim();
@@ -29,36 +30,29 @@ document.getElementById('btnNext').onclick = async () => {
 
     try {
         const snap = await get(child(ref(db), `nasabah/${cardInput}`));
-        
         if (snap.exists()) {
             let data = snap.val();
-            
-            // Pengecekan field CVV
             const dbCvv = data.cvv || data.CVV; 
 
-            if (dbCvv !== undefined && dbCvv !== null) {
-                if (String(dbCvv) === String(cvvInput)) {
-                    userData = data;
-                    document.getElementById('step1').classList.add('hidden');
-                    document.getElementById('step2').classList.remove('hidden');
-                } else {
-                    err1.innerText = "Kode CVV salah!";
-                }
+            if (dbCvv !== undefined && String(dbCvv) === String(cvvInput)) {
+                userData = data;
+                document.getElementById('step1').classList.add('hidden');
+                document.getElementById('step2').classList.remove('hidden');
             } else {
-                err1.innerText = "Field 'cvv' tidak ditemukan!";
+                err1.innerText = "Kode CVV salah!";
             }
         } else {
             err1.innerText = "Nomor kartu tidak terdaftar!";
         }
     } catch (e) { 
-        console.error("Error Detail:", e);
-        err1.innerText = "Terjadi kesalahan sistem."; 
+        err1.innerText = "Kesalahan koneksi!"; 
     } finally {
         btn.innerText = "Verifikasi Kartu";
         btn.disabled = false;
     }
 };
 
+// PIN LOGIC
 window.press = (num) => {
     if (currentPin.length < 6) {
         currentPin += num;
@@ -78,22 +72,29 @@ function updateDots() {
     });
 }
 
-document.getElementById('btnPin').onclick = () => {
+// STEP 2: VERIFIKASI PIN & AKTIVASI DATABASE
+document.getElementById('btnPin').onclick = async () => {
     if (!userData) return;
     
     const dbPin = userData.pin || userData.PIN;
+    const cardNo = document.getElementById('cardNo').value.replace(/\s/g, '');
     
-    if (dbPin !== undefined) {
-        if (currentPin === String(dbPin)) {
-            // SIMPAN SESI LOGIN
+    if (dbPin !== undefined && currentPin === String(dbPin)) {
+        try {
+            // SET STATUS DI DATABASE MENJADI ACTIVE
+            await update(ref(db, `nasabah/${cardNo}`), {
+                MyAccount: "active"
+            });
+
+            // SIMPAN SESI LOKAL
             sessionStorage.setItem('isAuth', 'true');
-            sessionStorage.setItem('userCard', document.getElementById('cardNo').value.replace(/\s/g, ''));
+            sessionStorage.setItem('userCard', cardNo);
             window.location.href = 'MyAccount/index.html';
-        } else {
-            document.getElementById('err2').innerText = "PIN salah!";
-            clr();
+        } catch (e) {
+            alert("Gagal sinkronisasi keamanan!");
         }
     } else {
-        alert("Data PIN tidak ditemukan!");
+        document.getElementById('err2').innerText = "PIN salah!";
+        clr();
     }
 };
