@@ -1,4 +1,5 @@
-# 🏦 Bank Devisa Nusantara - Web Simulation
+<img width="1360" height="768" alt="Screenshot (2)" src="https://github.com/user-attachments/assets/78606d6b-5fea-4671-9897-fb64796245e3" /># 🏦 Bank Devisa Nusantara - Web Simulation
+![Uploading Screenshot (2).png…]()
 
 [![Live Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://likezelwit.github.io/Bank-Devisa-Nusantara/)
 ![Status](https://img.shields.io/badge/Project-Educational-blue)
