@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan Akun | Bank Devisa Nusantara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #b8924e; --dark: #0f172a; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; }
+        
+        .settings-card { background: white; padding: 20px; border-radius: 25px; border: 1px solid #e2e8f0; }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #f1f5f9; }
+        .setting-item:last-child { border: none; }
+        
+        .info h4 { margin: 0; font-size: 0.95rem; color: var(--dark); }
+        .info p { margin: 5px 0 0; font-size: 0.75rem; color: #64748b; }
+
+        /* Switch Styling */
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #16a34a; }
+        input:checked + .slider:before { transform: translateX(24px); }
+        input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-qr { width: 100%; margin-top: 20px; padding: 15px; border-radius: 15px; border: 2px dashed var(--accent); background: #fefcf8; color: var(--accent); font-weight: 800; cursor: pointer; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header style="display: flex; align-items: center; margin-bottom: 25px;">
+        <a href="../index.html" style="text-decoration: none; font-size: 1.5rem; margin-right: 15px;">⬅️</a>
+        <h2 style="font-weight: 800; color: var(--dark); margin: 0;">Pengaturan</h2>
+    </header>
+
+    <div class="settings-card">
+        <div class="setting-item">
+            <div class="info">
+                <h4>Izinkan Pembayaran QR-Pay</h4>
+                <p>Aktifkan fitur terima pembayaran via QR</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="switchQR" onchange="toggleQR()">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <div class="info">
+                <h4>Akun Business</h4>
+                <p>Fitur khusus toko dan UMKM</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" disabled>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <div class="info" style="color: #ef4444;">
+                <h4>Bekukan Akun</h4>
+                <p>Nonaktifkan kartu sementara</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" disabled>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <button id="btnCreateQR" class="btn-qr" onclick="location.href='../Start-QrPay/index.html'">
+            ✨ Buat QR-Pay Sekarang
+        </button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getDatabase, ref, get, child, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
+        databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        projectId: "wifist-d3588"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const myCard = sessionStorage.getItem('userCard');
+
+    window.toggleQR = async () => {
+        const isChecked = document.getElementById('switchQR').checked;
+        const btn = document.getElementById('btnCreateQR');
+        
+        // Cek data di Firebase
+        const snap = await get(child(ref(db), `nasabah/${myCard}`));
+        const data = snap.val();
+
+        if(isChecked) {
+            // Jika dinyalakan, cek sudah punya CodeQR belum?
+            if(!data.CodeQR) {
+                btn.style.display = 'block';
+            }
+            // Simpan status aktif di database
+            await update(ref(db, `nasabah/${myCard}`), { qrActive: true });
+        } else {
+            btn.style.display = 'none';
+            await update(ref(db, `nasabah/${myCard}`), { qrActive: false });
+        }
+    };
+
+    // Load status awal
+    window.onload = async () => {
+        const snap = await get(child(ref(db), `nasabah/${myCard}`));
+        if(snap.val().qrActive) {
+            document.getElementById('switchQR').checked = true;
+            if(!snap.val().CodeQR) document.getElementById('btnCreateQR').style.display = 'block';
+        }
+    };
+</script>
+</body>
+</html>
