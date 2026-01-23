@@ -10,6 +10,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// --- LOGIKA AUTO REDIRECT KE DASHBOARD ---
+if (sessionStorage.getItem('isAuth') === 'true') {
+    window.location.href = 'MyAccount/index.html';
+}
+
 let currentPin = "";
 let userData = null;
 
@@ -28,17 +33,8 @@ document.getElementById('btnNext').onclick = async () => {
         if (snap.exists()) {
             let data = snap.val();
             
-            // DEBUG: Lihat di console (F12) isi data sebenarnya
-            console.log("Struktur data dari Firebase:", data);
-
-            // Jika datanya terbungkus ID unik (bertingkat), kita ambil level dalamnya
-            if (!data.cvv && typeof data === 'object') {
-                const firstKey = Object.keys(data)[0];
-                data = data[firstKey];
-            }
-
-            // Pengecekan ekstra aman
-            const dbCvv = data.cvv || data.CVV; // Cek kedua kemungkinan penulisan
+            // Pengecekan field CVV
+            const dbCvv = data.cvv || data.CVV; 
 
             if (dbCvv !== undefined && dbCvv !== null) {
                 if (String(dbCvv) === String(cvvInput)) {
@@ -49,7 +45,7 @@ document.getElementById('btnNext').onclick = async () => {
                     err1.innerText = "Kode CVV salah!";
                 }
             } else {
-                err1.innerText = "Field 'cvv' tidak ditemukan di database!";
+                err1.innerText = "Field 'cvv' tidak ditemukan!";
             }
         } else {
             err1.innerText = "Nomor kartu tidak terdaftar!";
@@ -63,7 +59,6 @@ document.getElementById('btnNext').onclick = async () => {
     }
 };
 
-// PIN LOGIC (window agar bisa diakses onclick HTML)
 window.press = (num) => {
     if (currentPin.length < 6) {
         currentPin += num;
@@ -90,6 +85,7 @@ document.getElementById('btnPin').onclick = () => {
     
     if (dbPin !== undefined) {
         if (currentPin === String(dbPin)) {
+            // SIMPAN SESI LOGIN
             sessionStorage.setItem('isAuth', 'true');
             sessionStorage.setItem('userCard', document.getElementById('cardNo').value.replace(/\s/g, ''));
             window.location.href = 'MyAccount/index.html';
@@ -98,6 +94,6 @@ document.getElementById('btnPin').onclick = () => {
             clr();
         }
     } else {
-        alert("Data PIN tidak ditemukan di database!");
+        alert("Data PIN tidak ditemukan!");
     }
 };
