@@ -3,21 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyAccount</title>
+    <title>MyAccount - BANK DEVISA</title>
     <link rel="stylesheet" href="../style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #b8924e; --dark: #0f172a; --light-bg: #f8fafc; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--light-bg); color: var(--dark); margin: 0; padding-bottom: 50px; }
-        
         .container { max-width: 600px; margin: auto; padding: 20px; }
-        
-        /* Section Titles */
         .section-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0 15px 5px; color: #64748b; }
-
-        /* Menu Grid */
         .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        
         .feature-card {
             background: white; padding: 15px 5px; border-radius: 18px; text-align: center;
             border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s ease;
@@ -26,25 +20,24 @@
         .feature-card:active { transform: scale(0.95); background: #f1f5f9; }
         .feature-card span { font-size: 1.8rem; margin-bottom: 8px; }
         .feature-card h3 { font-size: 0.65rem; margin: 0; font-weight: 700; color: var(--dark); }
-
-        /* Banner Promo */
         .promo-slider { background: var(--accent); border-radius: 20px; padding: 20px; margin-top: 25px; color: white; display: flex; align-items: center; justify-content: space-between; }
         .promo-text h4 { margin: 0; font-size: 1rem; }
         .promo-text p { margin: 5px 0 0; font-size: 0.7rem; opacity: 0.9; }
     </style>
 </head>
 <body>
-    
     <script>
-        if(sessionStorage.getItem('isAuth') !== 'true') window.location.href = '../index.html';
+        if(!sessionStorage.getItem('userCard')) window.location.href = '../index.html';
     </script>
 
     <div class="container">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <div class="logo">BANK<span>DEVISA</span></div>
+            <div class="logo" style="font-weight: 800;">BANK<span style="color: var(--accent);">DEVISA</span></div>
             <div style="display: flex; gap: 15px; align-items: center;">
                 <div style="position: relative;">🔔<span style="position: absolute; top: -5px; right: -5px; background: red; width: 8px; height: 8px; border-radius: 50%;"></span></div>
-                <button onclick="sessionStorage.clear(); window.location.href='../index.html';" style="padding: 6px 12px; border-radius: 10px; border: 1px solid #fee2e2; background: #fff1f1; cursor: pointer; font-weight: 700; color: #ef4444; font-size: 0.7rem;">Keluar</button>
+                <button id="btnLogout" style="padding: 6px 12px; border-radius: 10px; border: 1px solid #fee2e2; background: #fff1f1; cursor: pointer; font-weight: 700; color: #ef4444; font-size: 0.7rem;">
+                    Keluar
+                </button>
             </div>
         </header>
 
@@ -71,9 +64,9 @@
         <div class="section-title">Investasi & Pinjaman</div>
         <div class="menu-grid">
             <a href="invest/index.html" class="feature-card"><span>📈</span><h3>Reksa Dana</h3></a>
-            <a href="gold/index.html" class="feature-card"><span>✨</span><h3>Tabungan Emas</h3></a>
+            <a href="gold/index.html" class="feature-card"><span>✨</span><h3>Emas</h3></a>
             <a href="loan/index.html" class="feature-card"><span>💰</span><h3>Pinjaman</h3></a>
-            <a href="cc/index.html" class="feature-card"><span>💳</span><h3>Kartu Kredit</h3></a>
+            <a href="cc/index.html" class="feature-card"><span>💳</span><h3>K. Kredit</h3></a>
         </div>
 
         <div class="section-title">Layanan Lainnya</div>
@@ -87,7 +80,7 @@
         <div class="promo-slider">
             <div class="promo-text">
                 <h4>Rewards Platinum</h4>
-                <p>Tukar poin Anda dengan voucher belanja senilai Rp 500rb.</p>
+                <p>Tukar poin dengan voucher belanja Rp 500rb.</p>
             </div>
             <button style="background: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 800; font-size: 0.7rem; color: var(--dark);">Tukar</button>
         </div>
@@ -95,7 +88,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getDatabase, ref, get, child, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
@@ -105,17 +98,47 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        async function loadData() {
+        async function initDashboard() {
             const card = sessionStorage.getItem('userCard');
-            const snap = await get(child(ref(db), `nasabah/${card}`));
-            if(snap.exists()) {
-                const data = snap.val();
-                document.getElementById('namaNasabah').innerText = data.nama;
-                document.getElementById('saldoNasabah').innerText = "Rp " + data.saldo.toLocaleString('id-ID');
-                document.getElementById('nomorKartu').innerText = card.replace(/.{4}/g, '$& ');
+            
+            try {
+                const snap = await get(child(ref(db), `nasabah/${card}`));
+                
+                if(snap.exists()) {
+                    const data = snap.val();
+
+                    // --- CEK APAKAH MyAccount ACTIVE ---
+                    if (data.MyAccount !== "active") {
+                        // Jika nonactive atau penyusup nembak URL, tendang keluar
+                        sessionStorage.clear();
+                        window.location.href = '../index.html';
+                        return;
+                    }
+
+                    // Tampilkan Data
+                    document.getElementById('namaNasabah').innerText = data.name || data.nama;
+                    document.getElementById('saldoNasabah').innerText = "Rp " + (data.saldo || 0).toLocaleString('id-ID');
+                    document.getElementById('nomorKartu').innerText = card.replace(/.{4}/g, '$& ');
+                } else {
+                    window.location.href = '../index.html';
+                }
+            } catch (err) {
+                console.error("Auth Error");
+                window.location.href = '../index.html';
             }
         }
-        loadData();
+
+        // FUNGSI LOGOUT (Ubah database jadi nonactive)
+        document.getElementById('btnLogout').onclick = async () => {
+            const card = sessionStorage.getItem('userCard');
+            if (card) {
+                await update(ref(db, `nasabah/${card}`), { MyAccount: "nonactive" });
+            }
+            sessionStorage.clear();
+            window.location.href = '../index.html';
+        };
+
+        initDashboard();
     </script>
 </body>
 </html>
