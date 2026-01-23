@@ -8,36 +8,59 @@
     <style>
         :root { --accent: #b8924e; --dark: #0f172a; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark); margin: 0; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
-        .card { background: white; color: var(--dark); padding: 30px; border-radius: 30px; width: 85%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .hidden { display: none; }
-        .btn-gold { background: var(--accent); color: white; border: none; padding: 15px 30px; border-radius: 15px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 20px; }
-        input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-top: 10px; text-align: center; font-size: 1.2rem; letter-spacing: 5px; }
+        
+        .card { background: white; color: var(--dark); padding: 30px; border-radius: 30px; width: 85%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: fadeIn 0.5s ease; }
+        .hidden { display: none !important; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        /* Input Styling */
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; margin-top: 15px; text-align: center; font-family: monospace; font-size: 0.9rem; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--accent); }
+
+        .btn-gold { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 20px; font-size: 1rem; }
+        
+        /* Loader */
+        .loader-container { padding: 40px 0; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div id="viewInactive" class="card hidden">
-        <h1 style="font-size: 3rem;">🚫</h1>
-        <h3>Duh! Data Di Kartu Kamu Menunjukan Tidak Mendukung QR-Pay.</h3>
-        <p style="color: #64748b; font-size: 0.8rem;">Silakan aktifkan fitur ini di pengaturan akun.</p>
+        <h1 style="font-size: 4rem; margin: 0;">🚫</h1>
+        <h3 style="margin-top: 10px;">Layanan Belum Aktif</h3>
+        <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Data kartu Anda tidak mendukung QR-Pay. Silakan buat kunci enkripsi di menu Pengaturan.</p>
         <button class="btn-gold" onclick="location.href='../SetAccount/index.html'">AKTIFKAN SEKARANG</button>
     </div>
 
     <div id="viewVerify" class="card hidden">
-        <h3>Masukkan Kunci QR-Pay</h3>
-        <p style="color: #64748b; font-size: 0.8rem;">Kunci ini kamu dapatkan saat mendaftar QR-Pay.</p>
-        <input type="password" id="inputCode" placeholder="••••••">
-        <button class="btn-gold" onclick="verifyQR()">LIHAT QR SAYA</button>
+        <div style="font-size: 2rem; margin-bottom: 10px;">🔐</div>
+        <h3 style="margin: 0;">Verifikasi Kunci</h3>
+        <p style="color: #64748b; font-size: 0.8rem; margin-top: 5px;">Masukkan CodeQR (API Key) untuk membuka akses pembayaran.</p>
+        <input type="text" id="inputCode" placeholder="QR-XXXXXXXXXXXXXX" autocomplete="off">
+        <button class="btn-gold" onclick="verifyQR()">VERIFIKASI & GENERATE</button>
+    </div>
+
+    <div id="viewLoading" class="card hidden">
+        <div class="loader-container">
+            <div class="spinner"></div>
+            <p style="font-weight: 700; margin-top: 20px; color: #64748b;">Generating Secure QR...</p>
+            <p style="font-size: 0.7rem; color: #94a3b8;">Sistem sedang mengenkripsi data nasabah</p>
+        </div>
     </div>
 
     <div id="viewQR" class="card hidden">
-        <p style="font-weight: 800; font-size: 0.7rem; color: var(--accent); text-transform: uppercase;">My QR-Pay Code</p>
-        <div id="qrcode" style="margin: 20px auto; width: 200px; height: 200px; background: #eee;">
-            <img id="qrImg" src="" style="width: 100%;">
+        <p style="font-weight: 800; font-size: 0.65rem; color: var(--accent); text-transform: uppercase; letter-spacing: 2px;">My QR-Pay Code</p>
+        <div style="margin: 20px auto; padding: 15px; border: 2px solid #f1f5f9; border-radius: 20px; display: inline-block;">
+            <img id="qrImg" src="" style="width: 220px; height: 220px; display: block;">
         </div>
-        <h4 id="userName" style="margin: 10px 0 5px;">---</h4>
-        <p id="userCardDisplay" style="margin: 0; font-size: 0.8rem; color: #64748b;">0000 0000 0000</p>
-        <button class="btn-gold" style="background: var(--dark);" onclick="location.href='../index.html'">TUTUP</button>
+        <h4 id="userName" style="margin: 10px 0 5px; font-weight: 800;">---</h4>
+        <div style="background: #f8fafc; padding: 10px; border-radius: 10px; display: inline-block; width: 100%; box-sizing: border-box;">
+            <p id="userCardDisplay" style="margin: 0; font-size: 0.85rem; font-weight: 600; color: #64748b; letter-spacing: 1px;">0000 0000 0000</p>
+        </div>
+        <button class="btn-gold" style="background: var(--dark);" onclick="location.href='../index.html'">KEMBALI</button>
     </div>
 
 <script type="module">
@@ -53,41 +76,55 @@
     const db = getDatabase(app);
     const myCard = sessionStorage.getItem('userCard');
 
-    let dbCode = "";
+    let dbData = null;
+
+    // Fungsi ganti halaman (view)
+    function switchView(viewId) {
+        document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+        document.getElementById(viewId).classList.remove('hidden');
+    }
 
     window.onload = async () => {
         const snap = await get(child(ref(db), `nasabah/${myCard}`));
-        const data = snap.val();
+        dbData = snap.val();
 
-        if(!data.qrActive || !data.CodeQR) {
-            document.getElementById('viewInactive').classList.remove('hidden');
+        if(!dbData.qrActive || !dbData.CodeQR) {
+            switchView('viewInactive');
         } else {
-            dbCode = data.CodeQR;
-            // Jika sudah pernah verify di sesi ini, langsung tampilkan
+            // Jika sudah terverifikasi di session ini, langsung tampilkan
             if(sessionStorage.getItem('qrVerified') === 'true') {
-                showMyQR(data);
+                showMyQR();
             } else {
-                document.getElementById('viewVerify').classList.remove('hidden');
+                switchView('viewVerify');
             }
         }
     };
 
     window.verifyQR = () => {
-        const input = document.getElementById('inputCode').value;
-        if(input === dbCode) {
-            sessionStorage.setItem('qrVerified', 'true');
-            location.reload(); // Refresh untuk tampilkan QR
+        const input = document.getElementById('inputCode').value.trim();
+        
+        if(input === dbData.CodeQR) {
+            switchView('viewLoading');
+            
+            // Simulasi proses generate QR selama 2.5 detik
+            setTimeout(() => {
+                sessionStorage.setItem('qrVerified', 'true');
+                showMyQR();
+            }, 2500);
         } else {
-            alert("Kunci QR Salah!");
+            alert("Kunci QR-Pay Salah! Pastikan CodeQR sesuai dengan yang digenerate.");
         }
     };
 
-    function showMyQR(data) {
-        document.getElementById('viewQR').classList.remove('hidden');
-        document.getElementById('userName').innerText = data.nama;
+    function showMyQR() {
+        switchView('viewQR');
+        document.getElementById('userName').innerText = dbData.nama;
         document.getElementById('userCardDisplay').innerText = myCard;
-        // Gunakan API Google Chart untuk generate QR gratis
-        document.getElementById('qrImg').src = `https://chart.googleapis.com/chart?cht=qr&chl=${myCard}&chs=200x200&chld=L|0`;
+        
+        // Generate QR menggunakan data dari API Key (CodeQR)
+        //chl adalah isi data di dalam QR-nya
+        const qrData = dbData.CodeQR; 
+        document.getElementById('qrImg').src = `https://chart.googleapis.com/chart?cht=qr&chl=${qrData}&chs=250x250&chld=M|0`;
     }
 </script>
 </body>
