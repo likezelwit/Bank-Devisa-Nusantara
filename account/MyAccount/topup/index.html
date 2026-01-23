@@ -3,39 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Up | Bank Devisa Nusantara</title>
+    <title>Tambah Saldo | Bank Devisa Nusantara</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #b8924e; --dark: #0f172a; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; margin: 0; padding: 20px; overflow-x: hidden; }
         
-        /* Navigasi Page */
         .page { display: none; max-width: 500px; margin: auto; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .topup-card { background: white; padding: 25px; border-radius: 25px; border: 1px solid #e2e8f0; box-shadow: 0 10px 20px rgba(0,0,0,0.02); }
+        
+        /* Input Custom Amount */
         .input-group { margin-bottom: 20px; }
         .input-group label { display: block; font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
-        .input-group input, .input-group select { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 1rem; box-sizing: border-box; outline: none; }
-        
-        .denom-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .denom-item { padding: 15px; border: 1px solid #e2e8f0; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .denom-item.selected { border-color: var(--accent); background: #fefcf8; box-shadow: 0 0 0 2px var(--accent); }
+        .input-group input { width: 100%; padding: 18px; border-radius: 15px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 1.2rem; font-weight: 800; box-sizing: border-box; outline: none; transition: 0.3s; }
+        .input-group input:focus { border-color: var(--accent); background: #fefcf8; }
 
-        /* PIN Number Pad */
-        .pin-dots { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .denom-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+        .denom-item { padding: 15px; border: 1px solid #e2e8f0; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.2s; background: white; }
+        .denom-item.selected { border-color: var(--accent); background: #fefcf8; box-shadow: 0 0 0 2px var(--accent); }
+        .denom-item h4 { margin: 0; font-size: 1rem; color: var(--dark); font-weight: 800; }
+
+        /* PIN Pad */
+        .pin-dots { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; margin-top: 20px; }
         .dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #cbd5e1; }
         .dot.active { background: var(--dark); border-color: var(--dark); }
         .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .num-btn { padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; background: white; font-size: 1.2rem; font-weight: 800; cursor: pointer; }
-        .num-btn:active { background: #f1f5f9; }
-
-        /* Loading & Success */
+        
         .loader { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .btn-main { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--dark); color: white; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 20px; }
+        .btn-main { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--dark); color: white; font-weight: 800; font-size: 1rem; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -43,22 +44,30 @@
     <div id="pageInput" class="page active">
         <header style="display: flex; align-items: center; margin-bottom: 25px;">
             <a href="../index.html" style="text-decoration: none; font-size: 1.5rem; margin-right: 15px;">⬅️</a>
-            <h2 style="font-weight: 800; color: var(--dark);">Top Up</h2>
+            <h2 style="font-weight: 800; color: var(--dark);">Tambah Saldo</h2>
         </header>
 
         <div class="topup-card">
             <div class="input-group">
-                <label>Nomor Handphone</label>
-                <input type="number" id="phoneNo" placeholder="08xxxxxxxxxx">
+                <label>Jumlah Nominal (IDR)</label>
+                <input type="text" id="customAmount" placeholder="0" autocomplete="off">
             </div>
-            <label style="font-size: 0.75rem; font-weight: 800; color: #64748b;">PILIH NOMINAL</label>
-            <div class="denom-grid" id="denomContainer"></div>
+
+            <label style="font-size: 0.75rem; font-weight: 800; color: #64748b; display: block; margin-bottom: 10px;">CEPAT PILIH</label>
+            <div class="denom-grid">
+                <div class="denom-item" onclick="setAmount(50000)"><h4>50.000</h4></div>
+                <div class="denom-item" onclick="setAmount(100000)"><h4>100.000</h4></div>
+                <div class="denom-item" onclick="setAmount(500000)"><h4>500.000</h4></div>
+                <div class="denom-item" onclick="setAmount(1000000)"><h4>1.000.000</h4></div>
+            </div>
+
             <button onclick="goToPin()" class="btn-main">Lanjutkan</button>
         </div>
     </div>
 
     <div id="pagePin" class="page">
-        <h2 style="text-align: center; font-weight: 800;">Masukkan PIN</h2>
+        <h2 style="text-align: center; font-weight: 800;">Konfirmasi PIN</h2>
+        <p style="text-align: center; color: #64748b; font-size: 0.9rem;">Keamanan Transaksi</p>
         <div class="pin-dots" id="pinDots">
             <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
         </div>
@@ -72,7 +81,7 @@
             <button class="num-btn" onclick="pressNum(7)">7</button>
             <button class="num-btn" onclick="pressNum(8)">8</button>
             <button class="num-btn" onclick="pressNum(9)">9</button>
-            <button class="num-btn" style="background:#fee2e2" onclick="clearPin()">C</button>
+            <button class="num-btn" style="color:#ef4444" onclick="clearPin()">C</button>
             <button class="num-btn" onclick="pressNum(0)">0</button>
             <button class="num-btn" onclick="backspace()">⌫</button>
         </div>
@@ -80,20 +89,29 @@
 
     <div id="pageLoading" class="page" style="text-align: center; margin-top: 100px;">
         <div class="loader"></div>
-        <p style="font-weight: 700; margin-top: 20px; color: #64748b;">Memproses Transaksi...</p>
+        <p style="font-weight: 700; margin-top: 20px; color: #64748b;">Menambahkan Saldo...</p>
     </div>
 
     <div id="pageSuccess" class="page">
         <div class="topup-card" style="text-align: center;">
-            <div style="font-size: 3rem; color: #22c55e;">✅</div>
-            <h2 style="margin: 10px 0;">Berhasil!</h2>
-            <hr style="border: 1px dashed #e2e8f0; margin: 20px 0;">
-            <div style="text-align: left; font-size: 0.9rem; line-height: 2;">
-                <div style="display:flex; justify-content: space-between;"><span>Nomor</span><b id="resPhone"></b></div>
-                <div style="display:flex; justify-content: space-between;"><span>Total Bayar</span><b id="resPrice"></b></div>
-                <div style="display:flex; justify-content: space-between;"><span>Status</span><b style="color: #22c55e;">SUKSES</b></div>
+            <div style="background: #f0fdf4; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <span style="font-size: 2.5rem;">✅</span>
             </div>
-            <button onclick="location.href='../index.html'" class="btn-main">Selesai</button>
+            <h2 style="margin: 0; color: var(--dark);">Top Up Sukses</h2>
+            <p style="color: #64748b; font-size: 0.8rem; margin-top: 5px;">Saldo telah ditambahkan ke rekening Anda</p>
+            
+            <div style="background: #f8fafc; padding: 20px; border-radius: 15px; margin-top: 25px; text-align: left;">
+                <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #64748b;">Nominal</span>
+                    <b id="resPrice" style="color: #16a34a;">+ Rp 0</b>
+                </div>
+                <div style="display:flex; justify-content: space-between;">
+                    <span style="color: #64748b;">Metode</span>
+                    <b style="color: var(--dark);">Self Top-Up</b>
+                </div>
+            </div>
+            
+            <button onclick="location.href='../index.html'" class="btn-main" style="margin-top: 30px;">Kembali ke Beranda</button>
         </div>
     </div>
 
@@ -109,50 +127,44 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        let selectedPrice = 0;
+        let rawNominal = 0;
         let pinInput = "";
         let userData = null;
 
-        const pulsaDenoms = [
-            {label: "10.000", price: 11500},
-            {label: "25.000", price: 26500},
-            {label: "50.000", price: 51500},
-            {label: "100.000", price: 101500}
-        ];
-
-        // Load data nasabah
-        window.onload = async () => {
+        // Load data nasabah login
+        const loadAccount = async () => {
             const myCard = sessionStorage.getItem('userCard');
             const snap = await get(child(ref(db), `nasabah/${myCard}`));
             if (snap.exists()) userData = snap.val();
-            renderDenoms();
+        };
+        loadAccount();
+
+        // Input formatter (Titik otomatis)
+        const amountInput = document.getElementById('customAmount');
+        amountInput.oninput = (e) => {
+            let val = e.target.value.replace(/[^0-9]/g, '');
+            rawNominal = val ? parseInt(val) : 0;
+            e.target.value = rawNominal ? rawNominal.toLocaleString('id-ID') : "";
+            // Reset selection style if typing manually
+            document.querySelectorAll('.denom-item').forEach(d => d.classList.remove('selected'));
         };
 
-        function renderDenoms() {
-            const container = document.getElementById('denomContainer');
-            pulsaDenoms.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'denom-item';
-                div.innerHTML = `<h4>Rp ${item.label}</h4><p>Harga: Rp ${item.price.toLocaleString('id-ID')}</p>`;
-                div.onclick = () => {
-                    document.querySelectorAll('.denom-item').forEach(d => d.classList.remove('selected'));
-                    div.classList.add('selected');
-                    selectedPrice = item.price;
-                };
-                container.appendChild(div);
+        window.setAmount = (amt) => {
+            rawNominal = amt;
+            amountInput.value = amt.toLocaleString('id-ID');
+            document.querySelectorAll('.denom-item').forEach(d => {
+                d.classList.remove('selected');
+                if(d.innerText.includes(amt.toLocaleString('id-ID'))) d.classList.add('selected');
             });
-        }
+        };
 
-        // SPA Navigation
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
         window.goToPin = () => {
-            const phone = document.getElementById('phoneNo').value;
-            if (!phone || selectedPrice === 0) return alert("Lengkapi data!");
-            if (Number(userData.saldo) < selectedPrice) return alert("Saldo tidak cukup!");
+            if (rawNominal <= 0) return alert("Masukkan nominal!");
             showPage('pagePin');
         };
 
@@ -171,18 +183,13 @@
         function updatePinDots() {
             const dots = document.querySelectorAll('.dot');
             dots.forEach((dot, i) => {
-                if (i < pinInput.length) dot.classList.add('active');
-                else dot.classList.remove('active');
+                i < pinInput.length ? dot.classList.add('active') : dot.classList.remove('active');
             });
         }
 
-        async function verifyPin() {
-            if (pinInput === String(userData.pin)) {
-                processTransaction();
-            } else {
-                alert("PIN SALAH!");
-                clearPin();
-            }
+        function verifyPin() {
+            if (pinInput === String(userData.pin)) processTransaction();
+            else { alert("PIN SALAH!"); clearPin(); }
         }
 
         async function processTransaction() {
@@ -190,17 +197,20 @@
             const myCard = sessionStorage.getItem('userCard');
             
             try {
-                const newSaldo = Number(userData.saldo) - selectedPrice;
+                // Ambil saldo terbaru supaya akurat
+                const snap = await get(child(ref(db), `nasabah/${myCard}`));
+                const currentSaldo = Number(snap.val().saldo);
+                
+                // Tambahkan saldo (Matematika Bersih)
+                const newSaldo = currentSaldo + Number(rawNominal);
+                
                 await update(ref(db, `nasabah/${myCard}`), { saldo: newSaldo });
                 
-                // Set Data Struk
-                document.getElementById('resPhone').innerText = document.getElementById('phoneNo').value;
-                document.getElementById('resPrice').innerText = "Rp " + selectedPrice.toLocaleString('id-ID');
+                document.getElementById('resPrice').innerText = "+ Rp " + rawNominal.toLocaleString('id-ID');
                 
-                // Simulasi loading biar keren
                 setTimeout(() => showPage('pageSuccess'), 2000);
             } catch (e) {
-                alert("Gagal koneksi");
+                alert("Gagal memperbarui saldo.");
                 showPage('pageInput');
             }
         }
