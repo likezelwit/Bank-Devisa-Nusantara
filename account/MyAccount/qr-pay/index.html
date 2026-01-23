@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR-Pay | Bank Devisa Nusantara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #b8924e; --dark: #0f172a; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark); margin: 0; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .card { background: white; color: var(--dark); padding: 30px; border-radius: 30px; width: 85%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .hidden { display: none; }
+        .btn-gold { background: var(--accent); color: white; border: none; padding: 15px 30px; border-radius: 15px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 20px; }
+        input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-top: 10px; text-align: center; font-size: 1.2rem; letter-spacing: 5px; }
+    </style>
+</head>
+<body>
+
+    <div id="viewInactive" class="card hidden">
+        <h1 style="font-size: 3rem;">🚫</h1>
+        <h3>Duh! Data Di Kartu Kamu Menunjukan Tidak Mendukung QR-Pay.</h3>
+        <p style="color: #64748b; font-size: 0.8rem;">Silakan aktifkan fitur ini di pengaturan akun.</p>
+        <button class="btn-gold" onclick="location.href='../SetAccount/index.html'">AKTIFKAN SEKARANG</button>
+    </div>
+
+    <div id="viewVerify" class="card hidden">
+        <h3>Masukkan Kunci QR-Pay</h3>
+        <p style="color: #64748b; font-size: 0.8rem;">Kunci ini kamu dapatkan saat mendaftar QR-Pay.</p>
+        <input type="password" id="inputCode" placeholder="••••••">
+        <button class="btn-gold" onclick="verifyQR()">LIHAT QR SAYA</button>
+    </div>
+
+    <div id="viewQR" class="card hidden">
+        <p style="font-weight: 800; font-size: 0.7rem; color: var(--accent); text-transform: uppercase;">My QR-Pay Code</p>
+        <div id="qrcode" style="margin: 20px auto; width: 200px; height: 200px; background: #eee;">
+            <img id="qrImg" src="" style="width: 100%;">
+        </div>
+        <h4 id="userName" style="margin: 10px 0 5px;">---</h4>
+        <p id="userCardDisplay" style="margin: 0; font-size: 0.8rem; color: #64748b;">0000 0000 0000</p>
+        <button class="btn-gold" style="background: var(--dark);" onclick="location.href='../index.html'">TUTUP</button>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
+        databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        projectId: "wifist-d3588"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const myCard = sessionStorage.getItem('userCard');
+
+    let dbCode = "";
+
+    window.onload = async () => {
+        const snap = await get(child(ref(db), `nasabah/${myCard}`));
+        const data = snap.val();
+
+        if(!data.qrActive || !data.CodeQR) {
+            document.getElementById('viewInactive').classList.remove('hidden');
+        } else {
+            dbCode = data.CodeQR;
+            // Jika sudah pernah verify di sesi ini, langsung tampilkan
+            if(sessionStorage.getItem('qrVerified') === 'true') {
+                showMyQR(data);
+            } else {
+                document.getElementById('viewVerify').classList.remove('hidden');
+            }
+        }
+    };
+
+    window.verifyQR = () => {
+        const input = document.getElementById('inputCode').value;
+        if(input === dbCode) {
+            sessionStorage.setItem('qrVerified', 'true');
+            location.reload(); // Refresh untuk tampilkan QR
+        } else {
+            alert("Kunci QR Salah!");
+        }
+    };
+
+    function showMyQR(data) {
+        document.getElementById('viewQR').classList.remove('hidden');
+        document.getElementById('userName').innerText = data.nama;
+        document.getElementById('userCardDisplay').innerText = myCard;
+        // Gunakan API Google Chart untuk generate QR gratis
+        document.getElementById('qrImg').src = `https://chart.googleapis.com/chart?cht=qr&chl=${myCard}&chs=200x200&chld=L|0`;
+    }
+</script>
+</body>
+</html>
