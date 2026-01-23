@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR-Pay | Bank Devisa Nusantara</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root { --accent: #b8924e; --dark: #0f172a; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark); margin: 0; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; overflow: hidden; }
@@ -14,21 +15,20 @@
         
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-        /* Input Styling */
         input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; margin-top: 15px; text-align: center; font-family: monospace; font-size: 0.9rem; box-sizing: border-box; outline: none; transition: 0.3s; }
         input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(184, 146, 78, 0.2); }
 
         .btn-gold { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 20px; font-size: 1rem; transition: 0.2s; }
         .btn-gold:active { transform: scale(0.98); opacity: 0.9; }
         
-        /* Loader */
         .loader-container { padding: 40px 0; }
         .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* QR Frame */
         .qr-frame { margin: 20px auto; padding: 15px; border: 2px solid #f1f5f9; border-radius: 20px; display: inline-block; background: white; }
-        #qrImg { width: 220px; height: 220px; display: block; background: #fafafa; }
+        #qrcode { width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; }
+        #qrcode img { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
@@ -36,30 +36,29 @@
     <div id="viewInactive" class="card hidden">
         <h1 style="font-size: 4rem; margin: 0;">🚫</h1>
         <h3 style="margin-top: 10px;">Layanan Belum Aktif</h3>
-        <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Data kartu Anda tidak mendukung QR-Pay. Silakan buat kunci enkripsi di menu Pengaturan.</p>
+        <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Data kartu Anda tidak mendukung QR-Pay. Silakan aktifkan di menu Pengaturan.</p>
         <button class="btn-gold" onclick="location.href='../SetAccount/index.html'">AKTIFKAN SEKARANG</button>
     </div>
 
     <div id="viewVerify" class="card hidden">
         <div style="font-size: 2.5rem; margin-bottom: 10px;">🔐</div>
         <h3 style="margin: 0;">Verifikasi Kunci</h3>
-        <p style="color: #64748b; font-size: 0.8rem; margin-top: 5px;">Masukkan CodeQR (API Key) untuk membuka akses pembayaran.</p>
-        <input type="text" id="inputCode" placeholder="QR-XXXXXXXXXXXXXX" autocomplete="off">
-        <button class="btn-gold" onclick="verifyQR()">VERIFIKASI & GENERATE</button>
+        <p style="color: #64748b; font-size: 0.8rem; margin-top: 5px;">Masukkan CodeQR (API Key) untuk melihat kode pembayaran.</p>
+        <input type="password" id="inputCode" placeholder="••••••••••••" autocomplete="off">
+        <button class="btn-gold" onclick="verifyQR()">VERIFIKASI & TAMPILKAN</button>
     </div>
 
     <div id="viewLoading" class="card hidden">
         <div class="loader-container">
             <div class="spinner"></div>
             <p style="font-weight: 700; margin-top: 20px; color: #64748b;">Generating Secure QR...</p>
-            <p style="font-size: 0.7rem; color: #94a3b8;">Sistem sedang mengenkripsi data nasabah</p>
         </div>
     </div>
 
     <div id="viewQR" class="card hidden">
         <p style="font-weight: 800; font-size: 0.65rem; color: var(--accent); text-transform: uppercase; letter-spacing: 2px;">My QR-Pay Code</p>
         <div class="qr-frame">
-            <img id="qrImg" src="" alt="QR Code">
+            <div id="qrcode"></div>
         </div>
         <h4 id="userName" style="margin: 10px 0 5px; font-weight: 800; text-transform: uppercase;">---</h4>
         <div style="background: #f8fafc; padding: 12px; border-radius: 12px; display: inline-block; width: 100%; box-sizing: border-box;">
@@ -90,7 +89,6 @@
 
     window.onload = async () => {
         if (!myCard) {
-            alert("Sesi berakhir, silakan login kembali.");
             window.location.href = "/";
             return;
         }
@@ -101,7 +99,6 @@
         if(!dbData || !dbData.qrActive || !dbData.CodeQR) {
             switchView('viewInactive');
         } else {
-            // Cek jika sudah verifikasi di sesi ini
             if(sessionStorage.getItem('qrVerified') === 'true') {
                 showMyQR();
             } else {
@@ -112,17 +109,14 @@
 
     window.verifyQR = () => {
         const input = document.getElementById('inputCode').value.trim();
-        
         if(input === dbData.CodeQR) {
             switchView('viewLoading');
-            
-            // Simulasi proses enkripsi data
             setTimeout(() => {
                 sessionStorage.setItem('qrVerified', 'true');
                 showMyQR();
-            }, 2500);
+            }, 2000);
         } else {
-            alert("Kunci QR-Pay Salah! Gunakan CodeQR yang terdaftar di sistem.");
+            alert("Kunci QR-Pay Salah!");
         }
     };
 
@@ -131,18 +125,19 @@
         document.getElementById('userName').innerText = dbData.nama;
         document.getElementById('userCardDisplay').innerText = myCard;
         
-        const qrImg = document.getElementById('qrImg');
-        const qrData = dbData.CodeQR; 
+        // Bersihkan container sebelum menggambar ulang
+        const qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = "";
 
-        // Perbaikan URL: Menggunakan encodeURIComponent dan Margin (chld=M|2)
-        const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(qrData)}&choe=UTF-8&chld=M|2`;
-        
-        qrImg.src = qrUrl;
-
-        // Penanganan jika gambar gagal dimuat
-        qrImg.onerror = function() {
-            this.src = qrUrl + "&retry=" + new Date().getTime();
-        };
+        // Menggunakan library lokal (Tanpa URL luar, Jadi tidak akan kena CORB)
+        new QRCode(qrContainer, {
+            text: dbData.CodeQR,
+            width: 220,
+            height: 220,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
     }
 </script>
 </body>
