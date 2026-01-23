@@ -10,8 +10,15 @@
         :root { --accent: #b8924e; --dark: #0f172a; --light-bg: #f8fafc; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--light-bg); color: var(--dark); margin: 0; padding-bottom: 50px; }
         .container { max-width: 600px; margin: auto; padding: 20px; }
+        
+        /* SPA Transition */
+        .spa-page { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .spa-page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .section-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0 15px 5px; color: #64748b; }
         .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        
         .feature-card {
             background: white; padding: 15px 5px; border-radius: 18px; text-align: center;
             border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s ease;
@@ -20,9 +27,18 @@
         .feature-card:active { transform: scale(0.95); background: #f1f5f9; }
         .feature-card span { font-size: 1.8rem; margin-bottom: 8px; }
         .feature-card h3 { font-size: 0.65rem; margin: 0; font-weight: 700; color: var(--dark); }
+
+        /* Header Style */
+        .cam-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; padding: 0; position: relative; top: 2px; }
+
         .promo-slider { background: var(--accent); border-radius: 20px; padding: 20px; margin-top: 25px; color: white; display: flex; align-items: center; justify-content: space-between; }
         .promo-text h4 { margin: 0; font-size: 1rem; }
         .promo-text p { margin: 5px 0 0; font-size: 0.7rem; opacity: 0.9; }
+
+        /* Detail Page Style (SPA) */
+        .detail-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .back-btn { background: white; border: 1px solid #e2e8f0; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-weight: 800; }
+        .info-card { background: white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -32,58 +48,111 @@
 
     <div class="container">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <div class="logo" style="font-weight: 800;">BANK<span style="color: var(--accent);">DEVISA</span></div>
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <div style="position: relative;">🔔<span style="position: absolute; top: -5px; right: -5px; background: red; width: 8px; height: 8px; border-radius: 50%;"></span></div>
+            <div class="logo" style="font-weight: 800; cursor:pointer" onclick="openSPA('main-dashboard')">BANK<span style="color: var(--accent);">DEVISA</span></div>
+            <div style="display: flex; gap: 18px; align-items: center;">
+                <button class="cam-btn" onclick="location.href='QRscan/index.html'">📸</button>
+                <div style="position: relative; cursor:pointer">🔔<span style="position: absolute; top: -5px; right: -5px; background: red; width: 8px; height: 8px; border-radius: 50%;"></span></div>
                 <button id="btnLogout" style="padding: 6px 12px; border-radius: 10px; border: 1px solid #fee2e2; background: #fff1f1; cursor: pointer; font-weight: 700; color: #ef4444; font-size: 0.7rem;">
                     Keluar
                 </button>
             </div>
         </header>
 
-        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 25px; border-radius: 25px; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(15,23,42,0.2);">
-            <p style="opacity: 0.6; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;">Tabungan Utama</p>
-            <h2 id="saldoNasabah" style="font-size: 2.2rem; color: var(--accent); margin: 8px 0; font-weight: 800;">Rp 0</h2>
-            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-end;">
-                <div>
-                    <p style="font-size: 0.8rem; font-weight: 600; margin: 0;" id="namaNasabah">Memuat...</p>
-                    <p style="font-size: 0.7rem; opacity: 0.5; margin: 0;" id="nomorKartu">**** **** **** ****</p>
+        <div id="main-dashboard" class="spa-page active">
+            <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 25px; border-radius: 25px; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(15,23,42,0.2);">
+                <p style="opacity: 0.6; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;">Tabungan Utama</p>
+                <h2 id="saldoNasabah" style="font-size: 2.2rem; color: var(--accent); margin: 8px 0; font-weight: 800;">Rp 0</h2>
+                <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <p style="font-size: 0.8rem; font-weight: 600; margin: 0;" id="namaNasabah">Memuat...</p>
+                        <p style="font-size: 0.7rem; opacity: 0.5; margin: 0;" id="nomorKartu">**** **** **** ****</p>
+                    </div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" width="40" alt="Mastercard">
                 </div>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" width="40" alt="Mastercard">
+            </div>
+
+            <div class="section-title">Layanan Utama</div>
+            <div class="menu-grid">
+                <a href="transfer/index.html" class="feature-card"><span>💸</span><h3>Transfer</h3></a>
+                <a href="topup/index.html" class="feature-card"><span>📱</span><h3>Top Up</h3></a>
+                <a href="payment/index.html" class="feature-card"><span>🧾</span><h3>Tagihan</h3></a>
+                <a href="qr-pay/index.html" class="feature-card"><span>🤳</span><h3>QRIS</h3></a>
+            </div>
+
+            <div class="section-title">Investasi & Pinjaman</div>
+            <div class="menu-grid">
+                <div onclick="openSPA('page-invest')" class="feature-card"><span>📈</span><h3>Reksa Dana</h3></div>
+                <div onclick="openSPA('page-invest')" class="feature-card"><span>✨</span><h3>Emas</h3></div>
+                <div onclick="openSPA('page-loan')" class="feature-card"><span>💰</span><h3>Pinjaman</h3></div>
+                <div onclick="openSPA('page-loan')" class="feature-card"><span>💳</span><h3>K. Kredit</h3></div>
+            </div>
+
+            <div class="section-title">Layanan Lainnya</div>
+            <div class="menu-grid">
+                <a href="history/index.html" class="feature-card"><span>📋</span><h3>Mutasi</h3></a>
+                <div onclick="openSPA('page-others')" class="feature-card"><span>🚀</span><h3>Upgrade</h3></div>
+                <div onclick="openSPA('page-others')" class="feature-card"><span>🛡️</span><h3>Asuransi</h3></div>
+                <a href="help/index.html" class="feature-card"><span>📞</span><h3>Bantuan</h3></a>
+            </div>
+
+            <div class="promo-slider">
+                <div class="promo-text">
+                    <h4>Rewards Platinum</h4>
+                    <p>Tukar poin dengan voucher belanja Rp 500rb.</p>
+                </div>
+                <button style="background: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 800; font-size: 0.7rem; color: var(--dark);">Tukar</button>
             </div>
         </div>
 
-        <div class="section-title">Layanan Utama</div>
-        <div class="menu-grid">
-            <a href="transfer/index.html" class="feature-card"><span>💸</span><h3>Transfer</h3></a>
-            <a href="topup/index.html" class="feature-card"><span>📱</span><h3>Top Up</h3></a>
-            <a href="payment/index.html" class="feature-card"><span>🧾</span><h3>Tagihan</h3></a>
-            <a href="qr-pay/index.html" class="feature-card"><span>🤳</span><h3>QRIS</h3></a>
-        </div>
-
-        <div class="section-title">Investasi & Pinjaman</div>
-        <div class="menu-grid">
-            <a href="invest/index.html" class="feature-card"><span>📈</span><h3>Reksa Dana</h3></a>
-            <a href="gold/index.html" class="feature-card"><span>✨</span><h3>Emas</h3></a>
-            <a href="loan/index.html" class="feature-card"><span>💰</span><h3>Pinjaman</h3></a>
-            <a href="cc/index.html" class="feature-card"><span>💳</span><h3>K. Kredit</h3></a>
-        </div>
-
-        <div class="section-title">Layanan Lainnya</div>
-        <div class="menu-grid">
-            <a href="history/index.html" class="feature-card"><span>📋</span><h3>Mutasi</h3></a>
-            <a href="upgrade/index.html" class="feature-card"><span>🚀</span><h3>Upgrade</h3></a>
-            <a href="insurance/index.html" class="feature-card"><span>🛡️</span><h3>Asuransi</h3></a>
-            <a href="help/index.html" class="feature-card"><span>📞</span><h3>Bantuan</h3></a>
-        </div>
-
-        <div class="promo-slider">
-            <div class="promo-text">
-                <h4>Rewards Platinum</h4>
-                <p>Tukar poin dengan voucher belanja Rp 500rb.</p>
+        <div id="page-invest" class="spa-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="openSPA('main-dashboard')">←</button>
+                <h2 style="font-size: 1.1rem; margin: 0;">Investasi Terpadu</h2>
             </div>
-            <button style="background: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 800; font-size: 0.7rem; color: var(--dark);">Tukar</button>
+            <div class="info-card">
+                <p style="font-size: 0.7rem; color: #64748b; font-weight: 800;">TOTAL NILAI INVESTASI</p>
+                <h3 style="font-size: 1.5rem; margin: 5px 0;">Rp 12.500.000</h3>
+                <p style="font-size: 0.7rem; color: #10b981;">+2.4% Bulan ini 💹</p>
+            </div>
+            <div class="menu-grid">
+                <div class="feature-card"><span>📈</span><h3>Pasar Uang</h3></div>
+                <div class="feature-card"><span>✨</span><h3>Tabungan Emas</h3></div>
+                <div class="feature-card"><span>🏢</span><h3>Obligasi</h3></div>
+                <div class="feature-card"><span>📊</span><h3>Saham</h3></div>
+            </div>
         </div>
+
+        <div id="page-loan" class="spa-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="openSPA('main-dashboard')">←</button>
+                <h2 style="font-size: 1.1rem; margin: 0;">Pinjaman & Kredit</h2>
+            </div>
+            <div class="info-card">
+                <p style="font-size: 0.7rem; color: #64748b; font-weight: 800;">LIMIT TERSEDIA</p>
+                <h3 style="font-size: 1.5rem; margin: 5px 0; color: var(--accent);">Rp 50.000.000</h3>
+                <p style="font-size: 0.7rem;">Suku bunga rendah mulai 0.9%</p>
+            </div>
+            <div class="menu-grid">
+                <div class="feature-card"><span>💰</span><h3>Tunai</h3></div>
+                <div class="feature-card"><span>💳</span><h3>CC Platinum</h3></div>
+                <div class="feature-card"><span>🏠</span><h3>KPR</h3></div>
+                <div class="feature-card"><span>🚗</span><h3>Otomotif</h3></div>
+            </div>
+        </div>
+
+        <div id="page-others" class="spa-page">
+            <div class="detail-header">
+                <button class="back-btn" onclick="openSPA('main-dashboard')">←</button>
+                <h2 style="font-size: 1.1rem; margin: 0;">Layanan Tambahan</h2>
+            </div>
+            <div class="menu-grid">
+                <div class="feature-card"><span>🚀</span><h3>Limit Up</h3></div>
+                <div class="feature-card"><span>🛡️</span><h3>Proteksi</h3></div>
+                <div class="feature-card"><span>🎁</span><h3>Promo</h3></div>
+                <div class="feature-card"><span>🏢</span><h3>Bisnis</h3></div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -98,6 +167,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // FUNGSI NAVIGASI SPA
+        window.openSPA = (pageId) => {
+            document.querySelectorAll('.spa-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
         async function initDashboard() {
             const card = sessionStorage.getItem('userCard');
             
@@ -106,16 +184,12 @@
                 
                 if(snap.exists()) {
                     const data = snap.val();
-
-                    // --- CEK APAKAH MyAccount ACTIVE ---
                     if (data.MyAccount !== "active") {
-                        // Jika nonactive atau penyusup nembak URL, tendang keluar
                         sessionStorage.clear();
                         window.location.href = '../index.html';
                         return;
                     }
 
-                    // Tampilkan Data
                     document.getElementById('namaNasabah').innerText = data.name || data.nama;
                     document.getElementById('saldoNasabah').innerText = "Rp " + (data.saldo || 0).toLocaleString('id-ID');
                     document.getElementById('nomorKartu').innerText = card.replace(/.{4}/g, '$& ');
@@ -123,12 +197,10 @@
                     window.location.href = '../index.html';
                 }
             } catch (err) {
-                console.error("Auth Error");
                 window.location.href = '../index.html';
             }
         }
 
-        // FUNGSI LOGOUT (Ubah database jadi nonactive)
         document.getElementById('btnLogout').onclick = async () => {
             const card = sessionStorage.getItem('userCard');
             if (card) {
