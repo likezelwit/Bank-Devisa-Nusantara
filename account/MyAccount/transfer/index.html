@@ -30,10 +30,6 @@
 </head>
 <body>
 
-    <script>
-        if(sessionStorage.getItem('isAuth') !== 'true') window.location.href = '../../index.html';
-    </script>
-
     <div style="max-width: 500px; margin: auto;">
         <header style="display: flex; align-items: center; margin-bottom: 25px;">
             <a href="../index.html" style="text-decoration: none; font-size: 1.5rem; margin-right: 15px;">⬅️</a>
@@ -46,11 +42,10 @@
                 <div class="input-wrapper" style="padding:0;">
                     <input type="number" id="targetCard" placeholder="Masukkan nomor kartu" style="padding-left:15px;">
                 </div>
-                <div id="loader" style="display:none; font-size:0.7rem; color:var(--accent); margin-top:5px;">Mengecek...</div>
             </div>
 
             <div id="boxPenerima">
-                <p style="margin: 0; font-size: 0.65rem; color: #64748b; font-weight: 700;">PENERIMA</p>
+                <p style="margin: 0; font-size: 0.65rem; color: #64748b; font-weight: 700;">PENERIMA TERVERIFIKASI</p>
                 <p style="margin: 5px 0 0; font-size: 1.1rem; font-weight: 800; color: var(--dark);">
                     <span id="namaPenerima"></span>
                     <span id="flagPenerima" class="badge-country"></span>
@@ -61,16 +56,16 @@
                 <label id="labelNominal">Nominal Transfer</label>
                 <div class="input-wrapper">
                     <span class="currency-symbol" id="symb">Rp</span>
-                    <input type="text" id="amountDisplay" placeholder="0">
+                    <input type="text" id="amountDisplay" placeholder="0" autocomplete="off">
                 </div>
             </div>
 
             <div id="currencyPreview">
-                <p style="margin: 0 0 5px; font-size: 0.65rem; color: #92400e; font-weight: 700; text-transform: uppercase;">Dana Diterima</p>
+                <p style="margin: 0 0 5px; font-size: 0.65rem; color: #92400e; font-weight: 700; text-transform: uppercase;">Konversi Mata Uang</p>
                 <div id="convertedVal">...</div>
             </div>
 
-            <button id="btnProses" class="btn-send" disabled>Lanjut Konfirmasi</button>
+            <button id="btnProses" class="btn-send" disabled>Kirim Sekarang</button>
         </div>
     </div>
 
@@ -97,50 +92,46 @@
 
         let dataPenerima = null;
         let dataPengirim = null;
-        let rawNominal = 0; // Variabel murni angka
+        let rawNominal = 0; 
 
-        const formatIDR = (val) => "Rp " + Math.floor(val).toLocaleString('id-ID');
-        const formatUSD = (val) => "$ " + Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-        // LOAD DATA PENGIRIM
-        window.onload = async () => {
+        // 1. AMBIL DATA PENGIRIM DENGAN PASTI
+        const loadSender = async () => {
             const myCard = sessionStorage.getItem('userCard');
-            const pSnap = await get(child(ref(db), `nasabah/${myCard}`));
-            if (pSnap.exists()) {
-                dataPengirim = pSnap.val();
+            const snap = await get(child(ref(db), `nasabah/${myCard}`));
+            if (snap.exists()) {
+                dataPengirim = snap.val();
                 symb.innerText = (dataPengirim.country === 'US' || dataPengirim.country === 'ING') ? "$" : "Rp";
             }
         };
+        loadSender();
 
-        // INPUT FORMATTER (TITIK OTOMATIS)
+        // 2. FORMATTER INPUT (TITIK OTOMATIS)
         amountDisplay.oninput = (e) => {
             let val = e.target.value.replace(/[^0-9]/g, ''); 
-            if (val === "") {
+            if (!val) {
                 rawNominal = 0;
                 e.target.value = "";
             } else {
-                rawNominal = parseInt(val);
+                rawNominal = Number(val);
                 e.target.value = rawNominal.toLocaleString('id-ID');
             }
             calculateExchange();
         };
 
-        // CEK REKENING TUJUAN
+        // 3. CEK PENERIMA
         targetInput.oninput = async () => {
             if (targetInput.value.length >= 10) {
-                document.getElementById('loader').style.display = 'block';
                 const snap = await get(child(ref(db), `nasabah/${targetInput.value}`));
                 if (snap.exists()) {
                     dataPenerima = snap.val();
-                    document.getElementById('namaPenerima').innerText = dataPenerima.nama || dataPenerima.name;
+                    document.getElementById('namaPenerima').innerText = dataPenerima.nama;
                     document.getElementById('flagPenerima').innerText = dataPenerima.country || 'ID';
                     document.getElementById('boxPenerima').style.display = 'block';
-                    document.getElementById('loader').style.display = 'none';
                     btnProses.disabled = false;
                     calculateExchange();
                 } else {
-                    document.getElementById('loader').innerText = "Tidak ditemukan";
                     btnProses.disabled = true;
+                    document.getElementById('boxPenerima').style.display = 'none';
                 }
             }
         };
@@ -155,54 +146,64 @@
 
             if (cFrom === 'ID' && (cTo === 'US' || cTo === 'ING')) {
                 previewBox.style.display = 'block';
-                convertedText.innerText = formatUSD(rawNominal / RATE_USD_TO_IDR);
+                convertedText.innerText = "$ " + (rawNominal / RATE_USD_TO_IDR).toLocaleString('en-US', {minimumFractionDigits: 2});
             } else if ((cFrom === 'US' || cFrom === 'ING') && cTo === 'ID') {
                 previewBox.style.display = 'block';
-                convertedText.innerText = formatIDR(rawNominal * RATE_USD_TO_IDR);
+                convertedText.innerText = "Rp " + Math.round(rawNominal * RATE_USD_TO_IDR).toLocaleString('id-ID');
             } else {
                 previewBox.style.display = 'none';
             }
         }
 
+        // 4. EKSEKUSI TRANSFER (ANTI BUG MATEMATIKA)
         btnProses.onclick = async () => {
-            if (rawNominal <= 0) return alert("Nominal tidak valid!");
+            // Re-fetch saldo terbaru pengirim untuk akurasi
+            await loadSender();
             
-            // PAKSA SEMUA JADI ANGKA (Mencegah 1jt jadi 11jt)
-            const saldoPengirim = Number(dataPengirim.saldo);
-            const saldoPenerima = Number(dataPenerima.saldo);
             const myCard = sessionStorage.getItem('userCard');
-            const targetCard = targetInput.value;
+            const destinationCard = targetInput.value;
 
-            if (saldoPengirim < rawNominal) return alert("Saldo tidak cukup!");
+            // PASTIKAN SEMUA NUMBER DAN BULAT
+            const saldoAwalPengirim = Math.round(Number(dataPengirim.saldo));
+            const saldoAwalPenerima = Math.round(Number(dataPenerima.saldo));
+            const nominalKirim = Math.round(Number(rawNominal));
 
-            let amountFinal = rawNominal;
+            if (saldoAwalPengirim < nominalKirim) return alert("Saldo tidak cukup!");
+
+            let nominalDiterima = nominalKirim;
             const fromC = dataPengirim.country || 'ID';
             const toC = dataPenerima.country || 'ID';
 
-            if (fromC === 'ID' && (toC === 'US' || toC === 'ING')) amountFinal = rawNominal / RATE_USD_TO_IDR;
-            else if ((fromC === 'US' || fromC === 'ING') && toC === 'ID') amountFinal = rawNominal * RATE_USD_TO_IDR;
+            // Hitung Kurs jika beda negara
+            if (fromC === 'ID' && (toC === 'US' || toC === 'ING')) {
+                nominalDiterima = nominalKirim / RATE_USD_TO_IDR;
+            } else if ((fromC === 'US' || fromC === 'ING') && toC === 'ID') {
+                nominalDiterima = Math.round(nominalKirim * RATE_USD_TO_IDR);
+            }
 
-            const confirmMsg = `Kirim ke: ${dataPenerima.nama}\nTotal: ${fromC === 'ID' ? formatIDR(rawNominal) : formatUSD(rawNominal)}\nTerima: ${toC === 'ID' ? formatIDR(amountFinal) : formatUSD(amountFinal)}`;
-            
-            if (!confirm(confirmMsg)) return;
+            if (!confirm(`Kirim Rp ${nominalKirim.toLocaleString('id-ID')} ke ${dataPenerima.nama}?`)) return;
 
-            const pin = prompt("Masukkan 6 digit PIN:");
-            if (pin !== String(dataPengirim.pin)) return alert("PIN SALAH!");
+            const pin = prompt("Konfirmasi PIN:");
+            if (pin !== String(dataPengirim.pin)) return alert("PIN Salah!");
 
-            btnProses.innerText = "Processing...";
+            btnProses.innerText = "Mengirim...";
             btnProses.disabled = true;
 
             try {
+                // RUMUS MATEMATIKA ABSOLUT
+                const saldoAkhirPengirim = saldoAwalPengirim - nominalKirim;
+                const saldoAkhirPenerima = saldoAwalPenerima + nominalDiterima;
+
                 const updates = {};
-                // RUMUS MATEMATIKA YANG BENAR
-                updates[`nasabah/${myCard}/saldo`] = saldoPengirim - rawNominal;
-                updates[`nasabah/${targetCard}/saldo`] = saldoPenerima + amountFinal;
+                updates[`nasabah/${myCard}/saldo`] = saldoAkhirPengirim;
+                updates[`nasabah/${destinationCard}/saldo`] = saldoAkhirPenerima;
 
                 await update(ref(db), updates);
-                alert("TRANSFER BERHASIL!");
+                
+                alert("BERHASIL!\nSaldo Berkurang: " + nominalKirim.toLocaleString('id-ID'));
                 window.location.href = "../index.html";
             } catch (e) {
-                alert("Sistem Error!");
+                alert("Gagal koneksi database.");
                 btnProses.disabled = false;
             }
         };
