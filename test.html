@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Integration | BDN Pay</title>
+    <script type="module" src="https://likezelwit.github.io/Bank-Devisa-Nusantara/bdn-gateway.js"></script>
+</head>
+<body style="display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif;">
+
+    <div style="text-align:center; border:1px solid #ddd; padding:2rem; border-radius:15px;">
+        <h2>🛒 Proyek Tes BDN</h2>
+        <p>Barang: Kopi Gayo Premium</p>
+        <p>Harga: <b>Rp 50.000</b></p>
+        <button id="checkoutBtn" style="padding:10px 20px; cursor:pointer; background:#b8924e; color:white; border:none; border-radius:8px;">
+            Bayar Sekarang
+        </button>
+    </div>
+
+    <script>
+        // Inisialisasi pakai key yang lo dapet dari SPA tadi
+        // BDNPay.init("BDN_LIVE_XXXXXXXXXXXX"); 
+
+        document.getElementById('checkoutBtn').onclick = async () => {
+            try {
+                const res = await BDNPay.openPayment({
+                    amount: 50000,
+                    itemName: "Kopi Gayo Premium"
+                });
+
+                if(res.status === "success") {
+                    console.log("Transaksi Berhasil:", res.trxId);
+                    alert("Mantap Bre! Pembayaran Sukses. ID: " + res.trxId);
+                }
+            } catch (err) {
+                console.error("Gagal bayar:", err);
+            }
+        };
+    </script>
+</body>
+</html>
