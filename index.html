@@ -12,13 +12,18 @@
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
         <div class="nav-right">
-            <div class="system-status">Operasional Aktif</div>
+            <div class="status-wrapper">
+                <div class="system-status">Operasional Aktif</div>
+                <a href="account/MyAccount/index.html" class="btn-account">MyAccount</a>
+            </div>
         </div>
     </nav>
 
     <header class="hero">
         <div class="hero-content">
-            <span class="badge">OFFICIAL PORTAL 2026</span>
+            <div class="badge-container">
+                <span class="badge">OFFICIAL PORTAL 2026</span>
+            </div>
             <h1>Solusi Perbankan <br><span class="text-gradient">Masa Depan.</span></h1>
             <p>Akses cepat layanan aktivasi kartu 0810, pendaftaran nasabah baru, dan pusat informasi keuangan digital terintegrasi.</p>
         </div>
@@ -34,6 +39,7 @@
                         <h3>Daftar Nasabah Baru</h3>
                         <p>Ajukan akun rekening & kartu digital dalam hitungan menit.</p>
                     </div>
+                    <span class="arrow">→</span>
                 </a>
                 
                 <a href="card-issue/" class="menu-card">
@@ -42,6 +48,7 @@
                         <h3>Pendaftaran Kartu</h3>
                         <p>Standarisasi kartu pintar seri 0810 Platinum untuk nasabah.</p>
                     </div>
+                    <span class="arrow">→</span>
                 </a>
             </div>
         </section>
@@ -53,28 +60,28 @@
                     <div class="card-icon">🏦</div>
                     <div class="card-info">
                         <h3>Produk & Layanan</h3>
-                        <p>Tabungan, Kredit, Investasi & Pinjaman.</p>
+                        <p>Tabungan, Kredit, Investasi.</p>
                     </div>
                 </a>
                 <a href="edukasi/" class="menu-card">
                     <div class="card-icon">📘</div>
                     <div class="card-info">
                         <h3>Informasi Edukasi</h3>
-                        <p>Panduan literasi keuangan & syarat ketentuan.</p>
+                        <p>Panduan literasi keuangan.</p>
                     </div>
                 </a>
                 <a href="promo/" class="menu-card">
                     <div class="card-icon">🎁</div>
                     <div class="card-info">
-                        <h3>Promo & Penawaran</h3>
-                        <p>Diskon administrasi & bunga spesial terbaru.</p>
+                        <h3>Promo Terbaru</h3>
+                        <p>Diskon & bunga spesial.</p>
                     </div>
                 </a>
                 <a href="berita/" class="menu-card">
                     <div class="card-icon">📰</div>
                     <div class="card-info">
-                        <h3>Berita & Pengumuman</h3>
-                        <p>Update kebijakan & info operasional bank.</p>
+                        <h3>Berita & Info</h3>
+                        <p>Update kebijakan bank.</p>
                     </div>
                 </a>
             </div>
@@ -85,7 +92,7 @@
             <div class="menu-grid support-grid">
                 <a href="lokasi/" class="menu-card small-card">
                     <div class="card-icon-small">📍</div>
-                    <h3>Lokasi & Cabang</h3>
+                    <h3>Lokasi</h3>
                 </a>
                 <a href="faq/" class="menu-card small-card">
                     <div class="card-icon-small">❓</div>
@@ -101,20 +108,36 @@
                 </a>
                 <a href="pengaduan/" class="menu-card small-card">
                     <div class="card-icon-small">⚠️</div>
-                    <h3>Pengaduan</h3>
+                    <h3>Lapor</h3>
                 </a>
             </div>
         </section>
     </main>
 
-    <footer>
-        <div class="footer-top">
-            <div class="footer-logo">BDN<span>.</span></div>
-            <div class="social-links">
-                <a href="#">FB</a> <a href="#">TW</a> <a href="#">IG</a>
+    <footer class="footer-main">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo">BDN<span>.</span></div>
+                <p>Membangun ekonomi bangsa melalui teknologi finansial yang inklusif dan aman.</p>
+            </div>
+            <div class="footer-links-group">
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="#">Privasi</a>
+                    <a href="#">Syarat & Ketentuan</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Media</h4>
+                    <a href="#">Facebook</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">Twitter/X</a>
+                </div>
             </div>
         </div>
-        <p class="copyright">&copy; 2026 PT Bank Devisa Nusantara. Terdaftar dan Diawasi oleh OJK.</p>
+        <div class="footer-bottom">
+            <div class="ojk-badge">OJK <span>Terdaftar & Diawasi</span></div>
+            <p class="copyright">&copy; 2026 PT Bank Devisa Nusantara. All rights reserved.</p>
+        </div>
     </footer>
 
     <script src="script.js"></script>
