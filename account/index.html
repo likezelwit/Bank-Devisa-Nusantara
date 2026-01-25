@@ -6,8 +6,17 @@
     <title>Login | Bank Devisa Nusantara</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Tambahan dikit biar transisi 'hidden' mulus */
+        .hidden { display: none !important; }
+        .error { color: #ef4444; font-size: 0.75rem; font-weight: 600; margin-top: 10px; min-height: 1em; }
+        .pin-display { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+        .dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #cbd5e1; transition: 0.2s; }
+        .dot.active { background: #0f172a; border-color: #0f172a; transform: scale(1.2); }
+    </style>
 </head>
 <body>
+
     <div class="login-container">
         <div class="login-card" id="step1">
             <div class="logo">BANK<span>DEVISA</span></div>
@@ -15,13 +24,15 @@
             <p>Masukkan 16 digit nomor kartu dan CVV Anda.</p>
             
             <div class="input-group">
-                <label>Nomor Kartu</label>
-                <input type="text" id="cardNo" placeholder="0810xxxx" maxlength="16">
+                <label for="cardNo">Nomor Kartu</label>
+                <input type="tel" id="cardNo" placeholder="4512 xxxx xxxx xxxx" maxlength="16" autocomplete="off">
             </div>
+            
             <div class="input-group">
-                <label>CVV</label>
-                <input type="password" id="cvv" placeholder="***" maxlength="3">
+                <label for="cvv">CVV</label>
+                <input type="password" id="cvv" placeholder="***" maxlength="3" pattern="\d*" inputmode="numeric">
             </div>
+            
             <button class="btn-main" id="btnNext">Verifikasi Kartu</button>
             <p id="err1" class="error"></p>
         </div>
@@ -37,14 +48,24 @@
             </div>
 
             <div class="numpad">
-                <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
-                <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
-                <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
-                <button class="clear" onclick="clr()">C</button><button onclick="press(0)">0</button><button class="ok" id="btnPin">OK</button>
+                <button type="button" onclick="press(1)">1</button>
+                <button type="button" onclick="press(2)">2</button>
+                <button type="button" onclick="press(3)">3</button>
+                <button type="button" onclick="press(4)">4</button>
+                <button type="button" onclick="press(5)">5</button>
+                <button type="button" onclick="press(6)">6</button>
+                <button type="button" onclick="press(7)">7</button>
+                <button type="button" onclick="press(8)">8</button>
+                <button type="button" onclick="press(9)">9</button>
+                <button type="button" class="clear" onclick="clr()">C</button>
+                <button type="button" onclick="press(0)">0</button>
+                <button type="button" class="ok" id="btnPin">OK</button>
             </div>
             <p id="err2" class="error"></p>
         </div>
     </div>
+
     <script type="module" src="auth.js"></script>
+
 </body>
 </html>
