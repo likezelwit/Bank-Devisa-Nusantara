@@ -10,8 +10,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// --- AUTO REDIRECT JIKA SUDAH LOGIN ---
-if (sessionStorage.getItem('isAuth') === 'true') {
+// --- AUTO REDIRECT JIKA SUDAH LOGIN (PAKAI LOCAL STORAGE) ---
+// Pakai localStorage supaya kalau tab ketutup gak perlu login ulang tiap 10 menit
+if (localStorage.getItem('isAuth') === 'true' && localStorage.getItem('userCard')) {
     window.location.href = 'MyAccount/index.html';
 }
 
@@ -25,6 +26,11 @@ document.getElementById('btnNext').onclick = async () => {
     const btn = document.getElementById('btnNext');
     const err1 = document.getElementById('err1');
     
+    if (cardInput.length < 10 || cvvInput.length < 3) {
+        err1.innerText = "Data tidak lengkap!";
+        return;
+    }
+
     btn.innerText = "Mengecek...";
     btn.disabled = true;
 
@@ -32,6 +38,7 @@ document.getElementById('btnNext').onclick = async () => {
         const snap = await get(child(ref(db), `nasabah/${cardInput}`));
         if (snap.exists()) {
             let data = snap.val();
+            // Cek CVV (bisa case sensitive PIN/pin atau CVV/cvv)
             const dbCvv = data.cvv || data.CVV; 
 
             if (dbCvv !== undefined && String(dbCvv) === String(cvvInput)) {
@@ -52,7 +59,7 @@ document.getElementById('btnNext').onclick = async () => {
     }
 };
 
-// PIN LOGIC
+// PIN LOGIC (NUMPAD)
 window.press = (num) => {
     if (currentPin.length < 6) {
         currentPin += num;
@@ -78,20 +85,29 @@ document.getElementById('btnPin').onclick = async () => {
     
     const dbPin = userData.pin || userData.PIN;
     const cardNo = document.getElementById('cardNo').value.replace(/\s/g, '');
+    const btnOk = document.getElementById('btnPin');
     
     if (dbPin !== undefined && currentPin === String(dbPin)) {
+        btnOk.innerText = "...";
+        btnOk.disabled = true;
+        
         try {
             // SET STATUS DI DATABASE MENJADI ACTIVE
             await update(ref(db, `nasabah/${cardNo}`), {
-                MyAccount: "active"
+                MyAccount: "active",
+                lastLogin: new Date().toISOString() // Kasih tanda biar gak dianggap idle
             });
 
-            // SIMPAN SESI LOKAL
-            sessionStorage.setItem('isAuth', 'true');
-            sessionStorage.setItem('userCard', cardNo);
+            // SIMPAN SESI DI LOCAL STORAGE (ANTI-MENTAL)
+            localStorage.setItem('isAuth', 'true');
+            localStorage.setItem('userCard', cardNo);
+            
+            // Redirect ke dashboard
             window.location.href = 'MyAccount/index.html';
         } catch (e) {
             alert("Gagal sinkronisasi keamanan!");
+            btnOk.innerText = "OK";
+            btnOk.disabled = false;
         }
     } else {
         document.getElementById('err2').innerText = "PIN salah!";
