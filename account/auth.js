@@ -10,8 +10,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// --- AUTO REDIRECT JIKA SUDAH LOGIN (PAKAI LOCAL STORAGE) ---
-// Pakai localStorage supaya kalau tab ketutup gak perlu login ulang tiap 10 menit
+// --- AUTO REDIRECT JIKA SUDAH LOGIN ---
 if (localStorage.getItem('isAuth') === 'true' && localStorage.getItem('userCard')) {
     window.location.href = 'MyAccount/index.html';
 }
@@ -38,7 +37,6 @@ document.getElementById('btnNext').onclick = async () => {
         const snap = await get(child(ref(db), `nasabah/${cardInput}`));
         if (snap.exists()) {
             let data = snap.val();
-            // Cek CVV (bisa case sensitive PIN/pin atau CVV/cvv)
             const dbCvv = data.cvv || data.CVV; 
 
             if (dbCvv !== undefined && String(dbCvv) === String(cvvInput)) {
@@ -79,7 +77,7 @@ function updateDots() {
     });
 }
 
-// STEP 2: VERIFIKASI PIN & AKTIVASI DATABASE
+// STEP 2: VERIFIKASI PIN & AKTIVASI
 document.getElementById('btnPin').onclick = async () => {
     if (!userData) return;
     
@@ -95,14 +93,13 @@ document.getElementById('btnPin').onclick = async () => {
             // SET STATUS DI DATABASE MENJADI ACTIVE
             await update(ref(db, `nasabah/${cardNo}`), {
                 MyAccount: "active",
-                lastLogin: new Date().toISOString() // Kasih tanda biar gak dianggap idle
+                lastLogin: new Date().toISOString()
             });
 
-            // SIMPAN SESI DI LOCAL STORAGE (ANTI-MENTAL)
+            // SIMPAN DI LOCAL STORAGE
             localStorage.setItem('isAuth', 'true');
             localStorage.setItem('userCard', cardNo);
             
-            // Redirect ke dashboard
             window.location.href = 'MyAccount/index.html';
         } catch (e) {
             alert("Gagal sinkronisasi keamanan!");
