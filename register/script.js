@@ -208,13 +208,13 @@ async function finalRevealProcess() {
             nama_keluarga: document.querySelector('.em-name')?.value || "-",
             nomor_hp: document.querySelector('.em-phone')?.value || "-"
         },
-        name: inputNama.value.trim(),
+        nama: inputNama.value.trim(),
         nik: inputNIK.value,
         nomor_kartu: cardNo, 
         pekerjaan: document.getElementById('jobType').value,
         pendapatan: document.getElementById('income').value,
         pin: inputPW.value,
-        saldo: selectedCountry === 'ID' ? 1000000 : 100, 
+        saldo: selectedCountry === 'ID' ? 100000 : 10, 
         tgl_daftar: new Date().toISOString(),
         wa: inputWA.value
     };
