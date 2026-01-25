@@ -3,124 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Developer Guide | BDN Payment Gateway</title>
-    <link rel="stylesheet" href="../style.css">
+    <title>Developer Portal | BDN Gateway</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        :root { --code-bg: #1e293b; --code-text: #38bdf8; --gold: #b8924e; --navy: #0f172a; }
-        body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; color: #334155; line-height: 1.6; }
-        .doc-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        :root { --code-bg: #0f172a; --code-text: #38bdf8; --gold: #b8924e; --navy: #0f172a; --slate: #64748b; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; color: #1e293b; overflow-x: hidden; }
         
-        .hero-doc { 
-            text-align: center; padding: 80px 40px; 
-            background: linear-gradient(135deg, var(--navy) 0%, #1e293b 100%);
-            border-radius: 24px; color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.1); margin-bottom: 40px;
-        }
+        /* Navbar */
+        nav { background: white; padding: 1rem 8%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
+        .logo { font-weight: 800; font-size: 1.5rem; color: var(--navy); }
+        .logo span { color: var(--gold); }
 
-        .step-card { background: white; border-radius: 16px; padding: 35px; margin: 25px 0; border: 1px solid #e2e8f0; transition: 0.3s; }
-        .step-card:hover { border-color: var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .step-num { width: 35px; height: 35px; background: var(--gold); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
-        
-        .guide-list { list-style: none; padding: 0; }
-        .guide-list li { margin-bottom: 20px; padding-left: 30px; position: relative; }
-        .guide-list li::before { content: "✔"; position: absolute; left: 0; color: var(--gold); font-weight: bold; }
-        .sub-guide { font-size: 0.9rem; color: #64748b; margin-top: 5px; background: #f1f5f9; padding: 10px; border-radius: 8px; }
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
 
-        pre { background: var(--code-bg); color: var(--code-text); padding: 25px; border-radius: 12px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 14px; position: relative; border-left: 4px solid var(--gold); margin: 15px 0; }
-        .copy-badge { position: absolute; top: 10px; right: 10px; font-size: 11px; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 6px; color: white; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
-        .copy-badge:hover { background: var(--gold); }
-        
-        .btn-get-key { background: var(--gold); color: white; padding: 18px 36px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1.1rem; }
-        .btn-get-key:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(184, 146, 78, 0.3); }
-        .btn-get-key:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+        /* SPA Section Handling */
+        .page { display: none; animation: fadeIn 0.4s ease-out forwards; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .api-display { margin-top: 30px; padding: 25px; background: rgba(255,255,255,0.05); border: 2px dashed var(--gold); border-radius: 16px; display: none; text-align: center; }
-        #keyCode { display: block; margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; cursor: copy; }
-        .tag { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; background: #f1f5f9; color: var(--navy); }
+        /* Hero & Cards */
+        .card { background: white; border-radius: 20px; padding: 2.5rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 2rem; }
+        .hero { text-align: center; background: linear-gradient(135deg, var(--navy) 0%, #1e293b 100%); color: white; border-radius: 24px; padding: 4rem 2rem; margin-bottom: 3rem; }
         
-        .param-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .param-table th, .param-table td { text-align: left; padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+        /* Form Styling */
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--slate); }
+        input, select { width: 100%; padding: 0.8rem 1rem; border-radius: 12px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 1rem; transition: 0.3s; }
+        input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 4px rgba(184, 146, 78, 0.1); }
+
+        .btn { display: inline-block; background: var(--gold); color: white; padding: 1rem 2rem; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; text-align: center; width: 100%; font-size: 1rem; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(184, 146, 78, 0.4); }
+        .btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); margin-top: 1rem; }
+
+        /* Key Display */
+        .success-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 2rem; border-radius: 16px; text-align: center; }
+        .api-key-container { background: var(--code-bg); color: var(--code-text); padding: 1.5rem; border-radius: 12px; font-family: 'Fira Code', monospace; font-size: 1.1rem; margin: 1.5rem 0; position: relative; cursor: pointer; word-break: break-all; }
+        .copy-hint { font-size: 0.7rem; color: var(--slate); margin-top: 0.5rem; }
+
+        /* Code Blocks */
+        pre { background: var(--code-bg); color: var(--code-text); padding: 1.5rem; border-radius: 12px; overflow-x: auto; font-size: 0.85rem; margin: 1rem 0; border-left: 4px solid var(--gold); }
+        
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; background: #e2e8f0; }
+        .badge-success { background: #dcfce7; color: #166534; }
     </style>
 </head>
 <body>
 
-    <nav class="navbar" style="background: white; padding: 15px 8%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
-        <div class="logo" style="font-weight: 800; font-size: 1.5rem; color: var(--navy);">BDN<span>.</span> Dev</div>
-        <a href="../" class="btn-account" style="text-decoration: none; color: var(--navy); font-weight: 700;">Back to Portal</a>
+    <nav>
+        <div class="logo">BDN<span>.</span>Developer</div>
+        <div class="badge">v2.0 Beta</div>
     </nav>
 
-    <div class="doc-container">
-        <header class="hero-doc">
-            <h1 style="font-size: 2.5rem; margin-bottom: 20px;">Developer Console</h1>
-            <p style="opacity: 0.8; max-width: 600px; margin: 0 auto 30px;">Daftarkan proyek Anda untuk mendapatkan API Key yang dienkripsi secara aman.</p>
-            
-            <button class="btn-get-key" id="btnGetKey">Create Secure API Key</button>
-            
-            <div id="apiResult" class="api-display">
-                <p style="font-size: 14px; opacity: 0.7; margin-bottom: 5px;">YOUR SECURE API KEY (CLICK TO COPY):</p>
-                <code id="keyCode" title="Click to copy"></code>
-                <p style="font-size: 12px; color: #94a3b8;">⚠️ Key ini hanya muncul sekali. Jangan berikan kepada siapapun.</p>
+    <div class="container">
+        
+        <section id="page-landing" class="page active">
+            <div class="hero">
+                <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Integrate?</h1>
+                <p style="opacity: 0.8; margin-bottom: 2rem;">Hubungkan sistem Anda ke jaringan perbankan BDN 0810 dengan standar keamanan militer.</p>
+                <button class="btn" style="width: auto;" onclick="navigateTo('page-form')">Start New Project</button>
             </div>
-        </header>
-
-        <section>
-            <h2 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                <span style="color: var(--gold);">#</span> General API Setup Guide
-            </h2>
-            <div class="step-card">
-                <ul class="guide-list">
-                    <li>
-                        <strong>1. Registrasi Layanan</strong>
-                        <div class="sub-guide">Pastikan Anda sudah memiliki akun di portal Bank Devisa Nusantara sebelum mengaktifkan fitur gateway.</div>
-                    </li>
-                    <li>
-                        <strong>2. Masuk ke Dashboard</strong>
-                        <div class="sub-guide">Akses Console ini untuk mengelola kunci integrasi setiap proyek Anda.</div>
-                    </li>
-                    <li>
-                        <strong>3. Aktivasi Payment API</strong>
-                        <div class="sub-guide">
-                            Status layanan saat ini: <br>
-                            - Chat & AI API: <span class="tag">Disabled</span> <br>
-                            - <strong>Payment Gateway: <span class="tag" style="background: #22c55e; color: white;">Enabled (True)</span></strong>
-                        </div>
-                    </li>
-                    <li>
-                        <strong>4. Keamanan Environment</strong>
-                        <div class="sub-guide">Selalu gunakan file <code>.env</code> untuk menyimpan API Key di server-side agar tidak terlihat oleh publik.</div>
-                    </li>
-                </ul>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Quick Setup Guide</h3>
+                <div style="display: grid; gap: 1rem;">
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <span style="background: var(--gold); color:white; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size: 0.8rem;">1</span>
+                        <p>Generate API Key di portal ini (Gunakan environment variabel di server).</p>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <span style="background: var(--gold); color:white; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size: 0.8rem;">2</span>
+                        <p>Pasang SDK kami di bagian <code>&lt;head&gt;</code> website Anda.</p>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <span style="background: var(--gold); color:white; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size: 0.8rem;">3</span>
+                        <p>Panggil <code>BDNPay.init()</code> dan Anda siap menerima transaksi.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section>
-            <h2 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                <span style="color: var(--gold);">#</span> Integration Steps
-            </h2>
-            <div class="step-card">
-                <div class="step-header">
-                    <div class="step-num">1</div>
-                    <h3>SDK Loader</h3>
+        <section id="page-form" class="page">
+            <div class="card" style="text-align: center;">
+                <h2 style="margin-bottom: 0.5rem;">Project Details</h2>
+                <p style="color: var(--slate); margin-bottom: 2rem;">Lengkapi data berikut untuk mendaftarkan merchant baru.</p>
+                
+                <div class="form-group">
+                    <label>Project / Store Name</label>
+                    <input type="text" id="shopName" placeholder="Contoh: Kedai Kopi Nusantara">
                 </div>
-                <pre><span class="copy-badge" onclick="copySnippet(this)">Copy</span><code>&lt;script type="module" src="https://likezelwit.github.io/Bank-Devisa-Nusantara/bdn-gateway.js"&gt;&lt;/script&gt;</code></pre>
-            </div>
+                
+                <div class="form-group">
+                    <label>Website / App Domain</label>
+                    <input type="url" id="shopDomain" placeholder="https://tokoanda.com">
+                </div>
 
-            <div class="step-card">
-                <div class="step-header">
-                    <div class="step-num">2</div>
-                    <h3>Initialization</h3>
+                <div class="form-group">
+                    <label>Business Category</label>
+                    <select id="bizCategory">
+                        <option value="digital">Digital Product / SaaS</option>
+                        <option value="ecommerce">E-Commerce / Retail</option>
+                        <option value="gaming">Gaming Service</option>
+                        <option value="other">Others</option>
+                    </select>
                 </div>
-                <pre><span class="copy-badge" onclick="copySnippet(this)">Copy</span><code>&lt;script&gt;
-  BDNPay.init("MASUKKAN_KEY_HASIL_GENERATE");
+
+                <button class="btn" id="btnSubmit">Generate API Credentials</button>
+                <button class="btn btn-outline" onclick="navigateTo('page-landing')">Cancel</button>
+            </div>
+        </section>
+
+        <section id="page-success" class="page">
+            <div class="card success-box">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🛡️</div>
+                <h2>Project Successfully Registered</h2>
+                <p style="color: var(--slate);">Pastikan Anda menyimpan API Key ini. Kami tidak menyimpannya dalam bentuk teks biasa demi keamanan.</p>
+                
+                <div class="api-key-container" id="finalKey" onclick="copyKey()">
+                    </div>
+                <p class="copy-hint">Klik kode di atas untuk menyalin</p>
+
+                <div style="text-align: left; margin-top: 2.5rem;">
+                    <h4 style="margin-bottom: 0.5rem;">Next Steps: Integration Code</h4>
+                    <p style="font-size: 0.85rem; color: var(--slate);">Copy script ini ke dalam index.html Anda:</p>
+                    <pre><code>&lt;script type="module" src="https://likezelwit.github.io/Bank-Devisa-Nusantara/bdn-gateway.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  BDNPay.init("<span id="keyPlaceholder">...</span>");
 &lt;/script&gt;</code></pre>
+                </div>
+
+                <button class="btn" style="margin-top: 2rem;" onclick="location.reload()">Finish & Back to Home</button>
             </div>
         </section>
+
     </div>
+
+    
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
@@ -130,55 +152,70 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // SECURE RANDOM GENERATOR (Standard Crypto)
-        function generateSecureKey(len = 32) {
-            const array = new Uint8Array(len);
-            window.crypto.getRandomValues(array);
-            return 'BDN_LIVE_' + Array.from(array, b => b.toString(36).toUpperCase()).join('').substring(0, len);
-        }
-
-        // COPY FUNCTION FOR CODE SNIPPETS
-        window.copySnippet = (el) => {
-            const code = el.nextElementSibling.innerText;
-            navigator.clipboard.writeText(code);
-            el.innerText = "COPIED!";
-            setTimeout(() => el.innerText = "COPY", 2000);
+        // SPA Navigation Logic
+        window.navigateTo = (pageId) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
         };
 
-        document.getElementById('btnGetKey').onclick = async () => {
-            const shopName = prompt("Nama Toko/Proyek (Contoh: Toko Berkah):");
-            if (!shopName) return;
+        // Secure Key Generator
+        function generateSecureKey() {
+            const array = new Uint8Array(20);
+            window.crypto.getRandomValues(array);
+            const raw = Array.from(array, b => b.toString(36).toUpperCase()).join('');
+            return `BDN_LIVE_${raw.substring(0, 24)}`;
+        }
 
-            const btn = document.getElementById('btnGetKey');
+        // Copy Feature
+        window.copyKey = () => {
+            const keyText = document.getElementById('finalKey').innerText;
+            navigator.clipboard.writeText(keyText);
+            const hint = document.querySelector('.copy-hint');
+            hint.innerText = "✅ Copied to clipboard!";
+            hint.style.color = "#166534";
+            setTimeout(() => {
+                hint.innerText = "Klik kode di atas untuk menyalin";
+                hint.style.color = "var(--slate)";
+            }, 2000);
+        };
+
+        // Form Submission
+        document.getElementById('btnSubmit').onclick = async () => {
+            const name = document.getElementById('shopName').value.trim();
+            const domain = document.getElementById('shopDomain').value.trim();
+            const category = document.getElementById('bizCategory').value;
+
+            if (!name || !domain) {
+                alert("Please fill in all project details.");
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmit');
+            btn.innerText = "Provisioning Credentials...";
             btn.disabled = true;
-            btn.innerText = "Generating Vault...";
 
-            const secureKey = generateSecureKey();
+            const newKey = generateSecureKey();
 
             try {
-                // Save with permission metadata
-                await set(ref(db, 'merchants/' + secureKey), {
-                    merchantName: shopName,
+                await set(ref(db, 'merchants/' + newKey), {
+                    merchantName: name,
+                    domain: domain,
+                    category: category,
                     status: "active",
-                    permissions: { payment: true, sandbox: true },
+                    apis: { payment: true },
                     createdAt: new Date().toISOString()
                 });
+
+                // Update Success Page
+                document.getElementById('finalKey').innerText = newKey;
+                document.getElementById('keyPlaceholder').innerText = newKey;
                 
-                const codeDisplay = document.getElementById('keyCode');
-                document.getElementById('apiResult').style.display = 'block';
-                codeDisplay.innerText = secureKey;
-                btn.style.display = 'none';
-
-                codeDisplay.onclick = () => {
-                    navigator.clipboard.writeText(secureKey);
-                    alert("API Key tersalin ke clipboard!");
-                };
-
-                alert("API Key Berhasil Dibuat Secara Aman!");
+                navigateTo('page-success');
             } catch (e) {
-                alert("Database Error: Cek koneksi internet Anda.");
+                alert("Database connection failed. Please try again.");
+                btn.innerText = "Generate API Credentials";
                 btn.disabled = false;
-                btn.innerText = "Create New API Key";
             }
         };
     </script>
