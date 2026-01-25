@@ -28,14 +28,12 @@
         .feature-card span { font-size: 1.8rem; margin-bottom: 8px; }
         .feature-card h3 { font-size: 0.65rem; margin: 0; font-weight: 700; color: var(--dark); }
 
-        /* Header Style */
         .cam-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; padding: 0; position: relative; top: 2px; }
 
         .promo-slider { background: var(--accent); border-radius: 20px; padding: 20px; margin-top: 25px; color: white; display: flex; align-items: center; justify-content: space-between; }
         .promo-text h4 { margin: 0; font-size: 1rem; }
         .promo-text p { margin: 5px 0 0; font-size: 0.7rem; opacity: 0.9; }
 
-        /* Detail Page Style (SPA) */
         .detail-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { background: white; border: 1px solid #e2e8f0; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-weight: 800; }
         .info-card { background: white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
@@ -43,7 +41,8 @@
 </head>
 <body>
     <script>
-        if(!sessionStorage.getItem('userCard')) window.location.href = '../index.html';
+        // Guard: Jika tidak ada data auth di localStorage, tendang ke login
+        if(!localStorage.getItem('userCard')) window.location.href = '../index.html';
     </script>
 
     <div class="container">
@@ -85,14 +84,6 @@
                 <div onclick="openSPA('page-invest')" class="feature-card"><span>✨</span><h3>Emas</h3></div>
                 <div onclick="openSPA('page-loan')" class="feature-card"><span>💰</span><h3>Pinjaman</h3></div>
                 <div onclick="openSPA('page-loan')" class="feature-card"><span>💳</span><h3>K. Kredit</h3></div>
-            </div>
-
-            <div class="section-title">Layanan Lainnya</div>
-            <div class="menu-grid">
-                <a href="history/index.html" class="feature-card"><span>📋</span><h3>Mutasi</h3></a>
-                <div onclick="openSPA('page-others')" class="feature-card"><span>🚀</span><h3>Upgrade</h3></div>
-                <div onclick="openSPA('page-others')" class="feature-card"><span>🛡️</span><h3>Asuransi</h3></div>
-                <a href="help/index.html" class="feature-card"><span>📞</span><h3>Bantuan</h3></a>
             </div>
 
             <div class="promo-slider">
@@ -139,20 +130,6 @@
                 <div class="feature-card"><span>🚗</span><h3>Otomotif</h3></div>
             </div>
         </div>
-
-        <div id="page-others" class="spa-page">
-            <div class="detail-header">
-                <button class="back-btn" onclick="openSPA('main-dashboard')">←</button>
-                <h2 style="font-size: 1.1rem; margin: 0;">Layanan Tambahan</h2>
-            </div>
-            <div class="menu-grid">
-                <div class="feature-card"><span>🚀</span><h3>Limit Up</h3></div>
-                <div class="feature-card"><span>🛡️</span><h3>Proteksi</h3></div>
-                <div class="feature-card"><span>🎁</span><h3>Promo</h3></div>
-                <div class="feature-card"><span>🏢</span><h3>Bisnis</h3></div>
-            </div>
-        </div>
-
     </div>
 
     <script type="module">
@@ -177,39 +154,46 @@
         }
 
         async function initDashboard() {
-            const card = sessionStorage.getItem('userCard');
+            const card = localStorage.getItem('userCard'); // Ganti ke localStorage
+            if (!card) return;
             
             try {
                 const snap = await get(child(ref(db), `nasabah/${card}`));
                 
                 if(snap.exists()) {
                     const data = snap.val();
+                    // Cek status keaktifan akun dari DB
                     if (data.MyAccount !== "active") {
-                        sessionStorage.clear();
-                        window.location.href = '../index.html';
+                        handleLogout();
                         return;
                     }
 
-                    document.getElementById('namaNasabah').innerText = data.name || data.nama;
+                    document.getElementById('namaNasabah').innerText = data.name || data.nama || "Nasabah";
                     document.getElementById('saldoNasabah').innerText = "Rp " + (data.saldo || 0).toLocaleString('id-ID');
                     document.getElementById('nomorKartu').innerText = card.replace(/.{4}/g, '$& ');
                 } else {
-                    window.location.href = '../index.html';
+                    handleLogout();
                 }
             } catch (err) {
-                window.location.href = '../index.html';
+                console.error("Error loading dashboard:", err);
             }
         }
 
-        document.getElementById('btnLogout').onclick = async () => {
-            const card = sessionStorage.getItem('userCard');
+        async function handleLogout() {
+            const card = localStorage.getItem('userCard');
             if (card) {
-                await update(ref(db, `nasabah/${card}`), { MyAccount: "nonactive" });
+                try {
+                    // Update DB jadi nonactive saat logout
+                    await update(ref(db, `nasabah/${card}`), { MyAccount: "nonactive" });
+                } catch (e) { console.log("Silent logout error"); }
             }
-            sessionStorage.clear();
+            localStorage.clear();
             window.location.href = '../index.html';
-        };
+        }
 
+        document.getElementById('btnLogout').onclick = handleLogout;
+
+        // Jalankan inisialisasi
         initDashboard();
     </script>
 </body>
