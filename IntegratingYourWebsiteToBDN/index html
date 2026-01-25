@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration Guide | BDN Developer Portal</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --code-bg: #1e293b; --code-text: #e2e8f0; }
+        .doc-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .hero-doc { text-align: center; padding: 60px 0; border-bottom: 1px solid #e2e8f0; }
+        .step-card { background: white; border-radius: 16px; padding: 30px; margin: 20px 0; border: 1px solid #e2e8f0; }
+        .step-num { display: inline-block; width: 30px; height: 30px; background: #b8924e; color: white; border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold; margin-bottom: 15px; }
+        pre { background: var(--code-bg); color: var(--code-text); padding: 20px; border-radius: 12px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 14px; position: relative; }
+        .copy-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; background: #475569; padding: 4px 8px; border-radius: 4px; color: white; cursor: pointer; }
+        .btn-get-key { background: #0f172a; color: white; padding: 15px 30px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1rem; margin-top: 20px; }
+        .btn-get-key:hover { background: #b8924e; transform: translateY(-3px); }
+        .api-display { margin-top: 15px; padding: 15px; background: #f8fafc; border: 2px dashed #b8924e; border-radius: 8px; display: none; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">BDN<span>.</span> DevPortal</div>
+        <a href="../" class="btn-account">Kembali ke Portal</a>
+    </nav>
+
+    <div class="doc-container">
+        <header class="hero-doc">
+            <h1>Download and integrate BDN with your website!</h1>
+            <p style="color: #64748b; margin-top: 10px;">Solusi gateway pembayaran kartu 0810 untuk proyek web apps Anda.</p>
+            <button class="btn-get-key" id="btnGetKey">Get Your API Key</button>
+            <div id="apiResult" class="api-display">
+                <p style="font-size: 12px; font-weight: bold;">API KEY ANDA:</p>
+                <code id="keyCode" style="font-weight: bold; color: #b8924e;"></code>
+            </div>
+        </header>
+
+        <main>
+            <div class="step-card">
+                <span class="step-num">1</span>
+                <h3>Panggil BDN SDK</h3>
+                <p>Masukkan library kami di bagian paling atas tag <code>&lt;head&gt;</code> atau sebelum penutup <code>&lt;/body&gt;</code> di website Anda.</p>
+                <pre><span class="copy-badge">COPY</span>&lt;script type="module" src="https://likezelwit.github.io/Bank-Devisa-Nusantara/bdn-gateway.js"&gt;&lt;/script&gt;</pre>
+            </div>
+
+            <div class="step-card">
+                <span class="step-num">2</span>
+                <h3>Inisialisasi API Key</h3>
+                <p>Gunakan API Key yang sudah Anda dapatkan di atas untuk mengaktifkan sistem di website Anda.</p>
+                <pre><span class="copy-badge">COPY</span>&lt;script&gt;
+  BDNPay.init("API_KEY_ANDA_DI_SINI");
+&lt;/script&gt;</pre>
+            </div>
+
+            <div class="step-card">
+                <span class="step-num">3</span>
+                <h3>Eksekusi Pembayaran</h3>
+                <p>Panggil fungsi <code>openPayment</code> saat user menekan tombol beli. Sistem akan otomatis menangani pop-up dan pemotongan saldo.</p>
+                <pre><span class="copy-badge">COPY</span>function bayar() {
+  BDNPay.openPayment({
+    amount: 50000,
+    itemName: "Pesan Apel Fuji"
+  });
+}</pre>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
+            databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "wifist-d3588"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        document.getElementById('btnGetKey').onclick = async () => {
+            const shopName = prompt("Masukkan Nama Toko/Proyek Anda:");
+            if (!shopName) return;
+
+            const newKey = "BDNapi-" + Math.random().toString(36).substring(2, 12).toUpperCase();
+
+            try {
+                await set(ref(db, 'merchants/' + newKey), {
+                    namaToko: shopName,
+                    status: "active",
+                    createdAt: new Date().toISOString()
+                });
+                
+                document.getElementById('apiResult').style.display = 'block';
+                document.getElementById('keyCode').innerText = newKey;
+                alert("Berhasil! Simpan API Key Anda baik-baik.");
+            } catch (e) {
+                alert("Error: Gagal generate key.");
+            }
+        };
+    </script>
+</body>
+</html>
