@@ -41,7 +41,6 @@
 </head>
 <body>
     <script>
-        // Guard: Jika tidak ada data auth di localStorage, tendang ke login
         if(!localStorage.getItem('userCard')) window.location.href = '../index.html';
     </script>
 
@@ -60,7 +59,7 @@
         <div id="main-dashboard" class="spa-page active">
             <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 25px; border-radius: 25px; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(15,23,42,0.2);">
                 <p style="opacity: 0.6; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;">Tabungan Utama</p>
-                <h2 id="saldoNasabah" style="font-size: 2.2rem; color: var(--accent); margin: 8px 0; font-weight: 800;">Rp 0</h2>
+                <h2 id="saldoNasabah" style="font-size: 2.2rem; color: var(--accent); margin: 8px 0; font-weight: 800;">---</h2>
                 <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-end;">
                     <div>
                         <p style="font-size: 0.8rem; font-weight: 600; margin: 0;" id="namaNasabah">Memuat...</p>
@@ -102,7 +101,7 @@
             </div>
             <div class="info-card">
                 <p style="font-size: 0.7rem; color: #64748b; font-weight: 800;">TOTAL NILAI INVESTASI</p>
-                <h3 style="font-size: 1.5rem; margin: 5px 0;">Rp 12.500.000</h3>
+                <h3 id="totalInvest" style="font-size: 1.5rem; margin: 5px 0;">Rp 0</h3>
                 <p style="font-size: 0.7rem; color: #10b981;">+2.4% Bulan ini 💹</p>
             </div>
             <div class="menu-grid">
@@ -120,7 +119,7 @@
             </div>
             <div class="info-card">
                 <p style="font-size: 0.7rem; color: #64748b; font-weight: 800;">LIMIT TERSEDIA</p>
-                <h3 style="font-size: 1.5rem; margin: 5px 0; color: var(--accent);">Rp 50.000.000</h3>
+                <h3 id="limitLoan" style="font-size: 1.5rem; margin: 5px 0; color: var(--accent);">Rp 0</h3>
                 <p style="font-size: 0.7rem;">Suku bunga rendah mulai 0.9%</p>
             </div>
             <div class="menu-grid">
@@ -144,7 +143,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // FUNGSI NAVIGASI SPA
         window.openSPA = (pageId) => {
             document.querySelectorAll('.spa-page').forEach(page => {
                 page.classList.remove('active');
@@ -154,7 +152,7 @@
         }
 
         async function initDashboard() {
-            const card = localStorage.getItem('userCard'); // Ganti ke localStorage
+            const card = localStorage.getItem('userCard');
             if (!card) return;
             
             try {
@@ -162,15 +160,44 @@
                 
                 if(snap.exists()) {
                     const data = snap.val();
-                    // Cek status keaktifan akun dari DB
+                    
                     if (data.MyAccount !== "active") {
                         handleLogout();
                         return;
                     }
 
-                    document.getElementById('namaNasabah').innerText = data.name || data.nama || "Nasabah";
-                    document.getElementById('saldoNasabah').innerText = "Rp " + (data.saldo || 0).toLocaleString('id-ID');
+                    document.getElementById('namaNasabah').innerText = data.nama || data.name || "Nasabah";
                     document.getElementById('nomorKartu').innerText = card.replace(/.{4}/g, '$& ');
+
+                    // LOGIKA DETEKSI MATA UANG (CURRENCY DETECTION)
+                    const saldoRaw = data.saldo || 0;
+                    const country = data.country || "ID"; // Default ID jika tidak ada
+                    let formattedSaldo = "";
+
+                    if(country === "US") {
+                        // Jika US, tampilkan Dollar (USD)
+                        formattedSaldo = new Intl.NumberFormat('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 2
+                        }).format(saldoRaw);
+                    } else {
+                        // Jika selain US (atau ID), tampilkan Rupiah (IDR)
+                        formattedSaldo = new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                            maximumFractionDigits: 0
+                        }).format(saldoRaw);
+                    }
+
+                    document.getElementById('saldoNasabah').innerText = formattedSaldo;
+                    
+                    // Update tampilan simulasi investasi/pinjaman juga (opsional)
+                    if(country === "US") {
+                        document.getElementById('totalInvest').innerText = "$ 1,000.00";
+                        document.getElementById('limitLoan').innerText = "$ 5,000.00";
+                    }
+
                 } else {
                     handleLogout();
                 }
@@ -183,7 +210,6 @@
             const card = localStorage.getItem('userCard');
             if (card) {
                 try {
-                    // Update DB jadi nonactive saat logout
                     await update(ref(db, `nasabah/${card}`), { MyAccount: "nonactive" });
                 } catch (e) { console.log("Silent logout error"); }
             }
@@ -192,8 +218,6 @@
         }
 
         document.getElementById('btnLogout').onclick = handleLogout;
-
-        // Jalankan inisialisasi
         initDashboard();
     </script>
 </body>
