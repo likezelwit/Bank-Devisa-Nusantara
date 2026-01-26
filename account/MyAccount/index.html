@@ -169,34 +169,36 @@
                     document.getElementById('namaNasabah').innerText = data.nama || data.name || "Nasabah";
                     document.getElementById('nomorKartu').innerText = card.replace(/.{4}/g, '$& ');
 
-                    // LOGIKA DETEKSI MATA UANG (CURRENCY DETECTION)
                     const saldoRaw = data.saldo || 0;
-                    const country = data.country || "ID"; // Default ID jika tidak ada
+                    const country = data.country || "ID"; 
                     let formattedSaldo = "";
 
                     if(country === "US") {
-                        // Jika US, tampilkan Dollar (USD)
+                        // FIX: Bagi saldo dengan estimasi kurs biar 10000 jadi 0.60
+                        const kurs = 16666; 
+                        const saldoUSD = saldoRaw / kurs;
+
                         formattedSaldo = new Intl.NumberFormat('en-US', {
                             style: 'currency',
                             currency: 'USD',
                             minimumFractionDigits: 2
-                        }).format(saldoRaw);
+                        }).format(saldoUSD);
+
+                        // Update juga teks simulasi di page lain biar konsisten
+                        document.getElementById('totalInvest').innerText = "$ 750.00";
+                        document.getElementById('limitLoan').innerText = "$ 3,000.00";
                     } else {
-                        // Jika selain US (atau ID), tampilkan Rupiah (IDR)
                         formattedSaldo = new Intl.NumberFormat('id-ID', {
                             style: 'currency',
                             currency: 'IDR',
                             maximumFractionDigits: 0
                         }).format(saldoRaw);
+                        
+                        document.getElementById('totalInvest').innerText = "Rp 12.500.000";
+                        document.getElementById('limitLoan').innerText = "Rp 50.000.000";
                     }
 
                     document.getElementById('saldoNasabah').innerText = formattedSaldo;
-                    
-                    // Update tampilan simulasi investasi/pinjaman juga (opsional)
-                    if(country === "US") {
-                        document.getElementById('totalInvest').innerText = "$ 1,000.00";
-                        document.getElementById('limitLoan').innerText = "$ 5,000.00";
-                    }
 
                 } else {
                     handleLogout();
