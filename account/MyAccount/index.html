@@ -8,13 +8,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #b8924e; --dark: #0f172a; --light-bg: #f8fafc; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--light-bg); color: var(--dark); margin: 0; padding-bottom: 50px; }
-        .container { max-width: 600px; margin: auto; padding: 20px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--light-bg); color: var(--dark); margin: 0; padding-bottom: 50px; overflow-x: hidden; }
+        .container { max-width: 600px; margin: auto; padding: 20px; box-sizing: border-box; }
         
         /* SPA Transition */
         .spa-page { display: none; animation: fadeIn 0.3s ease-in-out; }
         .spa-page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Kunci biar saldo gak ngerusak layout */
+        .balance-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(15,23,42,0.2);
+            min-width: 0; /* Biar flexbox gak maksa lebar box */
+        }
+
+        #saldoNasabah {
+            font-size: 2.2rem; /* Default */
+            color: var(--accent);
+            margin: 8px 0;
+            font-weight: 800;
+            white-space: nowrap; /* Saldo haram hukumnya turun baris */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Kalo beneran kepanjangan, kasih titik tiga */
+            display: block;
+            transition: font-size 0.2s ease;
+        }
 
         .section-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0 15px 5px; color: #64748b; }
         .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
@@ -57,15 +81,15 @@
         </header>
 
         <div id="main-dashboard" class="spa-page active">
-            <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 25px; border-radius: 25px; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(15,23,42,0.2);">
+            <div class="balance-card">
                 <p style="opacity: 0.6; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;">Tabungan Utama</p>
-                <h2 id="saldoNasabah" style="font-size: 2.2rem; color: var(--accent); margin: 8px 0; font-weight: 800;">---</h2>
-                <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-end;">
-                    <div>
-                        <p style="font-size: 0.8rem; font-weight: 600; margin: 0;" id="namaNasabah">Memuat...</p>
+                <h2 id="saldoNasabah">---</h2>
+                <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-end; min-width: 0;">
+                    <div style="min-width: 0; flex: 1;">
+                        <p style="font-size: 0.8rem; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="namaNasabah">Memuat...</p>
                         <p style="font-size: 0.7rem; opacity: 0.5; margin: 0;" id="nomorKartu">**** **** **** ****</p>
                     </div>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" width="40" alt="Mastercard">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" width="40" alt="Mastercard" style="flex-shrink: 0; margin-left: 10px;">
                 </div>
             </div>
 
@@ -160,11 +184,7 @@
                 
                 if(snap.exists()) {
                     const data = snap.val();
-                    
-                    if (data.MyAccount !== "active") {
-                        handleLogout();
-                        return;
-                    }
+                    if (data.MyAccount !== "active") { handleLogout(); return; }
 
                     document.getElementById('namaNasabah').innerText = data.nama || data.name || "Nasabah";
                     document.getElementById('nomorKartu').innerText = card.replace(/.{4}/g, '$& ');
@@ -174,31 +194,37 @@
                     let formattedSaldo = "";
 
                     if(country === "US") {
-                        // FIX: Bagi saldo dengan estimasi kurs biar 10000 jadi 0.60
                         const kurs = 16666; 
                         const saldoUSD = saldoRaw / kurs;
-
                         formattedSaldo = new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD',
-                            minimumFractionDigits: 2
+                            style: 'currency', currency: 'USD', minimumFractionDigits: 2
                         }).format(saldoUSD);
+                    } else {
+                        formattedSaldo = new Intl.NumberFormat('id-ID', {
+                            style: 'currency', currency: 'IDR', maximumFractionDigits: 0
+                        }).format(saldoRaw);
+                    }
 
-                        // Update juga teks simulasi di page lain biar konsisten
+                    // DYNAMIC FONT SIZE LOGIC
+                    const saldoElem = document.getElementById('saldoNasabah');
+                    saldoElem.innerText = formattedSaldo;
+                    
+                    if (formattedSaldo.length > 16) {
+                        saldoElem.style.fontSize = "1.4rem";
+                    } else if (formattedSaldo.length > 12) {
+                        saldoElem.style.fontSize = "1.8rem";
+                    } else {
+                        saldoElem.style.fontSize = "2.2rem";
+                    }
+
+                    // Update Simulasi Invest/Loan (Hanya visual)
+                    if(country === "US") {
                         document.getElementById('totalInvest').innerText = "$ 750.00";
                         document.getElementById('limitLoan').innerText = "$ 3,000.00";
                     } else {
-                        formattedSaldo = new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            maximumFractionDigits: 0
-                        }).format(saldoRaw);
-                        
                         document.getElementById('totalInvest').innerText = "Rp 12.500.000";
                         document.getElementById('limitLoan').innerText = "Rp 50.000.000";
                     }
-
-                    document.getElementById('saldoNasabah').innerText = formattedSaldo;
 
                 } else {
                     handleLogout();
@@ -211,9 +237,7 @@
         async function handleLogout() {
             const card = localStorage.getItem('userCard');
             if (card) {
-                try {
-                    await update(ref(db, `nasabah/${card}`), { MyAccount: "nonactive" });
-                } catch (e) { console.log("Silent logout error"); }
+                try { await update(ref(db, `nasabah/${card}`), { MyAccount: "nonactive" }); } catch (e) {}
             }
             localStorage.clear();
             window.location.href = '../index.html';
