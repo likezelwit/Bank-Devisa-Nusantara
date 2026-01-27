@@ -17,185 +17,75 @@
 
     <main class="container">
         <div class="form-wrapper">
-            <div class="progress-container">
+            <div class="progress-container" id="progressContainer">
                 <div class="progress-bar-bg"><div class="progress-line" id="progressLine"></div></div>
-                <div class="circle active">1</div><div class="circle">2</div><div class="circle">3</div><div class="circle">4</div>
-                <div class="circle">5</div><div class="circle">6</div><div class="circle">7</div><div class="circle">8</div>
-                <div class="circle">9</div>
-            </div>
+                </div>
 
-            <div class="form-content">
-                <div class="step active" id="step1">
-                    <h2>01. Identitas Personal</h2>
+            <div class="form-content" id="dynamicForm">
+                <div class="step active" id="stepStart">
+                    <h2>Verifikasi Umur</h2>
+                    <p style="font-size: 0.8rem; color: var(--gray); margin-bottom: 15px;">Masukkan tanggal lahir untuk menyesuaikan metode registrasi.</p>
                     <div class="input-group">
-                        <label>Nama Lengkap (Otomatis Kapital)</label>
-                        <input type="text" id="inputNama" placeholder="CONTOH: RADEN ARYA" autocomplete="off">
+                        <label>Tanggal Lahir</label>
+                        <input type="date" id="inputTglLahir">
                     </div>
-                    <div class="input-group">
-                        <label>NIK (16 Digit Angka)</label>
-                        <input type="tel" id="inputNIK" maxlength="16" placeholder="Masukan 16 digit NIK">
-                    </div>
-                    <button class="btn-primary" onclick="nextStep(2)">Lanjutkan</button>
+                    <button class="btn-primary" onclick="initiateRegistration()">Mulai Registrasi</button>
                 </div>
 
-                <div class="step" id="step2">
-                    <h2>02. Verifikasi Kontak</h2>
-                    <div class="input-group">
-                        <label>Nomor WhatsApp (11-13 Digit)</label>
-                        <input type="tel" id="inputWA" placeholder="08xxxxxxxxxx">
-                    </div>
-                    <div class="input-group">
-                        <label>Email Aktif</label>
-                        <input type="email" id="inputEmail" placeholder="nama@email.com">
-                    </div>
-                    <div class="nav-buttons-split">
-                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
-                        <button class="btn-primary" onclick="nextStep(3)">Lanjutkan</button>
-                    </div>
-                </div>
-
-                <div class="step" id="step3">
-                    <h2>03. Informasi Pekerjaan</h2>
-                    <div class="input-group">
-                        <label>Pekerjaan</label>
-                        <select id="jobType">
-                            <option value="">-- Pilih --</option>
-                            <option>Karyawan</option>
-                            <option>Wiraswasta</option>
-                            <option>Pelajar/Mahasiswa</option>
-                        </select>
-                    </div>
-                    <div class="input-group"><label>Pendapatan</label><input type="tel" id="income" placeholder="Contoh: 10000000"></div>
-                    <div class="nav-buttons-split">
-                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
-                        <button class="btn-primary" onclick="nextStep(4)">Validasi Data</button>
-                    </div>
-                </div>
-
-                <div class="step" id="step4">
-                    <h2>04. Kontak Darurat</h2>
-                    <div id="emergencyContainer">
-                        <div class="emergency-item">
-                            <div class="input-group"><label>Nama Keluarga</label><input type="text" class="em-name"></div>
-                            <div class="input-group"><label>Nomor HP</label><input type="tel" class="em-phone"></div>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-add" onclick="addEmergencyField()">+ Tambah Keluarga</button>
-                    <div class="nav-buttons-split">
-                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
-                        <button class="btn-primary" onclick="nextStep(5)">Lanjutkan</button>
-                    </div>
-                </div>
-
-                <div class="step" id="step5">
-                    <h2>05. Otorisasi PIN</h2>
-                    <div class="input-group"><label>6 Digit PIN</label><input type="password" id="inputPW" maxlength="6" class="pin-input"></div>
-                    <div class="nav-buttons-split">
-                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
-                        <button class="btn-primary" onclick="nextStep(6)">Setel PIN</button>
-                    </div>
-                </div>
-
-                <div class="step" id="step6">
-                    <h2>06. Analisis Database</h2>
-                    <div class="loading-box">
-                        <div class="spinner-large"></div>
-                        <p id="slikStatus">Menghubungkan ke server...</p>
-                    </div>
-                    <div id="errorActions" style="display:none; margin-top:15px;">
-                        <button class="btn-alt" onclick="prevStep()">Perbaiki Data</button>
-                    </div>
-                    <button class="btn-primary" id="btnSlik" style="display:none" onclick="nextStep(7)">Lanjutkan Ke Tahap Akhir</button>
-                </div>
-
-                <div class="step" id="step7">
-                    <h2>07. Konfirmasi Akhir</h2>
-                    <div class="agreement-box">
-                        <p style="font-size: 0.75rem; text-align: justify; margin-bottom: 15px;">
-                            Saya dengan ini menyatakan bertanggung jawab penuh atas kebenaran data dan penggunaan kartu ini sesuai hukum yang berlaku.
-                        </p>
-                        <label class="check-label"><input type="checkbox" id="checkAgree"> SAYA BERTANGGUNG JAWAB</label>
-                    </div>
-                    <div class="nav-buttons-split">
-                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
-                        <button class="btn-primary" onclick="nextStep(8)">Lanjutkan</button>
-                    </div>
-                </div>
-
-                <div class="step" id="step8">
-                    <h2>08. Lokasi & Mata Uang</h2>
-                    <div class="input-group">
-                        <label>Pilih Negara Domisili</label>
-                        <select id="countrySelect">
-                            <option value="">-- Pilih Negara --</option>
-                            <option value="ID">Indonesia (IDR)</option>
-                            <option value="US">Amerika Serikat (USD)</option>
-                            <option value="ING">Inggris (GBP/USD International)</option>
-                        </select>
-                    </div>
-                    <div class="nav-buttons-split">
-                        <button class="btn-alt" onclick="prevStep()">< Kembali</button>
-                        <button class="btn-primary" id="btnGenerate" onclick="generateFinal()">Terbitkan Kartu</button>
-                    </div>
-                </div>
-
-                <div class="step" id="step9">
-                    <div id="processingArea">
-                        <div class="loading-box">
-                            <div class="spinner-large"></div>
-                            <div id="queueStatus">Proses Enkripsi & Unique ID...</div>
-                            <div id="timerDisplay">Estimasi: --</div>
-                        </div>
-                    </div>
-
-                    <div id="finalReveal" style="display:none;">
-                        <div class="reveal-text" id="rev1">SERVER VALIDATED [OK]</div>
-                        <div class="reveal-text" id="rev2" style="color:#b8924e">SMART CHIP ACTIVATED [OK]</div>
-                        <div class="reveal-text" id="rev3" style="color:#22c55e">STATUS : PLATINUM ACTIVE</div>
-                        
-                        <div class="card-scene">
-                            <div class="card-inner" id="cardInner">
-                                <div id="captureArea" class="card-face card-front">
-                                    <div class="card-header">
-                                        <span class="bank-name">BANK DEVISA NUSANTARA</span>
-                                        <div class="chip-card"></div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="card-number" id="displayNo">0000 0000 0000 0000</div>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="footer-left">
-                                            <small>CARD HOLDER</small>
-                                            <div id="displayName" class="name-display">NAME</div>
-                                        </div>
-                                        <div class="footer-right">
-                                            <div class="card-series">PLATINUM</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="card-face card-back">
-                                    <div class="mag-stripe"></div>
-                                    <div class="cvv-area">
-                                        <span style="font-size: 8px; color:#000; margin-right: 5px;">CVV</span>
-                                        <span class="cvv-code">***</span>
-                                    </div>
-                                    <div class="card-terms">
-                                        Kartu ini adalah milik Bank Devisa Nusantara. Segala bentuk penyalahgunaan akan diproses sesuai hukum negara.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="button-group-final">
-                            <button class="btn-primary btn-save" id="btnDownload" onclick="takeScreenshot()">📸 SIMPAN GAMBAR KARTU</button>
-                            <button class="btn-flip" id="btnFlip" onclick="toggleFlip()">🔄 PUTAR KARTU</button>
-                        </div>
-                    </div>
-                </div>
+                <div id="stepsContainer"></div>
             </div>
         </div>
     </main>
+
+    <div id="finalCardTemplate" style="display:none;">
+        <div id="processingArea">
+            <div class="loading-box">
+                <div class="spinner-large"></div>
+                <div id="queueStatus">Proses Enkripsi & Unique ID...</div>
+                <div id="timerDisplay">Estimasi: --</div>
+            </div>
+        </div>
+        <div id="finalReveal" style="display:none;">
+            <div class="reveal-text" id="rev1">SERVER VALIDATED [OK]</div>
+            <div class="reveal-text" id="rev2" style="color:#b8924e">SMART CHIP ACTIVATED [OK]</div>
+            <div class="reveal-text" id="rev3" style="color:#22c55e">STATUS : <span id="variantStatus">ACTIVE</span></div>
+            <div class="card-scene">
+                <div class="card-inner" id="cardInner">
+                    <div id="captureArea" class="card-face card-front">
+                        <div class="card-header">
+                            <span class="bank-name">BANK DEVISA NUSANTARA</span>
+                            <div class="chip-card"></div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-number" id="displayNo">0000 0000 0000 0000</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="footer-left">
+                                <small>CARD HOLDER</small>
+                                <div id="displayName" class="name-display">NAME</div>
+                            </div>
+                            <div class="footer-right">
+                                <div class="card-series" id="cardSeriesDisplay">PLATINUM</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="mag-stripe"></div>
+                        <div class="cvv-area">
+                            <span style="font-size: 8px; color:#000; margin-right: 5px;">CVV</span>
+                            <span class="cvv-code">***</span>
+                        </div>
+                        <div class="card-terms">Kartu ini adalah milik Bank Devisa Nusantara. Segala bentuk penyalahgunaan akan diproses hukum.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="button-group-final">
+                <button class="btn-primary btn-save" id="btnDownload" onclick="takeScreenshot()">📸 SIMPAN GAMBAR KARTU</button>
+                <button class="btn-flip" id="btnFlip" onclick="toggleFlip()">🔄 PUTAR KARTU</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="script.js"></script>
 </body>
 </html>
