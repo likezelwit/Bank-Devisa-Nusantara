@@ -1,91 +1,147 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0f172a">
-    <title>Registrasi Nasabah | BDN</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pendaftaran Kartu • Zeli System</title>
+
+  <!-- CSS External -->
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">BDN<span>.</span></div>
-        <a href="../" class="btn-back">BATAL</a>
-    </nav>
 
-    <main class="container">
-        <div class="form-wrapper">
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-bar-bg"><div class="progress-line" id="progressLine"></div></div>
-                </div>
+<!-- ================= PROGRESS ================= -->
+<div class="progress-wrapper">
+  <div class="progress-bar-bg">
+    <div class="progress-line" id="progressLine"></div>
+  </div>
+  <div class="progress-container" id="progressContainer">
+    <!-- circle step di-generate JS -->
+  </div>
+</div>
 
-            <div class="form-content" id="dynamicForm">
-                <div class="step active" id="stepStart">
-                    <h2>Verifikasi Umur</h2>
-                    <p style="font-size: 0.8rem; color: var(--gray); margin-bottom: 15px;">Masukkan tanggal lahir untuk menyesuaikan metode registrasi.</p>
-                    <div class="input-group">
-                        <label>Tanggal Lahir</label>
-                        <input type="date" id="inputTglLahir">
-                    </div>
-                    <button class="btn-primary" onclick="initiateRegistration()">Mulai Registrasi</button>
-                </div>
+<!-- ================= FORM WRAPPER ================= -->
+<div class="form-wrapper">
 
-                <div id="stepsContainer"></div>
-            </div>
-        </div>
-    </main>
+  <!-- ===== STEP 1 ===== -->
+  <section class="step active" id="step1">
+    <h2>Data Diri</h2>
 
-    <div id="finalCardTemplate" style="display:none;">
-        <div id="processingArea">
-            <div class="loading-box">
-                <div class="spinner-large"></div>
-                <div id="queueStatus">Proses Enkripsi & Unique ID...</div>
-                <div id="timerDisplay">Estimasi: --</div>
-            </div>
-        </div>
-        <div id="finalReveal" style="display:none;">
-            <div class="reveal-text" id="rev1">SERVER VALIDATED [OK]</div>
-            <div class="reveal-text" id="rev2" style="color:#b8924e">SMART CHIP ACTIVATED [OK]</div>
-            <div class="reveal-text" id="rev3" style="color:#22c55e">STATUS : <span id="variantStatus">ACTIVE</span></div>
-            <div class="card-scene">
-                <div class="card-inner" id="cardInner">
-                    <div id="captureArea" class="card-face card-front">
-                        <div class="card-header">
-                            <span class="bank-name">BANK DEVISA NUSANTARA</span>
-                            <div class="chip-card"></div>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-number" id="displayNo">0000 0000 0000 0000</div>
-                        </div>
-                        <div class="card-footer">
-                            <div class="footer-left">
-                                <small>CARD HOLDER</small>
-                                <div id="displayName" class="name-display">NAME</div>
-                            </div>
-                            <div class="footer-right">
-                                <div class="card-series" id="cardSeriesDisplay">PLATINUM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-face card-back">
-                        <div class="mag-stripe"></div>
-                        <div class="cvv-area">
-                            <span style="font-size: 8px; color:#000; margin-right: 5px;">CVV</span>
-                            <span class="cvv-code">***</span>
-                        </div>
-                        <div class="card-terms">Kartu ini adalah milik Bank Devisa Nusantara. Segala bentuk penyalahgunaan akan diproses hukum.</div>
-                    </div>
-                </div>
-            </div>
-            <div class="button-group-final">
-                <button class="btn-primary btn-save" id="btnDownload" onclick="takeScreenshot()">📸 SIMPAN GAMBAR KARTU</button>
-                <button class="btn-flip" id="btnFlip" onclick="toggleFlip()">🔄 PUTAR KARTU</button>
-            </div>
-        </div>
+    <div class="input-group">
+      <label>Nama Lengkap</label>
+      <input type="text" id="namaLengkap">
     </div>
 
-    <script type="module" src="script.js"></script>
+    <div class="input-group">
+      <label>Tanggal Lahir</label>
+      <input type="date" id="inputDOB">
+    </div>
+
+    <button onclick="nextStep(2)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 2 ===== -->
+  <section class="step" id="step2">
+    <h2>Kontak</h2>
+    <input type="tel" placeholder="Nomor HP">
+    <button onclick="nextStep(3)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 3 ===== -->
+  <section class="step" id="step3">
+    <h2>Alamat</h2>
+    <textarea placeholder="Alamat lengkap"></textarea>
+    <button onclick="nextStep(4)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 4 ===== -->
+  <section class="step" id="step4">
+    <h2>Identitas</h2>
+    <input type="text" placeholder="NIK / Identitas">
+    <button onclick="nextStep(5)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 5 ===== -->
+  <section class="step" id="step5">
+    <h2>Data Tambahan</h2>
+    <input type="text">
+    <button onclick="nextStep(6)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 6 (SLIK) ===== -->
+  <section class="step" id="step6">
+    <h2>Analisis Sistem</h2>
+    <p>Sistem sedang menganalisis data…</p>
+    <button onclick="nextStep(7)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 7 ===== -->
+  <section class="step" id="step7">
+    <h2>Konfirmasi</h2>
+    <button onclick="nextStep(8)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 8 ===== -->
+  <section class="step" id="step8">
+    <h2>Verifikasi</h2>
+    <button onclick="nextStep(9)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 9 ===== -->
+  <section class="step" id="step9">
+    <h2>Review</h2>
+    <button onclick="nextStep(10)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 10 ===== -->
+  <section class="step" id="step10">
+    <h2>Persetujuan</h2>
+    <button onclick="nextStep(11)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 11 ===== -->
+  <section class="step" id="step11">
+    <h2>Data Akhir</h2>
+    <button onclick="nextStep(12)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 12 ===== -->
+  <section class="step" id="step12">
+    <h2>Ringkasan</h2>
+    <button onclick="nextStep(13)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 13 ===== -->
+  <section class="step" id="step13">
+    <h2>Generate Kartu</h2>
+    <button onclick="nextStep(14)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 14 ===== -->
+  <section class="step" id="step14">
+    <h2>Preview Kartu</h2>
+    <button onclick="nextStep(15)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 15 ===== -->
+  <section class="step" id="step15">
+    <h2>Konfirmasi Akhir</h2>
+    <button onclick="nextStep(16)">Lanjut</button>
+  </section>
+
+  <!-- ===== STEP 16 (FINAL) ===== -->
+  <section class="step" id="step16">
+    <h2>Kartu Berhasil Dibuat</h2>
+    <div id="finalCard"></div>
+  </section>
+
+</div>
+
+<!-- ================= JS ================= -->
+<script src="script.js"></script>
+
 </body>
 </html>
