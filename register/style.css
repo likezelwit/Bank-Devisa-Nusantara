@@ -1,127 +1,261 @@
 :root {
-    --navy: #0f172a;
-    --gold: #b8924e;
-    --blue: #4f46e5;
-    --bg: #f8fafc;
-    --white: #ffffff;
-    --gray: #64748b;
-    --red: #ef4444;
-    --green: #22c55e;
+  --navy: #0f172a;
+  --gold: #b8924e;
+  --blue: #4f46e5;
+  --bg: #f8fafc;
+  --white: #ffffff;
+  --gray: #64748b;
+  --red: #ef4444;
+  --green: #22c55e;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--navy); overflow-x: hidden; line-height: 1.5; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
 
-/* NAVIGATION */
-.navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; background: white; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; height: 70px; }
-.logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -1px; } 
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--navy);
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* ================= NAV ================= */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 5%;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 70px;
+}
+
+.logo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
 .logo span { color: var(--gold); }
-.btn-back { text-decoration: none; color: var(--gray); font-weight: 700; font-size: 0.7rem; border: 1.5px solid #e2e8f0; padding: 8px 14px; border-radius: 10px; }
 
-/* LAYOUT */
-.container { padding: 1rem; display: flex; justify-content: center; min-height: calc(100vh - 70px); align-items: flex-start; }
-.form-wrapper { background: white; width: 100%; max-width: 480px; padding: 1.5rem; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 0.5rem; }
+.btn-back {
+  text-decoration: none;
+  color: var(--gray);
+  font-weight: 700;
+  font-size: 0.7rem;
+  border: 1.5px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 10px;
+}
 
-/* PROGRESS BAR */
-.progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 2rem; padding: 0 5px; }
-.progress-bar-bg { position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #f1f5f9; z-index: 1; }
-.progress-line { width: 0%; height: 100%; background: var(--blue); transition: 0.5s ease; }
-.circle { width: 32px; height: 32px; background: white; border: 2px solid #e2e8f0; border-radius: 50%; z-index: 2; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--gray); transition: 0.3s; }
-.circle.active { border-color: var(--blue); color: var(--blue); transform: scale(1.1); background: #f8faff; }
-.circle.completed { background: var(--blue); border-color: var(--blue); color: white; }
+/* ================= LAYOUT ================= */
+.container {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  min-height: calc(100vh - 70px);
+}
 
-/* STEPS */
+.form-wrapper {
+  background: white;
+  width: 100%;
+  max-width: 480px;
+  padding: 1.5rem;
+  border-radius: 24px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.05);
+}
+
+/* ================= PROGRESS ================= */
+.progress-container {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.progress-bar-bg {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #f1f5f9;
+  z-index: 1;
+}
+
+.progress-line {
+  height: 100%;
+  width: 0%;
+  background: var(--blue);
+  transition: width .4s ease;
+}
+
+.circle {
+  width: 28px;
+  height: 28px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  z-index: 2;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: .3s;
+}
+
+.circle.active {
+  border-color: var(--blue);
+  color: var(--blue);
+  transform: scale(1.15);
+  background: #f8faff;
+}
+
+.circle.completed {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: white;
+}
+
+/* ================= STEPS ================= */
 .step { display: none; }
-.step.active { display: block; animation: mobileFadeUp 0.4s ease-out forwards; }
-@keyframes mobileFadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-.step h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 1.2rem; color: var(--navy); text-align: left; }
-
-/* INPUTS */
-.input-group { text-align: left; margin-bottom: 1rem; }
-.input-group label { display: block; font-size: 0.65rem; font-weight: 800; color: var(--gray); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-.input-group input, .input-group select { 
-    width: 100%; height: 55px; padding: 0 1rem; border: 2px solid #f1f5f9; border-radius: 14px; 
-    font-size: 16px !important; font-weight: 600; outline: none; transition: 0.3s; background: #f8fafc;
+.step.active {
+  display: block;
+  animation: fadeUp .35s ease;
 }
 
-/* BUTTONS GENERAL */
-.btn-primary { 
-    width: 100%; height: 60px; background: var(--navy); color: white; border: none; border-radius: 18px; 
-    font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; 
-    display: flex; align-items: center; justify-content: center;
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* FINAL STEP BUTTONS */
-.button-group-final { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; width: 100%; }
-.btn-save { background: var(--green) !important; height: 65px; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2); }
-.btn-flip { width: 100%; height: 55px; background: #f1f5f9; color: var(--navy); border: 2px solid #e2e8f0; border-radius: 18px; font-weight: 700; cursor: pointer; }
+.step h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 1.2rem;
+}
 
-/* CARD 3D SYSTEM */
-.card-scene { width: 100%; aspect-ratio: 1.58 / 1; perspective: 1000px; margin-bottom: 20px; }
-.card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
-.card-inner.is-flipped { transform: rotateY(180deg); }
-.card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 20px; padding: 1.5rem; }
+/* ================= INPUT ================= */
+.input-group { margin-bottom: 1rem; }
+.input-group label {
+  font-size: .65rem;
+  font-weight: 800;
+  color: var(--gray);
+  margin-bottom: 6px;
+  display: block;
+  text-transform: uppercase;
+}
 
-/* --- PERBAIKAN TATA LETAK DEPAN --- */
+.input-group input,
+.input-group select {
+  width: 100%;
+  height: 55px;
+  padding: 0 1rem;
+  border-radius: 14px;
+  border: 2px solid #f1f5f9;
+  font-size: 16px;
+  font-weight: 600;
+  background: #f8fafc;
+  outline: none;
+}
+
+/* ================= BUTTON ================= */
+.btn-primary {
+  width: 100%;
+  height: 60px;
+  background: var(--navy);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn-primary:hover { opacity: .9; }
+
+/* ================= CARD 3D ================= */
+.card-scene {
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 1.58 / 1;
+  perspective: 1200px;
+  margin: 20px auto;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform .9s cubic-bezier(.34,1.56,.64,1);
+}
+
+.card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
+/* FRONT */
 .card-front {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Menjaga jarak atas, tengah, bawah */
-    color: white;
-    text-align: left;
+  background: linear-gradient(135deg,#0f172a,#1e293b);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-/* Bagian Footer Kartu: Kunci Platinum di Kanan */
 .card-footer {
-    display: flex;
-    justify-content: space-between; /* Nama di kiri, Platinum di kanan */
-    align-items: flex-end;
-    width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
-.footer-left { text-align: left; }
-.footer-right { text-align: right; }
 
-.chip-card { width: 45px; height: 35px; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); border-radius: 6px; margin-top: 10px; }
-.bank-name { font-size: 0.7rem; font-weight: 800; color: var(--gold); letter-spacing: 1.5px; }
-.card-number { font-size: 1.3rem; letter-spacing: 2px; font-family: monospace; margin: 10px 0; }
-.card-series { font-weight: 800; color: var(--gold); letter-spacing: 1px; font-size: 0.8rem; }
+.bank-name { font-size: .7rem; letter-spacing: 1.5px; color: var(--gold); }
+.card-number { font-family: monospace; font-size: 1.2rem; letter-spacing: 2px; }
 
-/* --- PERBAIKAN SISI BELAKANG --- */
+/* BACK */
 .card-back {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    transform: rotateY(180deg);
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-}
-.mag-stripe { width: 100%; height: 40px; background: #000; margin-top: 20px; }
-
-/* Perbaikan Kotak CVV agar angka tidak meluber */
-.cvv-area { 
-    margin: 20px 1.5rem 10px; 
-    height: 35px; 
-    background: #eee; 
-    display: flex; 
-    justify-content: flex-end; 
-    align-items: center; 
-    padding-right: 15px; 
-    border-radius: 4px;
-    overflow: hidden; /* Mengunci teks di dalam */
+  background: linear-gradient(135deg,#1e293b,#0f172a);
+  transform: rotateY(180deg);
+  padding: 0;
 }
 
-.cvv-code { font-weight: 700; color: #000; font-family: monospace; font-size: 1.1rem; }
-.card-terms { padding: 0 1.5rem; font-size: 7px; color: rgba(255,255,255,0.4); line-height: 1.2; text-align: left; }
+.mag-stripe {
+  height: 40px;
+  background: #000;
+  margin-top: 20px;
+}
 
-/* UTILS & ANIMATION */
-.spinner-large { border: 4px solid #f1f5f9; border-top-color: var(--blue); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s infinite linear; margin: 0 auto 1.2rem; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.reveal-text { opacity: 0; font-size: 0.75rem; font-weight: 700; margin-bottom: 6px; text-align: left; padding-left: 10px; border-left: 3px solid #e2e8f0; transition: 0.5s; }
-.reveal-text.show { opacity: 1; border-left-color: var(--gold); }
-.final-glow { animation: cardGlow 2s infinite alternate; }
-@keyframes cardGlow { from { box-shadow: 0 0 20px rgba(79, 70, 229, 0.2); } to { box-shadow: 0 0 40px rgba(184, 146, 78, 0.6); } }
+.cvv-area {
+  margin: 20px 1.5rem;
+  background: #eee;
+  height: 35px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 12px;
+}
 
-/* SISTEM 3D REFINED */
-.card-scene { width: 100%; max-width: 350px; aspect-ratio: 1.58 / 1; perspective: 1200px; margin: 20px auto; }
-.card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1); transform-style: preserve-3d; cursor: pointer; }
-.card-inner.is-flipped { transform: rotateY(180deg) rotateZ(1deg); }
+.cvv-code {
+  font-family: monospace;
+  font-weight: 700;
+}
