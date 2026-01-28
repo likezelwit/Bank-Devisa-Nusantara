@@ -555,6 +555,53 @@ async function finalRevealProcess(stepDiv) {
     }
 }
 
+// --- FITUR BARU: RASIO KARTU ---
+window.changeCardRatio = (type, ratio, dimensionText) => {
+    const cardScene = document.getElementById('cardScene');
+    const ratioInfo = document.getElementById('ratioInfo');
+    const buttons = document.querySelectorAll('.btn-ratio');
+
+    // Update UI Buttons
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Update Text Dimensi
+    ratioInfo.innerText = `Dimensi Fisik: ${dimensionText}`;
+
+    // Ubah Aspect Ratio Container
+    // Kita gunakan Style langsung untuk override CSS
+    cardScene.style.aspectRatio = `${ratio} / 1`;
+
+    // Minimalisir Text: Sesuaikan font size agar proporsional
+    // Default (ID-1 1.58) adalah 100%.
+    // CR-79 (1.64) -> Sedikit lebih gepeng, text size mungkin normal.
+    // CR-100 (1.47) -> Lebih kotak, area lebih lega, text bisa lebih besar atau tetap.
+    
+    // Logika sederhana: Normalisasi berdasarkan rasio lebar.
+    const baseRatio = 1.586;
+    let scaleFactor = 1;
+
+    if (ratio < baseRatio) {
+        // Kotak (CR-90, CR-100) -> Area lebih tinggi, text bisa sedikit membesar agar terisi penuh
+        scaleFactor = 1.1; 
+    } else {
+        // Gepeng (CR-79) -> Text harus mengecil sedikit biar muut
+        scaleFactor = 0.95;
+    }
+    
+    // Terapkan ke elemen kartu dalam stepDiv aktif
+    const activeStepDiv = document.getElementById(`step${currentStep}`);
+    if(activeStepDiv) {
+        const cardNumber = activeStepDiv.querySelector('.card-number');
+        const nameDisplay = activeStepDiv.querySelector('.name-display');
+        const bankName = activeStepDiv.querySelector('.bank-name');
+        
+        if(cardNumber) cardNumber.style.fontSize = `${1.3 * scaleFactor}rem`;
+        if(nameDisplay) nameDisplay.style.fontSize = `${0.9 * scaleFactor}rem`; // Base name ~0.9
+        if(bankName) bankName.style.fontSize = `${0.7 * scaleFactor}rem`;
+    }
+};
+
 // --- UTILITIES ---
 window.toggleFlip = (stepDiv) => {
     if (isFlipLocked) { alert("Tunggu 5 detik..."); return; }
@@ -578,6 +625,11 @@ window.takeScreenshot = (stepDiv) => {
     const area = stepDiv.querySelector('.capture-area');
     const btn = stepDiv.querySelector('.btn-download');
     btn.innerText = "MENGUNDUH...";
+    
+    // Penting: html2canvas akan menangkap rasio CSS saat ini.
+    // Karena kita mengubah 'aspectRatio' pada .card-scene via JS di fungsi changeCardRatio,
+    // html2canvas akan otomatis membuat gambar dengan rasio yang benar.
+    
     html2canvas(area, { 
         scale: 3, 
         useCORS: true, 
