@@ -1,15 +1,3 @@
-Ini adalah **Final Update** `script.js`.
-
-Sesuai permintaan Anda:
-1.  **Token Permanen:** Token dibuat sekali di awal dan **DISIMPAN KE FIREBASE** di bawah path `active_tokens/{token}`.
-2.  **No Duplicate Token:** Kita cek dulu di Firebase, jika token sudah dipakai orang lain, kita buat baru.
-3.  **Auto-Save Data:** Setiap kali user klik "Lanjutkan", data input (Nama, WA, dll) otomatis tersimpan di Firebase `users/{token}`.
-4.  **Auto-Restore:** Saat buka tab baru dengan URL yang sama, data form akan terisi otomatis dari Firebase (bukan cuma localStorage, tapi dari Database).
-5.  **URL Rapi:** URL tidak akan bertambah-tambah (stacking) lagi.
-
-Silakan ganti seluruh isi `script.js` dengan kode ini:
-
-```javascript
 // --- FIREBASE IMPORT ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
@@ -808,4 +796,3 @@ window.takeScreenshot = (stepDiv) => {
         console.log("New session.");
     }
 })();
-```
