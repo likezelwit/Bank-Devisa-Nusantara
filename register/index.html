@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* --- STYLE CSS (PERTAHANKAN & UPDATE) --- */
+        /* --- STYLE CSS --- */
         :root {
             --navy: #0f172a;
             --gold: #b8924e;
@@ -142,35 +142,35 @@
                 <!-- Steps will be injected here via JS -->
             </div>
             
-            <!-- FINAL REVEAL TEMPLATE (Hidden by default, moved here for structure) -->
+            <!-- FINAL REVEAL TEMPLATE (Hidden by default) -->
             <div id="finalStepTemplate" class="step" style="display:none;">
-                <div id="processingArea">
+                <div class="processing-area">
                     <div class="loading-box">
                         <div class="spinner-large"></div>
-                        <div id="queueStatus">Proses Enkripsi & Unique ID...</div>
-                        <div id="timerDisplay">Estimasi: --</div>
+                        <div class="queue-status">Proses Enkripsi & Unique ID...</div>
+                        <div class="timer-display">Estimasi: --</div>
                     </div>
                 </div>
 
-                <div id="finalReveal" style="display:none;">
-                    <div class="reveal-text" id="rev1">SERVER VALIDATED [OK]</div>
-                    <div class="reveal-text" id="rev2" style="color:#b8924e">SMART CHIP ACTIVATED [OK]</div>
-                    <div class="reveal-text" id="rev3" style="color:#22c55e">STATUS : PLATINUM ACTIVE</div>
+                <div class="final-reveal" style="display:none;">
+                    <div class="reveal-text rev-1">SERVER VALIDATED [OK]</div>
+                    <div class="reveal-text rev-2" style="color:#b8924e">SMART CHIP ACTIVATED [OK]</div>
+                    <div class="reveal-text rev-3" style="color:#22c55e">STATUS : PLATINUM ACTIVE</div>
                     
                     <div class="card-scene">
-                        <div class="card-inner" id="cardInner">
-                            <div id="captureArea" class="card-face card-front">
+                        <div class="card-inner card-inner-ref">
+                            <div class="capture-area card-face card-front">
                                 <div class="card-header">
                                     <span class="bank-name">BANK DEVISA NUSANTARA</span>
                                     <div class="chip-card"></div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="card-number" id="displayNo">0000 0000 0000 0000</div>
+                                    <div class="card-number display-no">0000 0000 0000 0000</div>
                                 </div>
                                 <div class="card-footer">
                                     <div class="footer-left">
                                         <small>CARD HOLDER</small>
-                                        <div id="displayName" class="name-display">NAME</div>
+                                        <div class="name-display display-name">NAME</div>
                                     </div>
                                     <div class="footer-right">
                                         <div class="card-series">PLATINUM</div>
@@ -182,7 +182,7 @@
                                 <div class="mag-stripe"></div>
                                 <div class="cvv-area">
                                     <span style="font-size: 8px; color:#000; margin-right: 5px;">CVV</span>
-                                    <span class="cvv-code">***</span>
+                                    <span class="cvv-code cvv-display">***</span>
                                 </div>
                                 <div class="card-terms">
                                     Kartu ini adalah milik Bank Devisa Nusantara. Segala bentuk penyalahgunaan akan diproses sesuai hukum negara.
@@ -192,8 +192,8 @@
                     </div>
 
                     <div class="button-group-final">
-                        <button class="btn-primary btn-save" id="btnDownload" onclick="takeScreenshot()">📸 SIMPAN GAMBAR KARTU</button>
-                        <button class="btn-flip" id="btnFlip" onclick="toggleFlip()">🔄 PUTAR KARTU</button>
+                        <button class="btn-primary btn-save btn-download">📸 SIMPAN GAMBAR KARTU</button>
+                        <button class="btn-flip btn-flip-action">🔄 PUTAR KARTU</button>
                     </div>
                 </div>
             </div>
@@ -215,20 +215,20 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- KONFIGURASI TAHAPAN BERDASARKAN UMUR ---
+        // --- KONFIGURASI TAHAPAN ---
         const MODES = {
             child: {
                 name: "Anak (7-10 Tahun)",
                 steps: [
                     { id: 1, title: "01. Identitas Anak", fields: [
-                        { id: "inputNama", label: "Nama Lengkap (Otomatis Kapital)", type: "text", placeholder: "CONTOH: BUDI SANTOSO", validate: "min3" },
-                        { id: "inputDOB_Display", label: "Tanggal Lahir", type: "text", readonly: true } // Readonly dari age gate
+                        { id: "inputNama", label: "Nama Lengkap", type: "text", placeholder: "NAMA LENGKAP", validate: "min3" },
+                        { id: "inputDOB_Display", label: "Tanggal Lahir", type: "text", readonly: true }
                     ]},
                     { id: 2, title: "02. Cita-Cita", fields: [
-                        { id: "jobType", label: "Cita-cita / Pekerjaan", type: "select", options: ["-- Pilih --", "Pelajar", "Dokter", "Pilot", "Ilmuwan", "Polisi", "Lainnya"] }
+                        { id: "jobType", label: "Cita-cita", type: "select", options: ["-- Pilih --", "Pelajar", "Dokter", "Pilot", "Ilmuwan", "Polisi", "Lainnya"] }
                     ]},
                     { id: 3, title: "03. Data Wali", fields: [
-                        { id: "waliName", label: "Nama Lengkap Orang Tua/Wali", type: "text", placeholder: "Nama Orang Tua", validate: "min3" }
+                        { id: "waliName", label: "Nama Orang Tua/Wali", type: "text", placeholder: "Nama Wali", validate: "min3" }
                     ]},
                     { id: 4, title: "04. Keamanan", fields: [
                         { id: "inputPW", label: "6 Digit PIN", type: "password", maxlength: 6, validate: "len6" }
@@ -237,9 +237,9 @@
                         { id: "checkAgree", label: "Saya Janji Rajin Menabung", type: "checkbox", validate: "checked" }
                     ]},
                     { id: 6, title: "06. Lokasi", fields: [
-                        { id: "countrySelect", label: "Pilih Negara Domisili", type: "select", options: ["-- Pilih --", "Indonesia (IDR)", "Amerika Serikat (USD)", "Inggris (GBP)"], validate: "selected" }
+                        { id: "countrySelect", label: "Negara Domisili", type: "select", options: ["-- Pilih --", "Indonesia (IDR)", "Amerika Serikat (USD)", "Inggris (GBP)"], validate: "selected" }
                     ]},
-                    { id: 7, title: "Finalisasi", isFinal: true } // Langkah Generate
+                    { id: 7, title: "Finalisasi", isFinal: true }
                 ]
             },
             teen: {
@@ -250,31 +250,31 @@
                         { id: "inputDOB_Display", label: "Tanggal Lahir", type: "text", readonly: true }
                     ]},
                     { id: 2, title: "02. Kontak", fields: [
-                        { id: "inputWA", label: "Nomor WhatsApp", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
-                        { id: "inputEmail", label: "Email Aktif", type: "email", placeholder: "nama@email.com", validate: "email" }
+                        { id: "inputWA", label: "WhatsApp", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
+                        { id: "inputEmail", label: "Email", type: "email", placeholder: "nama@email.com", validate: "email" }
                     ]},
                     { id: 3, title: "03. Pendidikan", fields: [
-                        { id: "jobType", label: "Nama Sekolah/Instansi", type: "text", placeholder: "Contoh: SMA Negeri 1", validate: "min3" }
+                        { id: "jobType", label: "Nama Sekolah", type: "text", placeholder: "SMA Negeri 1", validate: "min3" }
                     ]},
                     { id: 4, title: "04. Finansial", fields: [
                         { id: "incomeSource", label: "Sumber Uang Saku", type: "select", options: ["-- Pilih --", "Orang Tua", "Hadiah", "Part Time", "Lainnya"], validate: "selected" }
                     ]},
                     { id: 5, title: "05. Kontak Darurat", fields: [
-                        { id: "emName", label: "Nama Orang Tua/Kakak", type: "text", placeholder: "Nama Penanggung Jawab", validate: "min3" },
-                        { id: "emPhone", label: "Nomor HP Darurat", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit10-13" }
+                        { id: "emName", label: "Nama Penanggung Jawab", type: "text", placeholder: "Nama Orang Tua", validate: "min3" },
+                        { id: "emPhone", label: "No. HP Darurat", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit10-13" }
                     ]},
                     { id: 6, title: "06. Keamanan", fields: [
                         { id: "inputPW", label: "6 Digit PIN", type: "password", maxlength: 6, validate: "len6" }
                     ]},
                     { id: 7, title: "07. Analisis Data", type: "loading", msg: "Menghubungkan ke Database Sekolah..." },
                     { id: 8, title: "08. Konfirmasi", fields: [
-                        { id: "checkAgree", label: "Saya bertanggung jawab atas akun ini", type: "checkbox", validate: "checked" }
+                        { id: "checkAgree", label: "Saya bertanggung jawab", type: "checkbox", validate: "checked" }
                     ]},
                     { id: 9, title: "09. Legalitas", fields: [
-                        { id: "checkLegal", label: "Menyetujui Syarat & Ketentuan Layanan", type: "checkbox", validate: "checked" }
+                        { id: "checkLegal", label: "Setuju Syarat & Ketentuan", type: "checkbox", validate: "checked" }
                     ]},
                     { id: 10, title: "10. Lokasi", fields: [
-                        { id: "countrySelect", label: "Pilih Negara Domisili", type: "select", options: ["-- Pilih --", "Indonesia (IDR)", "Amerika Serikat (USD)", "Inggris (GBP)"], validate: "selected" }
+                        { id: "countrySelect", label: "Negara Domisili", type: "select", options: ["-- Pilih --", "Indonesia (IDR)", "Amerika Serikat (USD)", "Inggris (GBP)"], validate: "selected" }
                     ]},
                     { id: 11, title: "Finalisasi", isFinal: true }
                 ]
@@ -283,31 +283,31 @@
                 name: "Dewasa (18+ Tahun)",
                 steps: [
                     { id: 1, title: "01. Identitas", fields: [
-                        { id: "inputNama", label: "Nama Lengkap Sesuai KTP", type: "text", placeholder: "NAMA LENGKAP", validate: "min3" },
+                        { id: "inputNama", label: "Nama Lengkap KTP", type: "text", placeholder: "NAMA LENGKAP", validate: "min3" },
                         { id: "inputDOB_Display", label: "Tanggal Lahir", type: "text", readonly: true }
                     ]},
                     { id: 2, title: "02. Kontak Utama", fields: [
-                        { id: "inputWA", label: "WhatsApp Terverifikasi", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
-                        { id: "inputEmail", label: "Email Utama", type: "email", placeholder: "nama@email.com", validate: "email" }
+                        { id: "inputWA", label: "WhatsApp", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
+                        { id: "inputEmail", label: "Email", type: "email", placeholder: "nama@email.com", validate: "email" }
                     ]},
                     { id: 3, title: "03. Domisili", fields: [
-                        { id: "address", label: "Alamat Lengkap", type: "text", placeholder: "Jalan, No Rumah, Kelurahan...", validate: "min5" }
+                        { id: "address", label: "Alamat Lengkap", type: "text", placeholder: "Jalan, No Rumah...", validate: "min5" }
                     ]},
                     { id: 4, title: "04. Profesi", fields: [
                         { id: "jobType", label: "Pekerjaan", type: "text", placeholder: "Posisi & Perusahaan", validate: "min3" }
                     ]},
                     { id: 5, title: "05. Pendapatan", fields: [
-                        { id: "income", label: "Estimasi Penghasilan Bulanan", type: "tel", placeholder: "Contoh: 10000000", validate: "digit" }
+                        { id: "income", label: "Penghasilan Bulanan", type: "tel", placeholder: "Contoh: 10000000", validate: "digit" }
                     ]},
                     { id: 6, title: "06. Sumber Dana", fields: [
-                        { id: "incomeSource", label: "Sumber Dana", type: "select", options: ["-- Pilih --", "Gaji", "Hasil Usaha", "Investasi", "Warisan", "Lainnya"], validate: "selected" }
+                        { id: "incomeSource", label: "Sumber Dana", type: "select", options: ["-- Pilih --", "Gaji", "Usaha", "Investasi", "Warisan"], validate: "selected" }
                     ]},
                     { id: 7, title: "07. Tujuan Akun", fields: [
-                        { id: "accPurpose", label: "Tujuan Pembukaan", type: "select", options: ["-- Pilih --", "Transaksi Harian", "Tabungan", "Bisnis"], validate: "selected" }
+                        { id: "accPurpose", label: "Tujuan Pembukaan", type: "select", options: ["-- Pilih --", "Transaksi", "Tabungan", "Bisnis"], validate: "selected" }
                     ]},
                     { id: 8, title: "08. Kontak Darurat", fields: [
-                        { id: "emName", label: "Nama Kontak Darurat", type: "text", validate: "min3" },
-                        { id: "emRelation", label: "Hubungan", type: "text", placeholder: "Suami/Istri/Saudara", validate: "min3" }
+                        { id: "emName", label: "Nama Darurat", type: "text", validate: "min3" },
+                        { id: "emRelation", label: "Hubungan", type: "text", placeholder: "Keluarga", validate: "min3" }
                     ]},
                     { id: 9, title: "09. Keamanan 1", fields: [
                         { id: "inputPW", label: "6 Digit PIN", type: "password", maxlength: 6, validate: "len6" }
@@ -318,10 +318,10 @@
                     { id: 11, title: "11. Background Check", type: "loading", msg: "Melakukan Sinkronisasi Database..." },
                     { id: 12, title: "12. BI Checking", type: "loading", msg: "Analisis SLIK & Skor Kredit..." },
                     { id: 13, title: "13. Konfirmasi", fields: [
-                        { id: "checkAgree", label: "Saya menyatakan data di atas benar", type: "checkbox", validate: "checked" }
+                        { id: "checkAgree", label: "Saya menyatakan data benar", type: "checkbox", validate: "checked" }
                     ]},
                     { id: 14, title: "14. Kepatuhan", fields: [
-                        { id: "checkCompliance", label: "Menyetujui Kebijakan AML & CTF", type: "checkbox", validate: "checked" }
+                        { id: "checkCompliance", label: "Setujui Kebijakan AML", type: "checkbox", validate: "checked" }
                     ]},
                     { id: 15, title: "15. Lokasi", fields: [
                         { id: "countrySelect", label: "Negara Domisili", type: "select", options: ["-- Pilih --", "Indonesia (IDR)", "Amerika Serikat (USD)", "Inggris (GBP)", "Singapura (SGD)", "Jepang (JPY)"], validate: "selected" }
@@ -332,11 +332,11 @@
         };
 
         // --- GLOBAL VARIABLES ---
-        let currentMode = null; // 'child', 'teen', 'adult'
+        let currentMode = null; 
         let currentStep = 1;
         let isFlipLocked = false;
         let finalDataReady = null;
-        let userDOB = ""; // Disimpan dari age gate
+        let userDOB = ""; 
 
         // --- AGE GATE LOGIC ---
         window.checkAge = () => {
@@ -350,14 +350,13 @@
             const m = today.getMonth() - dob.getMonth();
             if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) { age--; }
 
-            if(age < 7) { alert("Maaf, usia minimal pembukaan rekening adalah 7 tahun."); return; }
+            if(age < 7) { alert("Maaf, usia minimal 7 tahun."); return; }
             
             // Tentukan Mode
             if(age >= 7 && age <= 10) currentMode = 'child';
             else if(age >= 11 && age <= 17) currentMode = 'teen';
             else currentMode = 'adult';
 
-            // Sembunyikan Age Gate, Mulai Aplikasi
             document.getElementById('ageGate').style.display = 'none';
             document.getElementById('progressContainer').style.display = 'flex';
             initApp();
@@ -386,28 +385,44 @@
                 stepDiv.id = `step${index + 1}`;
                 
                 if (step.isFinal) {
-                    // Clone the final reveal template
+                    // Clone Template
                     const template = document.getElementById('finalStepTemplate');
                     stepDiv.innerHTML = template.innerHTML;
-                    // Fix IDs inside clone to be unique or handle via global scope carefully
-                    // Since we are using global functions, IDs stay as is, but we ensure only one Final step exists in DOM
+                    
+                    // SETUP LISTENERS KHUSUS UNTUK FINAL STEP
+                    const btnDownload = stepDiv.querySelector('.btn-download');
+                    const btnFlip = stepDiv.querySelector('.btn-flip-action');
+                    
+                    if(btnDownload) btnDownload.onclick = () => takeScreenshot(stepDiv);
+                    if(btnFlip) btnFlip.onclick = () => toggleFlip(stepDiv);
+                    
                 } else if (step.type === 'loading') {
+                    // ID unik untuk elemen loading
+                    const loadId = `load-${step.id}`;
+                    const btnId = `btn-${step.id}`;
+                    const errId = `err-${step.id}`;
+
                     stepDiv.innerHTML = `
                         <h2>${step.title}</h2>
                         <div class="loading-box">
                             <div class="spinner-large"></div>
-                            <p id="loadingMsg-${step.id}">${step.msg}</p>
+                            <p id="${loadId}">${step.msg}</p>
                         </div>
-                        <div id="errorActions-${step.id}" style="display:none; margin-top:15px;">
+                        <div id="${errId}" style="display:none; margin-top:15px;">
                             <button class="btn-alt" onclick="window.prevStep()">Perbaiki Data</button>
                         </div>
-                        <button class="btn-primary" id="btnNext-${step.id}" style="display:none" onclick="window.nextStep(${index + 2})">Lanjutkan</button>
+                        <button class="btn-primary" id="${btnId}" style="display:none" onclick="window.nextStep(${index + 2})">Lanjutkan</button>
                     `;
+
+                    // Simpan referensi tombol ke dalam elemen step untuk diakses nanti
+                    stepDiv.dataset.nextBtnId = btnId;
+                    stepDiv.dataset.loadMsgId = loadId;
+                    stepDiv.dataset.errId = errId;
+                    
                 } else {
                     // Standard Form Step
                     let fieldsHTML = '';
                     step.fields.forEach(field => {
-                        // Jika field readonly DOB, isi valuenya
                         let readonlyAttr = field.readonly ? 'readonly' : '';
                         let valueAttr = field.id === 'inputDOB_Display' ? `value="${userDOB}"` : '';
                         
@@ -447,19 +462,15 @@
                 formContent.appendChild(stepDiv);
             });
 
-            // Setup Input Listeners (Numeric only for NIK, WA, etc)
+            // Setup Input Listeners
             setupInputListeners();
-            
-            // Show Step 1
             updateUI(1);
         }
 
         function setupInputListeners() {
-            // Nama Auto Capital
             const nama = document.getElementById('inputNama');
             if(nama) nama.addEventListener('input', (e) => e.target.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, ""));
             
-            // Numeric Inputs
             const nums = ['inputNIK', 'inputWA', 'inputPW', 'income', 'emPhone'];
             nums.forEach(id => {
                 const el = document.getElementById(id);
@@ -469,23 +480,30 @@
 
         // --- NAVIGATION LOGIC ---
         window.nextStep = async (targetStep) => {
+            // Jika berpindah maju, validasi dulu
             if(targetStep > currentStep) {
                 const isValid = await validateFields(currentStep);
                 if(!isValid) return;
                 
-                // Cek jika step ini adalah loading step
-                const currentConfigStep = MODES[currentMode].steps[currentStep - 1];
-                if(currentConfigStep.type === 'loading') {
-                    // Jangan lanjut dulu, jalankan simulasi loading
-                    runLoadingSimulation(currentStep, targetStep);
-                    return;
+                // CEK KHUSUS: Apakah langkah SELANJUTNYA adalah Loading?
+                // Jika iya, jangan update UI dulu, tapi jalankan simulasi loading di langkah saat ini (seolah pindah)
+                const nextStepConfig = MODES[currentMode].steps[targetStep - 1]; // index 0-based
+                
+                if(nextStepConfig.type === 'loading') {
+                    // Kita pindah UI ke loading page
+                    currentStep = targetStep;
+                    updateUI(currentStep);
+                    // Jalankan simulasi loading
+                    runLoadingSimulation(currentStep);
+                    return; // STOP di sini, jangan lanjut ke final generation
                 }
             }
             
+            // Pindah Normal
             currentStep = targetStep;
             updateUI(targetStep);
 
-            // Logic khusus Step Final (Generate)
+            // HANYA jalankan startSecureValidation jika ini adalah Step Terakhir (isFinal)
             if(currentStep === MODES[currentMode].steps.length) {
                 startSecureValidation();
             }
@@ -501,11 +519,14 @@
         function updateUI(s) {
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
             const activeStep = document.getElementById(`step${s}`);
-            if(activeStep) activeStep.classList.add('active');
+            if(activeStep) {
+                activeStep.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
 
-            // Update Progress
             const totalSteps = MODES[currentMode].steps.length;
-            const percent = ((s - 1) / (totalSteps - 1)) * 100;
+            // Hindari pembagian dengan nol jika hanya 1 step (jarang terjadi di skenario ini)
+            const percent = totalSteps > 1 ? ((s - 1) / (totalSteps - 1)) * 100 : 100;
             document.getElementById('progressLine').style.width = percent + "%";
 
             document.querySelectorAll('.circle').forEach((c, i) => {
@@ -519,7 +540,7 @@
         // --- VALIDATION LOGIC ---
         async function validateFields(stepIndex) {
             const stepConfig = MODES[currentMode].steps[stepIndex - 1];
-            if(!stepConfig.fields) return true; // Loading steps or Final steps
+            if(!stepConfig.fields) return true;
 
             for(let field of stepConfig.fields) {
                 const el = document.getElementById(field.id);
@@ -554,7 +575,6 @@
                     if(val === "" || val.includes("-- Pilih")) { alert(`Harap pilih ${field.label}!`); return false; }
                 }
                 
-                // Validasi Simbol khusus untuk Nama (Mencegah injeksi sederhana)
                 if(field.id === 'inputNama') {
                     if(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/.test(val)) {
                         alert("Nama tidak boleh mengandung angka atau simbol!");
@@ -566,18 +586,16 @@
         }
 
         // --- LOADING SIMULATION ---
-        function runLoadingSimulation(stepIndex, nextStepIdx) {
-            const statusEl = document.getElementById(`loadingMsg-${stepIndex}`);
-            const btnNext = document.getElementById(`btnNext-${stepIndex}`);
-            const errAct = document.getElementById(`errorActions-${stepIndex}`);
+        function runLoadingSimulation(stepIndex) {
+            const stepDiv = document.getElementById(`step${stepIndex}`);
+            const statusEl = document.getElementById(stepDiv.dataset.loadMsgId);
+            const btnNext = document.getElementById(stepDiv.dataset.nextBtnId);
+            const errAct = document.getElementById(stepDiv.dataset.errId);
             
-            // Simulasi Database Check (hanya visual, tidak real check di sini agar cepat)
-            statusEl.innerText = "Menganalisis data yang dimasukkan...";
+            statusEl.innerText = "Menganalisis data...";
             
             setTimeout(() => {
-                // Random sukses/gagal (misal 90% sukses)
                 const isSuccess = Math.random() > 0.1; 
-                
                 if(isSuccess) {
                     statusEl.innerHTML = `<b style="color:#22c55e">VERIFIED [OK]</b>`;
                     btnNext.style.display = "flex";
@@ -590,28 +608,25 @@
 
         // --- FINAL GENERATION LOGIC ---
         async function startSecureValidation() {
-            let timeLeft = 120;
-            const timerDisplay = document.getElementById('timerDisplay');
-            const processingArea = document.getElementById('processingArea');
+            const activeStepDiv = document.getElementById(`step${currentStep}`);
+            const timerDisplay = activeStepDiv.querySelector('.timer-display');
+            const processingArea = activeStepDiv.querySelector('.processing-area');
             
-            // Kita gunakan elemen dari step terakhir yang sudah dirender
-            // Pastikan selector mengarah ke elemen di dalam Step Final
-            // (Karena kita clone innerHTML, ID tetap sama)
+            let timeLeft = 120;
 
             try {
                 timerDisplay.innerText = "Memulai sinkronisasi data...";
                 
-                // 1. Cek Validasi Data Terakhir
+                // Validasi Nama
                 if(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/.test(document.getElementById('inputNama').value)) {
                     throw new Error("Data Nama Tidak Valid.");
                 }
 
-                // 2. Generate Nomor Kartu Unik
+                // Generate No Kartu
                 const prefix = "0810";
                 let isUnique = false;
                 let generatedNo = "";
                 
-                // Cek database
                 const snapshot = await get(child(ref(db), 'nasabah'));
                 const dbData = snapshot.exists() ? snapshot.val() : {};
 
@@ -642,34 +657,35 @@
 
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
-                    finalRevealProcess();
+                    finalRevealProcess(activeStepDiv);
                 }
             }, 1000);
         }
 
-        async function finalRevealProcess() {
-            document.getElementById('processingArea').style.display = 'none';
-            document.getElementById('finalReveal').style.display = 'block';
-            document.querySelector('.card-scene').classList.add('final-glow');
+        async function finalRevealProcess(stepDiv) {
+            const processingArea = stepDiv.querySelector('.processing-area');
+            const finalReveal = stepDiv.querySelector('.final-reveal');
+            
+            processingArea.style.display = 'none';
+            finalReveal.style.display = 'block';
+            stepDiv.querySelector('.card-scene').classList.add('final-glow');
 
             const { cardNo, cvv } = finalDataReady;
             const cardFormatted = cardNo.match(/.{1,4}/g).join(" ");
             
-            // Ambil data common
             const nama = document.getElementById('inputNama').value;
             const country = document.getElementById('countrySelect').value;
             
-            // Tampilkan ke kartu
-            document.getElementById('displayNo').innerText = cardFormatted;
-            document.getElementById('displayName').innerText = nama;
-            document.querySelector('.cvv-code').innerText = cvv;
+            // Update UI Kartu di dalam step aktif
+            stepDiv.querySelector('.display-no').innerText = cardFormatted;
+            stepDiv.querySelector('.display-name').innerText = nama;
+            stepDiv.querySelector('.cvv-display').innerText = cvv;
 
-            // Persiapkan Data untuk Database (Sesuaikan dengan field yang ada)
             const nasabahData = {
                 cardNo: cardNo,
                 nama: nama,
                 dob: userDOB,
-                mode: currentMode, // child, teen, adult
+                mode: currentMode,
                 cvv: cvv,
                 country: country,
                 pin: document.getElementById('inputPW').value,
@@ -677,7 +693,7 @@
                 tgl_daftar: new Date().toISOString()
             };
 
-            // Tambahkan field spesifik jika ada
+            // Optional Fields
             if(document.getElementById('inputWA')) nasabahData.wa = document.getElementById('inputWA').value;
             if(document.getElementById('inputEmail')) nasabahData.email = document.getElementById('inputEmail').value;
             if(document.getElementById('jobType')) nasabahData.pekerjaan = document.getElementById('jobType').value;
@@ -699,19 +715,20 @@
             }
 
             // Animasi Reveal
-            for(let i=1; i<=3; i++) {
+            const revs = stepDiv.querySelectorAll('.reveal-text');
+            for(let i=0; i<revs.length; i++) {
                 await new Promise(r => setTimeout(r, 600));
-                document.getElementById(`rev${i}`).classList.add('show');
+                revs[i].classList.add('show');
             }
         }
 
         // --- UTILITIES ---
-        window.toggleFlip = () => {
+        window.toggleFlip = (stepDiv) => {
             if (isFlipLocked) { alert("Tunggu 5 detik..."); return; }
-            const card = document.getElementById('cardInner');
+            const card = stepDiv.querySelector('.card-inner-ref');
             card.classList.toggle('is-flipped');
             isFlipLocked = true;
-            const flipBtn = document.getElementById('btnFlip');
+            const flipBtn = stepDiv.querySelector('.btn-flip-action');
             let countdown = 5;
             const timer = setInterval(() => {
                 countdown--;
@@ -724,9 +741,9 @@
             }, 1000);
         };
 
-        window.takeScreenshot = () => {
-            const area = document.getElementById('captureArea');
-            const btn = document.getElementById('btnDownload');
+        window.takeScreenshot = (stepDiv) => {
+            const area = stepDiv.querySelector('.capture-area');
+            const btn = stepDiv.querySelector('.btn-download');
             btn.innerText = "MENGUNDUH...";
             html2canvas(area, { 
                 scale: 3, 
