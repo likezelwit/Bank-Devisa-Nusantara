@@ -1,6 +1,6 @@
 // --- FIREBASE IMPORT ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
@@ -137,22 +137,21 @@ let finalDataReady = null;
 let userDOB = ""; 
 let sessionToken = ""; 
 
-// --- MANAJEMEN URL & LOCALSTORAGE (PENTING) ---
+// --- MANAJEMEN URL & FIREBASE REALTIME ---
 function updateURL() {
     if (!currentMode) return;
+    // URL Format: #m=MODE|s=STEP|t=TOKEN
     const hash = `m=${currentMode}|s=${currentStep}|t=${sessionToken}`;
-    window.location.hash = hash;
     
-    // Simpan token & DOB ke LocalStorage agar tidak hilang saat refresh/tutup tab
-    localStorage.setItem('bdn_token', sessionToken);
-    localStorage.setItem('bdn_dob', userDOB);
-    localStorage.setItem('bdn_mode', currentMode);
+    // Hanya ganti hash jika berbeda (mencegah history stack berlebihan)
+    if (window.location.hash !== `#${hash}`) {
+        history.pushState(null, null, `#${hash}`);
+    }
 }
 
 function parseURL() {
     const hash = window.location.hash.substring(1); 
     if (!hash) return null;
-
     try {
         const params = hash.split('|').reduce((acc, pair) => {
             const [key, val] = pair.split('=');
@@ -165,38 +164,53 @@ function parseURL() {
     }
 }
 
-// Fungsi cek apakah ada sesi tersimpan
-function checkExistingSession() {
+// Listener perubahan URL (Back/Forward Browser)
+window.addEventListener('hashchange', () => {
+    const params = parseURL();
+    if (params && params.t === sessionToken && params.m === currentMode) {
+        const newStep = parseInt(params.s);
+        if (newStep !== currentStep && newStep > 0) {
+            // Hanya update UI, jangan simpan ke firebase lagi (biar infinite loop)
+            currentStep = newStep; 
+            updateUI(currentStep);
+        }
+    }
+});
+
+// Fungsi Cek & Restore Sesi
+async function checkExistingSession() {
     const params = parseURL();
     
-    // Ambil token dari URL
-    const urlToken = params ? params.t : null;
+    if (!params || !params.t) return false;
+
+    const urlToken = params.t;
+    sessionToken = urlToken; // Set token global
+
+    // Cek apakah token ada di Firebase
+    const snapshot = await get(ref(db, `users/${urlToken}`));
     
-    // Ambil token dari LocalStorage
-    const storedToken = localStorage.getItem('bdn_token');
-    const storedDOB = localStorage.getItem('bdn_dob');
-    const storedMode = localStorage.getItem('bdn_mode');
+    if (snapshot.exists()) {
+        const data = snapshot.val();
+        console.log("Session found in Firebase. Restoring...");
+        
+        // Restore Variables
+        currentMode = data.mode;
+        currentStep = parseInt(params.s) || 1;
+        userDOB = data.dob || "";
 
-    // Jika URL ada token DAN cocok dengan LocalStorage, maka Restore!
-    if (params && params.m && params.s && urlToken && urlToken === storedToken) {
-        console.log("Restoring session...");
-        currentMode = storedMode; // Set mode dari penyimpanan
-        currentStep = parseInt(params.s); // Set step dari URL
-        sessionToken = storedToken; // Set token
-        userDOB = storedDOB || ""; // Set DOB
-
-        // Langsung sembunyikan age gate dan jalankan initApp
+        // Update UI
         document.getElementById('ageGate').style.display = 'none';
         document.getElementById('progressContainer').style.display = 'flex';
-        initApp(true); // true = mode restore
-        return true; // Session restored
+        initApp(true); // true = restore mode
+        return true;
     }
     
-    return false; // No valid session
+    // Token ada di URL tapi tidak di Firebase (Invalid/Expired)
+    return false; 
 }
 
 // --- AGE GATE LOGIC ---
-window.checkAge = () => {
+window.checkAge = async () => {
     const dobInput = document.getElementById('inputDOB').value;
     if(!dobInput) { alert("Harap pilih tanggal lahir!"); return; }
     
@@ -213,8 +227,36 @@ window.checkAge = () => {
     else if(age >= 11 && age <= 17) currentMode = 'teen';
     else currentMode = 'adult';
 
-    // Generate NEW Token
-    sessionToken = Math.random().toString(36).substr(2, 12);
+    // 1. Generate Token
+    let newToken = Math.random().toString(36).substr(2, 10);
+    let isUnique = false;
+
+    // 2. Cek Unik di Firebase
+    while (!isUnique) {
+        const snap = await get(ref(db, `users/${newToken}`));
+        if (!snap.exists()) {
+            isUnique = true;
+        } else {
+            newToken = Math.random().toString(36).substr(2, 10); // Coba token lain
+        }
+    }
+    
+    sessionToken = newToken;
+
+    // 3. Simpan Data Awal ke Firebase
+    const initialData = {
+        token: sessionToken,
+        mode: currentMode,
+        dob: userDOB,
+        step: 1,
+        created_at: new Date().toISOString()
+    };
+    
+    // Simpan ke 2 tempat: 
+    // a. users/{token} (Data nasabah sementara)
+    // b. active_tokens/{token} (Untuk validasi cepat)
+    await set(ref(db, `users/${sessionToken}`), initialData);
+    await set(ref(db, `active_tokens/${sessionToken}`), true);
 
     document.getElementById('ageGate').style.display = 'none';
     document.getElementById('progressContainer').style.display = 'flex';
@@ -226,6 +268,7 @@ function initApp(isRestoring = false) {
     const formContent = document.getElementById('formContent');
     const circleWrapper = document.getElementById('circleWrapper');
     
+    // Build Progress
     circleWrapper.innerHTML = '';
     for(let i=1; i<=config.steps.length; i++) {
         const c = document.createElement('div');
@@ -235,6 +278,7 @@ function initApp(isRestoring = false) {
         circleWrapper.appendChild(c);
     }
 
+    // Build Steps
     formContent.innerHTML = '';
     config.steps.forEach((step, index) => {
         const stepDiv = document.createElement('div');
@@ -312,16 +356,33 @@ function initApp(isRestoring = false) {
     
     if (isRestoring) {
         updateUI(currentStep);
-        restoreData(); // Mengisi data yang tersimpan di localStorage jika ada
+        restoreDataFromFirebase(); // Ambil data input dari Firebase
     } else {
         updateUI(1);
     }
 }
 
-// Fungsi untuk mengembalikan value input yang tersimpan (Opsional tapi disarankan)
-function restoreData() {
-    // Anda bisa menambahkan logika untuk memuat 'inputNama', dll dari localStorage jika Anda menyimpannya.
-    // Untuk saat ini, kita hanya merestore DOB yang sudah ditangani di initApp.
+// Restore data form (Nama, WA, dll) dari Firebase
+async function restoreDataFromFirebase() {
+    if (!sessionToken) return;
+    
+    const snapshot = await get(ref(db, `users/${sessionToken}`));
+    if (snapshot.exists()) {
+        const data = snapshot.val();
+        
+        // Loop semua input field dan isi valuenya jika ada di firebase
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            if (data[input.id]) {
+                // Khusus checkbox
+                if (input.type === 'checkbox') {
+                    input.checked = data[input.id];
+                } else {
+                    input.value = data[input.id];
+                }
+            }
+        });
+    }
 }
 
 function setupInputListeners() {
@@ -345,7 +406,7 @@ window.nextStep = async (targetStep) => {
         
         if(nextStepConfig.type === 'loading') {
             currentStep = targetStep;
-            updateURL(); // Simpan state ke URL & LocalStorage
+            updateURL();
             updateUI(currentStep);
             runLoadingSimulation(currentStep);
             return;
@@ -353,8 +414,9 @@ window.nextStep = async (targetStep) => {
     }
     
     currentStep = targetStep;
-    updateURL(); // Simpan state
+    updateURL();
     updateUI(targetStep);
+    saveCurrentStepDataToFirebase(); // SIMPAN DATA KE FIREBASE SETIAP LANJUT
 
     if(currentStep === MODES[currentMode].steps.length) {
         startSecureValidation();
@@ -366,8 +428,41 @@ window.prevStep = () => {
         currentStep--;
         updateURL();
         updateUI(currentStep);
+        saveCurrentStepDataToFirebase(); // Simpan saat mundur juga
     }
 };
+
+// Fungsi simpan data form saat ini ke Firebase Realtime
+async function saveCurrentStepDataToFirebase() {
+    if (!sessionToken) return;
+
+    // Ambil semua value dari form yang visible saat ini
+    const activeStepDiv = document.getElementById(`step${currentStep}`);
+    if (!activeStepDiv) return;
+
+    const inputs = activeStepDiv.querySelectorAll('input, select');
+    const stepData = {};
+    let hasData = false;
+
+    inputs.forEach(input => {
+        if (input.type === 'checkbox') {
+            if (input.checked) { stepData[input.id] = true; hasData = true; }
+        } else {
+            if (input.value && input.value.trim() !== "") {
+                stepData[input.id] = input.value.trim();
+                hasData = true;
+            }
+        }
+    });
+
+    // Jika ada data, update ke firebase
+    if (hasData) {
+        // Path: users/{token}/step_data/step_{nomor_step}
+        await update(ref(db, `users/${sessionToken}/step_data/step_${currentStep}`), stepData);
+        // Update step terakhir di root
+        await update(ref(db, `users/${sessionToken}`), { step: currentStep });
+    }
+}
 
 function updateUI(s) {
     document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
@@ -467,7 +562,7 @@ async function startSecureValidation() {
     let timeLeft = 120;
 
     try {
-        timerDisplay.innerText = "Memulai sinkronisasi data...";
+        timerDisplay.innerText =Memulai sinkronisasi data...";
         
         if(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/.test(document.getElementById('inputNama').value)) {
             throw new Error("Data Nama Tidak Valid.");
@@ -540,10 +635,26 @@ async function finalRevealProcess(stepDiv) {
 
     const uniqueNasabahId = 'NAS-' + Math.random().toString(36).substr(2, 9).toUpperCase();
 
+    // Kumpulkan semua data dari firebase users/{token}
+    const userSessionRef = ref(db, `users/${sessionToken}`);
+    const sessionSnap = await get(userSessionRef);
+    const sessionData = sessionSnap.exists() ? sessionSnap.val() : {};
+    
+    // Merge data form dari step_data
+    let formData = {};
+    if(sessionData.step_data) {
+        // Flatten step data
+        Object.values(sessionData.step_data).forEach(stepObj => {
+            Object.assign(formData, stepObj);
+        });
+    }
+
     const nasabahData = {
         activeVariant: "Platinum", cardStatus: "Active", CodeQR: "", MyAccount: "active", created_at: new Date().toISOString(), 
         nasabah_id: uniqueNasabahId, nama: nama, cardNo: cardNo, cvv: cvv, dob: userDOB, pin: pin, country: countryCode,
-        saldo: countryRaw === 'Indonesia (IDR)' ? 100000 : 10, tgl_daftar: new Date().toISOString()
+        saldo: countryRaw === 'Indonesia (IDR)' ? 100000 : 10, tgl_daftar: new Date().toISOString(),
+        // Masukkan data form dari Firebase
+        ...formData
     };
 
     const fieldsToCheck = ['inputWA', 'inputEmail', 'jobType', 'income', 'incomeSource', 'accPurpose', 'waliName', 'emName', 'emRelation', 'emPhone', 'address', 'secQuestion'];
@@ -566,7 +677,15 @@ async function finalRevealProcess(stepDiv) {
     });
 
     try {
+        // Simpan ke nasabah utama
         await set(ref(db, 'nasabah/' + cardNo), nasabahData);
+        
+        // Update token di users untuk menandai sudah selesai (opsional)
+        await update(ref(db, `users/${sessionToken}`), {
+            status: 'completed',
+            cardNo: cardNo
+        });
+
         sessionStorage.setItem('userCard', cardNo);
         sessionStorage.setItem('isAuth', 'true');
     } catch (e) { 
@@ -670,9 +789,10 @@ window.takeScreenshot = (stepDiv) => {
 
 // --- INITIALIZATION ---
 // Jalankan pengecekan sesi saat script pertama kali dimuat
-if (checkExistingSession()) {
-    console.log("Session restored from URL.");
-} else {
-    console.log("New session or invalid URL.");
-    // Normal flow, tunggu user input di Age Gate
-}
+(async () => {
+    if (await checkExistingSession()) {
+        console.log("Session restored from Firebase.");
+    } else {
+        console.log("New session.");
+    }
+})();
