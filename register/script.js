@@ -471,9 +471,17 @@ async function finalRevealProcess(stepDiv) {
     
     // Ambil data dari form
     const nama = document.getElementById('inputNama').value;
-    const country = document.getElementById('countrySelect')?.value || "Indonesia (IDR)";
+    const countryRaw = document.getElementById('countrySelect')?.value || "Indonesia (IDR)";
     const pin = document.getElementById('inputPW')?.value || "000000";
     
+    // --- KONVERSI NEGARA KE KODE (ID, US, GB, SG, JP) ---
+    let countryCode = "ID"; // Default
+    if (countryRaw.includes("Indonesia")) countryCode = "ID";
+    else if (countryRaw.includes("Amerika")) countryCode = "US";
+    else if (countryRaw.includes("Inggris")) countryCode = "GB";
+    else if (countryRaw.includes("Singapura")) countryCode = "SG";
+    else if (countryRaw.includes("Jepang")) countryCode = "JP";
+
     // Update UI Kartu
     stepDiv.querySelector('.display-no').innerText = cardFormatted;
     stepDiv.querySelector('.display-name').innerText = nama;
@@ -496,8 +504,11 @@ async function finalRevealProcess(stepDiv) {
         cvv: cvv,
         dob: userDOB,
         pin: pin,
-        country: country,
-        saldo: country === 'Indonesia (IDR)' ? 100000 : 10,
+        country: countryCode, // SIMPAN KODE NEGARA (ID, US, dll)
+        
+        // Logika saldo tetap berdasarkan nama negara asli
+        saldo: countryRaw === 'Indonesia (IDR)' ? 100000 : 10,
+        
         tgl_daftar: new Date().toISOString()
     };
 
