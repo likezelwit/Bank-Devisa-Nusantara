@@ -63,7 +63,8 @@
                     <div class="reveal-text rev-2" style="color:#b8924e">SMART CHIP ACTIVATED [OK]</div>
                     <div class="reveal-text rev-3" style="color:#22c55e">STATUS : PLATINUM ACTIVE</div>
                     
-                    <div class="card-scene">
+                    <!-- AREA KARTU -->
+                    <div class="card-scene" id="cardScene">
                         <div class="card-inner card-inner-ref">
                             <div class="capture-area card-face card-front">
                                 <div class="card-header">
@@ -94,6 +95,46 @@
                                     Kartu ini adalah milik Bank Devisa Nusantara. Segala bentuk penyalahgunaan akan diproses sesuai hukum negara.
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- FITUR BARU: PILIH RASIO -->
+                    <div class="ratio-selector-area">
+                        <p style="font-size: 0.8rem; color: var(--gray); margin-bottom: 10px; text-align: center; font-weight: 700;">PILIH FORMAT KARTU FISIK</p>
+                        <div class="ratio-buttons">
+                            <button class="btn-ratio active" onclick="changeCardRatio('ID-1', 1.586, '85.60 × 53.98 mm')">ID-1 (Standar)</button>
+                            <button class="btn-ratio" onclick="changeCardRatio('CR-79', 1.645, '83.9 × 51 mm')">CR-79</button>
+                            <button class="btn-ratio" onclick="changeCardRatio('CR-90', 1.533, '92 × 60 mm')">CR-90</button>
+                            <button class="btn-ratio" onclick="changeCardRatio('CR-100', 1.47, '98.5 × 67 mm')">CR-100</button>
+                        </div>
+                        <div id="ratioInfo" class="ratio-info">
+                            Dimensi Fisik: 85.60 × 53.98 mm
+                        </div>
+                        
+                        <!-- TABEL BAHAN -->
+                        <div class="material-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">SPESIFIKASI BAHAN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Karton tipis</td>
+                                        <td>0.3 – 0.5 mm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Karton tebal / duplex</td>
+                                        <td>0.6 – 1 mm</td>
+                                    </tr>
+                                    <tr class="highlight-row">
+                                        <td>Kardus keras (mirip kartu)</td>
+                                        <td>0.7 – 0.9 mm ✅</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 5px;">(Tidak berpengaruh jika rasio di ganti-ganti)</p>
                         </div>
                     </div>
 
