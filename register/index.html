@@ -16,30 +16,56 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
+    
+    <!-- OVERLAY LOADING GLOBAL (Digunakan untuk import URL & Next Step) -->
+    <div id="globalLoader" class="loader-overlay hidden">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <div class="loader-text" id="loaderText">Memproses...</div>
+        </div>
+    </div>
+
+    <!-- MODAL CUSTOM (PENGGANTI ALERT) -->
+    <div id="customModal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-icon" id="modalIcon">⚠️</div>
+            <h3 id="modalTitle">Peringatan</h3>
+            <p id="modalMessage">Pesan error di sini</p>
+            <button class="btn-modal" onclick="window.closeModal()">MENGERTI</button>
+        </div>
+    </div>
+
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
         <a href="../" class="btn-back">BATAL</a>
     </nav>
 
     <main class="container">
-        <!-- OVERLAY LOADING RESTORE -->
-        <div id="restoreOverlay" class="restore-overlay">
-            <div class="spinner-restore"></div>
-            <p class="text-restore">Memuat sesi sebelumnya...</p>
-            <small class="sub-restore">Mohon tunggu sebentar</small>
-        </div>
-
         <div class="form-wrapper">
             <!-- AGE GATE / STEP 0 -->
             <div id="ageGate" class="step active">
                 <h2>Selamat Datang</h2>
                 <div class="age-gate-box">
-                    <p style="margin-bottom:15px; color:var(--gray)">Silahkan masukkan Tanggal Lahir (DDMMYYYY) untuk memulai registrasi.</p>
-                    <div class="input-group">
-                        <label>TANGGAL LAHIR</label>
-                        <!-- Maxlength 8: DDMMYYYY -->
-                        <input type="tel" id="inputDOB" placeholder="DDMMYYYY" maxlength="8">
+                    <p style="margin-bottom:15px; color:var(--gray)">Silahkan masukkan Tanggal Lahir untuk memulai registrasi.</p>
+                    
+                    <!-- INPUT TANGGAL LAHIR TERPISAH -->
+                    <div class="dob-container">
+                        <div class="dob-field">
+                            <label>HARI</label>
+                            <input type="number" id="dobDD" placeholder="DD" maxlength="2" oninput="limitInput(this, 2)">
+                        </div>
+                        <span class="dob-separator">/</span>
+                        <div class="dob-field">
+                            <label>BULAN</label>
+                            <input type="number" id="dobMM" placeholder="MM" maxlength="2" oninput="limitInput(this, 2)">
+                        </div>
+                        <span class="dob-separator">/</span>
+                        <div class="dob-field">
+                            <label>TAHUN</label>
+                            <input type="number" id="dobYYYY" placeholder="YYYY" maxlength="4" oninput="limitInput(this, 4)">
+                        </div>
                     </div>
+
                     <button class="btn-primary" onclick="checkAge()">MULAI REGISTRASI</button>
                 </div>
             </div>
