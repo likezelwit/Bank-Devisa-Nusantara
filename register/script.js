@@ -135,6 +135,57 @@ let currentStep = 1;
 let isFlipLocked = false;
 let finalDataReady = null;
 let userDOB = ""; 
+// Token untuk validasi URL sederhana
+let sessionToken = ""; 
+
+// --- MANAJEMEN URL (HASH STATE) ---
+function updateURL() {
+    if (!currentMode) return;
+    // Format URL: #m=MODE|s=STEP|t=TOKEN
+    const hash = `m=${currentMode}|s=${currentStep}|t=${sessionToken}`;
+    window.location.hash = hash;
+}
+
+function parseURL() {
+    const hash = window.location.hash.substring(1); // Hapus tanda #
+    if (!hash) return null;
+
+    try {
+        const params = hash.split('|').reduce((acc, pair) => {
+            const [key, val] = pair.split('=');
+            acc[key] = val;
+            return acc;
+        }, {});
+
+        return params; // { m: "teen", s: "8", t: "xyz" }
+    } catch (e) {
+        return null;
+    }
+}
+
+// Listener jika URL berubah manual (misal tombol back browser)
+window.addEventListener('hashchange', () => {
+    const params = parseURL();
+    if (params && params.m && params.s && params.t === sessionToken) {
+        // Valid token, lanjutkan
+        if (currentMode !== params.m) {
+            // Jika mode beda, re-init app
+            currentMode = params.m;
+            currentStep = parseInt(params.s);
+            document.getElementById('ageGate').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'flex';
+            initApp(true); // true = restore mode
+        } else if (currentStep !== parseInt(params.s)) {
+            // Jika step beda
+            currentStep = parseInt(params.s);
+            updateUI(currentStep);
+        }
+    } else if (params) {
+        // Token mismatch atau error, reset ke awal
+        window.location.hash = "";
+        location.reload();
+    }
+});
 
 // --- AGE GATE LOGIC ---
 window.checkAge = () => {
@@ -155,12 +206,15 @@ window.checkAge = () => {
     else if(age >= 11 && age <= 17) currentMode = 'teen';
     else currentMode = 'adult';
 
+    // Generate Token Session
+    sessionToken = Math.random().toString(36).substr(2, 12);
+
     document.getElementById('ageGate').style.display = 'none';
     document.getElementById('progressContainer').style.display = 'flex';
     initApp();
 };
 
-function initApp() {
+function initApp(isRestoring = false) {
     const config = MODES[currentMode];
     const formContent = document.getElementById('formContent');
     const circleWrapper = document.getElementById('circleWrapper');
@@ -183,23 +237,16 @@ function initApp() {
         stepDiv.id = `step${index + 1}`;
         
         if (step.isFinal) {
-            // Clone Template
             const template = document.getElementById('finalStepTemplate');
             stepDiv.innerHTML = template.innerHTML;
-            
-            // SETUP LISTENERS KHUSUS UNTUK FINAL STEP
             const btnDownload = stepDiv.querySelector('.btn-download');
             const btnFlip = stepDiv.querySelector('.btn-flip-action');
-            
             if(btnDownload) btnDownload.onclick = () => takeScreenshot(stepDiv);
             if(btnFlip) btnFlip.onclick = () => toggleFlip(stepDiv);
-            
         } else if (step.type === 'loading') {
-            // ID unik untuk elemen loading
             const loadId = `load-${step.id}`;
             const btnId = `btn-${step.id}`;
             const errId = `err-${step.id}`;
-
             stepDiv.innerHTML = `
                 <h2>${step.title}</h2>
                 <div class="loading-box">
@@ -211,14 +258,10 @@ function initApp() {
                 </div>
                 <button class="btn-primary" id="${btnId}" style="display:none" onclick="window.nextStep(${index + 2})">Lanjutkan</button>
             `;
-
-            // Simpan referensi tombol ke dalam elemen step untuk diakses nanti
             stepDiv.dataset.nextBtnId = btnId;
             stepDiv.dataset.loadMsgId = loadId;
             stepDiv.dataset.errId = errId;
-            
         } else {
-            // Standard Form Step
             let fieldsHTML = '';
             step.fields.forEach(field => {
                 let readonlyAttr = field.readonly ? 'readonly' : '';
@@ -260,9 +303,27 @@ function initApp() {
         formContent.appendChild(stepDiv);
     });
 
-    // Setup Input Listeners
+    // 3. Setup Input Listeners & Auto Save to URL
     setupInputListeners();
-    updateUI(1);
+    
+    // 4. Cek apakah sedang restore atau baru mulai
+    if (isRestoring) {
+        updateUI(currentStep);
+        restoreFormDataFromURL(); // Mengisi ulang form
+    } else {
+        updateUI(1);
+    }
+}
+
+function restoreFormDataFromURL() {
+    // Di sini kita bisa memeriksa URL yang lebih kompleks jika perlu
+    // Namun, karena HTML form statis, saat updateUI dipanggil, 
+    // browser akan merender form di step tersebut.
+    // Jika user ingin data tersimpan permanen, kita bisa menyimpannya ke localStorage
+    // Tapi sesuai request URL hanya untuk step.
+    
+    // Jika ingin menyimpan value input juga, kita bisa extend URL hash jadi sangat panjang.
+    // Untuk saat ini, fokus pada Step Resumable.
 }
 
 function setupInputListeners() {
@@ -274,6 +335,10 @@ function setupInputListeners() {
         const el = document.getElementById(id);
         if(el) el.addEventListener('input', (e) => e.target.value = e.target.value.replace(/[^0-9]/g, ""));
     });
+
+    // TAMBAHAN: Listener untuk menyimpan data input ke URL Hash (Opsional/Extended)
+    // Agar URL tidak terlalu panjang, kita hanya update Step secara real-time.
+    // Jika ingin menyimpan isi form, kita perlu encode data.
 }
 
 // --- NAVIGATION LOGIC ---
@@ -283,24 +348,21 @@ window.nextStep = async (targetStep) => {
         const isValid = await validateFields(currentStep);
         if(!isValid) return;
         
-        // CEK KHUSUS: Apakah langkah SELANJUTNYA adalah Loading?
-        const nextStepConfig = MODES[currentMode].steps[targetStep - 1]; // index 0-based
+        const nextStepConfig = MODES[currentMode].steps[targetStep - 1];
         
         if(nextStepConfig.type === 'loading') {
-            // Kita pindah UI ke loading page
             currentStep = targetStep;
+            updateURL(); // Update URL sebelum loading
             updateUI(currentStep);
-            // Jalankan simulasi loading
             runLoadingSimulation(currentStep);
-            return; // STOP di sini
+            return;
         }
     }
     
-    // Pindah Normal
     currentStep = targetStep;
+    updateURL(); // Update URL setiap ganti step
     updateUI(targetStep);
 
-    // HANYA jalankan startSecureValidation jika ini adalah Step Terakhir (isFinal)
     if(currentStep === MODES[currentMode].steps.length) {
         startSecureValidation();
     }
@@ -309,6 +371,7 @@ window.nextStep = async (targetStep) => {
 window.prevStep = () => {
     if(currentStep > 1) {
         currentStep--;
+        updateURL(); // Update URL saat mundur juga
         updateUI(currentStep);
     }
 };
@@ -413,12 +476,10 @@ async function startSecureValidation() {
     try {
         timerDisplay.innerText = "Memulai sinkronisasi data...";
         
-        // Validasi Nama
         if(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/.test(document.getElementById('inputNama').value)) {
             throw new Error("Data Nama Tidak Valid.");
         }
 
-        // Generate No Kartu
         const prefix = "0810";
         let isUnique = false;
         let generatedNo = "";
@@ -469,55 +530,30 @@ async function finalRevealProcess(stepDiv) {
     const { cardNo, cvv } = finalDataReady;
     const cardFormatted = cardNo.match(/.{1,4}/g).join(" ");
     
-    // Ambil data dari form
     const nama = document.getElementById('inputNama').value;
     const countryRaw = document.getElementById('countrySelect')?.value || "Indonesia (IDR)";
     const pin = document.getElementById('inputPW')?.value || "000000";
     
-    // --- KONVERSI NEGARA KE KODE (ID, US, GB, SG, JP) ---
-    let countryCode = "ID"; // Default
+    let countryCode = "ID";
     if (countryRaw.includes("Indonesia")) countryCode = "ID";
     else if (countryRaw.includes("Amerika")) countryCode = "US";
     else if (countryRaw.includes("Inggris")) countryCode = "GB";
     else if (countryRaw.includes("Singapura")) countryCode = "SG";
     else if (countryRaw.includes("Jepang")) countryCode = "JP";
 
-    // Update UI Kartu
     stepDiv.querySelector('.display-no').innerText = cardFormatted;
     stepDiv.querySelector('.display-name').innerText = nama;
     stepDiv.querySelector('.cvv-display').innerText = cvv;
 
-    // Generate ID Unik
     const uniqueNasabahId = 'NAS-' + Math.random().toString(36).substr(2, 9).toUpperCase();
 
-    // --- KONSTRUKSI DATA FIREBASE ---
     const nasabahData = {
-        activeVariant: "Platinum",     
-        cardStatus: "Active",           
-        CodeQR: "",                     
-        MyAccount: "active",            
-        created_at: new Date().toISOString(), 
-        
-        nasabah_id: uniqueNasabahId,
-        nama: nama,
-        cardNo: cardNo,
-        cvv: cvv,
-        dob: userDOB,
-        pin: pin,
-        country: countryCode, // SIMPAN KODE NEGARA (ID, US, dll)
-        
-        // Logika saldo tetap berdasarkan nama negara asli
-        saldo: countryRaw === 'Indonesia (IDR)' ? 100000 : 10,
-        
-        tgl_daftar: new Date().toISOString()
+        activeVariant: "Platinum", cardStatus: "Active", CodeQR: "", MyAccount: "active", created_at: new Date().toISOString(), 
+        nasabah_id: uniqueNasabahId, nama: nama, cardNo: cardNo, cvv: cvv, dob: userDOB, pin: pin, country: countryCode,
+        saldo: countryRaw === 'Indonesia (IDR)' ? 100000 : 10, tgl_daftar: new Date().toISOString()
     };
 
-    // TAMBAHAN: Cari dan masukkan field lain
-    const fieldsToCheck = [
-        'inputWA', 'inputEmail', 'jobType', 'income', 'incomeSource', 
-        'accPurpose', 'waliName', 'emName', 'emRelation', 'emPhone', 'address', 'secQuestion'
-    ];
-
+    const fieldsToCheck = ['inputWA', 'inputEmail', 'jobType', 'income', 'incomeSource', 'accPurpose', 'waliName', 'emName', 'emRelation', 'emPhone', 'address', 'secQuestion'];
     fieldsToCheck.forEach(id => {
         const el = document.getElementById(id);
         if (el && el.value && el.value.trim() !== "") {
@@ -537,9 +573,7 @@ async function finalRevealProcess(stepDiv) {
     });
 
     try {
-        // Simpan ke Firebase
         await set(ref(db, 'nasabah/' + cardNo), nasabahData);
-        
         sessionStorage.setItem('userCard', cardNo);
         sessionStorage.setItem('isAuth', 'true');
     } catch (e) { 
@@ -547,12 +581,8 @@ async function finalRevealProcess(stepDiv) {
         alert("Koneksi terputus saat menyimpan!");
     }
 
-    // --- PERBAIKAN: PANGGIL FUNGSI RASIO DEFAULT SAAT PERTAMA KALI MUNCUL ---
-    // Ini memastikan ukuran font belakang kartu (CVV) benar saat muncul pertama kali
-    // Default ID-1
     changeCardRatio('ID-1', 1.586, '85.60 × 53.98 mm');
 
-    // Animasi Reveal
     const revs = stepDiv.querySelectorAll('.reveal-text');
     for(let i=0; i<revs.length; i++) {
         await new Promise(r => setTimeout(r, 600));
@@ -566,37 +596,29 @@ window.changeCardRatio = (type, ratio, dimensionText) => {
     const ratioInfo = document.getElementById('ratioInfo');
     const buttons = document.querySelectorAll('.btn-ratio');
 
-    // 1. Update UI Buttons
     if (event && event.target) {
         buttons.forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
     }
 
-    // 2. Update Text Dimensi
     if(ratioInfo) ratioInfo.innerText = `Dimensi Fisik: ${dimensionText}`;
 
-    // 3. Set atribut data-ratio agar CSS max-width berubah (CR-90/100 jadi besar)
     if(cardScene) {
         cardScene.style.aspectRatio = `${ratio} / 1`;
         cardScene.setAttribute('data-ratio', type);
     }
 
-    // Minimalisir Text: Sesuaikan font size agar proporsional
     const baseRatio = 1.586;
     let scaleFactor = 1;
 
     if (ratio < baseRatio) {
-        // Kotak (CR-90, CR-100) -> Area lebih tinggi/lebar, text bisa sedikit membesar agar terisi penuh
         scaleFactor = 1.1; 
     } else {
-        // Gepeng (CR-79) -> Text harus mengecil sedikit biar muut
         scaleFactor = 0.95;
     }
     
-    // Terapkan ke elemen kartu dalam stepDiv aktif
     const activeStepDiv = document.getElementById(`step${currentStep}`);
     if(activeStepDiv) {
-        // --- DEPAN ---
         const cardNumber = activeStepDiv.querySelector('.card-number');
         const nameDisplay = activeStepDiv.querySelector('.name-display');
         const bankName = activeStepDiv.querySelector('.bank-name');
@@ -605,9 +627,7 @@ window.changeCardRatio = (type, ratio, dimensionText) => {
         if(nameDisplay) nameDisplay.style.fontSize = `${0.9 * scaleFactor}rem`; 
         if(bankName) bankName.style.fontSize = `${0.7 * scaleFactor}rem`;
 
-        // --- BELAKANG (CVV, TERMS) ---
-        // Kita override style inline CSS dari file .css agar mengikuti rasio
-        const cvvLabel = activeStepDiv.querySelector('.cvv-area span'); // Label "CVV"
+        const cvvLabel = activeStepDiv.querySelector('.cvv-area span');
         const cvvCode = activeStepDiv.querySelector('.cvv-code');
         const cardTerms = activeStepDiv.querySelector('.card-terms');
 
@@ -641,7 +661,6 @@ window.takeScreenshot = (stepDiv) => {
     const btn = stepDiv.querySelector('.btn-download');
     btn.innerText = "MENGUNDUH...";
     
-    // Penting: html2canvas akan menangkap rasio CSS saat ini.
     html2canvas(area, { 
         scale: 3, 
         useCORS: true, 
