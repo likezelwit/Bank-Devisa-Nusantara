@@ -50,7 +50,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
     width: 100%; height: 60px; background: var(--navy); color: white; border: none; border-radius: 18px;
     font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s;
     display: flex; align-items: center; justify-content: center;
-    position: relative; /* Untuk spinner loading */
+    position: relative; /* Untuk spinner */
 }
 .btn-alt { background: white; color: var(--navy); border: 2px solid #e2e8f0; }
 .nav-buttons-split { display: flex; gap: 10px; margin-top: 10px; }
@@ -136,21 +136,23 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
     perspective: 1200px; 
     margin: 20px auto; 
     transition: all 0.5s ease; 
+    
+    /* PENTING: Aktifkan Container Query agar satuan cqw berfungsi */
     container-type: inline-size; 
 }
 
-/* State classes untuk ukuran spesifik */
+/* State classes untuk ukuran spesifik (akan di-trigger oleh JS) */
 .card-scene[data-ratio="CR-79"] {
-    max-width: 310px; 
+    max-width: 310px; /* Sedikit lebih kecil dari ID-1 */
 }
 .card-scene[data-ratio="ID-1"] {
     max-width: 320px;
 }
 .card-scene[data-ratio="CR-90"] {
-    max-width: 340px; 
+    max-width: 340px; /* Lebih lebar dari standar */
 }
 .card-scene[data-ratio="CR-100"] {
-    max-width: 360px; 
+    max-width: 360px; /* Paling lebar/besar */
 }
 
 .card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1); transform-style: preserve-3d; cursor: pointer; }
@@ -185,9 +187,9 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
     overflow: hidden; 
 }
 
-/* UPDATE CVV: Menggunakan unit 'cqw' agar font ikut membesar saat kartu membesar */
+/* --- PERBAIKAN CVV: Menggunakan 'cqw' (Container Query Width) agar font ikut membesar saat kartu membesar */
 .cvv-area span { 
-    font-size: 4cqw; /* Label 'CVV' dinamis */
+    font-size: 4cqw; /* Label 'CVV' proporsional */
     color: #000; 
     margin-right: 5px;
     font-weight: 800;
@@ -198,7 +200,22 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
     font-family: monospace; 
     font-size: 12cqw; /* Angka CVV besar dan dinamis */
 }
-.card-terms { padding: 0 1.5rem; font-size: 2.5cqw; color: rgba(255,255,255,0.4); line-height: 1.2; text-align: left; }
+.card-terms { 
+    padding: 0 1.5rem; 
+    font-size: 2.5cqw; /* Terms text ikut menyesuaikan */
+    color: rgba(255,255,255,0.4); 
+    line-height: 1.2; 
+    text-align: left; 
+}
+
+/* UTILS & ANIMATION */
+.spinner-large { border: 4px solid #f1f5f9; border-top-color: var(--blue); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s infinite linear; margin: 0 auto 1.2rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.reveal-text { opacity: 0; font-size: 0.75rem; font-weight: 700; margin-bottom: 6px; text-align: left; padding-left: 10px; border-left: 3px solid #e2e8f0; transition: 0.5s; }
+.reveal-text.show { opacity: 1; border-left-color: var(--gold); }
+.final-glow { animation: cardGlow 2s infinite alternate; }
+@keyframes cardGlow { from { box-shadow: 0 0 20px rgba(79, 70, 229, 0.2); } to { box-shadow: 0 0 40px rgba(184, 146, 78, 0.6); } }
+.hidden { display: none !important; }
 
 /* --- RESTORE OVERLAY STYLE --- */
 .restore-overlay {
@@ -219,7 +236,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
 .spinner-restore {
     width: 50px;
     height: 50px;
-    border: 4px solid rgba(255, 255, 255, 0.3);
+    border: 4px solid rgba(255, 255,255, 0.3);
     border-top-color: var(--gold); /* Warna emas */
     border-radius: 50%;
     animation: spin 1s infinite linear;
@@ -234,20 +251,45 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
 
 .sub-restore {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255,255,255, 0.7);
     margin-top: 5px;
 }
 
-/* UTILS & ANIMATION */
-.spinner-large { border: 4px solid #f1f5f9; border-top-color: var(--blue); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s infinite linear; margin: 0 auto 1.2rem; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.reveal-text { opacity: 0; font-size: 0.75rem; font-weight: 700; margin-bottom: 6px; text-align: left; padding-left: 10px; border-left: 3px solid #e2e8f0; transition: 0.5s; }
-.reveal-text.show { opacity: 1; border-left-color: var(--gold); }
-.final-glow { animation: cardGlow 2s infinite alternate; }
-@keyframes cardGlow { from { box-shadow: 0 0 20px rgba(79, 70, 229, 0.2); } to { box-shadow: 0 0 40px rgba(184, 146, 78, 0.6); } }
-.hidden { display: none !important; }
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 
-/* Button Loading State */
+/* --- ALERT POP UP (Custom Overlay) */
+.alert-popup {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5); /* Gelap transparan gelap */
+    z-index: 10000;
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+}
+
+.alert-popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0,0,0.2);
+}
+
+.alert-text { font-size: 1rem; color: var(--navy); font-weight: 700; margin-bottom: 15px; }
+
+.alert-btn {
+    margin-top: 10px;
+}
+
+/* Loading State (Spinner di dalam tombol NextStep) */
 .btn-primary.loading {
     color: transparent; /* Sembunyi teks */
     pointer-events: none; /* Matikan klik */
@@ -261,7 +303,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
 }
 .btn-spinner {
     position: absolute;
-    width: 20px; height: 20px;
+    width: 20px; 
+    height: 20px; 
     border: 2px solid rgba(255,255,255,0.3);
     border-top-color: white;
     border-radius: 50%;
