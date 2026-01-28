@@ -547,6 +547,11 @@ async function finalRevealProcess(stepDiv) {
         alert("Koneksi terputus saat menyimpan!");
     }
 
+    // --- PERBAIKAN: PANGGIL FUNGSI RASIO DEFAULT SAAT PERTAMA KALI MUNCUL ---
+    // Ini memastikan ukuran font belakang kartu (CVV) benar saat muncul pertama kali
+    // Default ID-1
+    changeCardRatio('ID-1', 1.586, '85.60 × 53.98 mm');
+
     // Animasi Reveal
     const revs = stepDiv.querySelectorAll('.reveal-text');
     for(let i=0; i<revs.length; i++) {
@@ -561,28 +566,27 @@ window.changeCardRatio = (type, ratio, dimensionText) => {
     const ratioInfo = document.getElementById('ratioInfo');
     const buttons = document.querySelectorAll('.btn-ratio');
 
-    // Update UI Buttons
-    buttons.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    // 1. Update UI Buttons
+    if (event && event.target) {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+    }
 
-    // Update Text Dimensi
-    ratioInfo.innerText = `Dimensi Fisik: ${dimensionText}`;
+    // 2. Update Text Dimensi
+    if(ratioInfo) ratioInfo.innerText = `Dimensi Fisik: ${dimensionText}`;
 
-    // Ubah Aspect Ratio Container
-    // Kita gunakan Style langsung untuk override CSS
-    cardScene.style.aspectRatio = `${ratio} / 1`;
+    // 3. Set atribut data-ratio agar CSS max-width berubah (CR-90/100 jadi besar)
+    if(cardScene) {
+        cardScene.style.aspectRatio = `${ratio} / 1`;
+        cardScene.setAttribute('data-ratio', type);
+    }
 
     // Minimalisir Text: Sesuaikan font size agar proporsional
-    // Default (ID-1 1.58) adalah 100%.
-    // CR-79 (1.64) -> Sedikit lebih gepeng, text size mungkin normal.
-    // CR-100 (1.47) -> Lebih kotak, area lebih lega, text bisa lebih besar atau tetap.
-    
-    // Logika sederhana: Normalisasi berdasarkan rasio lebar.
     const baseRatio = 1.586;
     let scaleFactor = 1;
 
     if (ratio < baseRatio) {
-        // Kotak (CR-90, CR-100) -> Area lebih tinggi, text bisa sedikit membesar agar terisi penuh
+        // Kotak (CR-90, CR-100) -> Area lebih tinggi/lebar, text bisa sedikit membesar agar terisi penuh
         scaleFactor = 1.1; 
     } else {
         // Gepeng (CR-79) -> Text harus mengecil sedikit biar muut
@@ -592,13 +596,24 @@ window.changeCardRatio = (type, ratio, dimensionText) => {
     // Terapkan ke elemen kartu dalam stepDiv aktif
     const activeStepDiv = document.getElementById(`step${currentStep}`);
     if(activeStepDiv) {
+        // --- DEPAN ---
         const cardNumber = activeStepDiv.querySelector('.card-number');
         const nameDisplay = activeStepDiv.querySelector('.name-display');
         const bankName = activeStepDiv.querySelector('.bank-name');
         
         if(cardNumber) cardNumber.style.fontSize = `${1.3 * scaleFactor}rem`;
-        if(nameDisplay) nameDisplay.style.fontSize = `${0.9 * scaleFactor}rem`; // Base name ~0.9
+        if(nameDisplay) nameDisplay.style.fontSize = `${0.9 * scaleFactor}rem`; 
         if(bankName) bankName.style.fontSize = `${0.7 * scaleFactor}rem`;
+
+        // --- BELAKANG (CVV, TERMS) ---
+        // Kita override style inline CSS dari file .css agar mengikuti rasio
+        const cvvLabel = activeStepDiv.querySelector('.cvv-area span'); // Label "CVV"
+        const cvvCode = activeStepDiv.querySelector('.cvv-code');
+        const cardTerms = activeStepDiv.querySelector('.card-terms');
+
+        if(cvvLabel) cvvLabel.style.fontSize = `${2.0 * scaleFactor}vw`; 
+        if(cvvCode) cvvCode.style.fontSize = `${6.0 * scaleFactor}vw`;
+        if(cardTerms) cardTerms.style.fontSize = `${7.5 * scaleFactor}px`;
     }
 };
 
@@ -627,9 +642,6 @@ window.takeScreenshot = (stepDiv) => {
     btn.innerText = "MENGUNDUH...";
     
     // Penting: html2canvas akan menangkap rasio CSS saat ini.
-    // Karena kita mengubah 'aspectRatio' pada .card-scene via JS di fungsi changeCardRatio,
-    // html2canvas akan otomatis membuat gambar dengan rasio yang benar.
-    
     html2canvas(area, { 
         scale: 3, 
         useCORS: true, 
