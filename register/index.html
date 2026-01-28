@@ -22,15 +22,23 @@
     </nav>
 
     <main class="container">
+        <!-- OVERLAY LOADING RESTORE -->
+        <div id="restoreOverlay" class="restore-overlay">
+            <div class="spinner-restore"></div>
+            <p class="text-restore">Memuat sesi sebelumnya...</p>
+            <small class="sub-restore">Mohon tunggu sebentar</small>
+        </div>
+
         <div class="form-wrapper">
             <!-- AGE GATE / STEP 0 -->
             <div id="ageGate" class="step active">
                 <h2>Selamat Datang</h2>
                 <div class="age-gate-box">
-                    <p style="margin-bottom:15px; color:var(--gray)">Silahkan masukkan Tanggal Lahir untuk memulai registrasi.</p>
+                    <p style="margin-bottom:15px; color:var(--gray)">Silahkan masukkan Tanggal Lahir (DDMMYYYY) untuk memulai registrasi.</p>
                     <div class="input-group">
                         <label>TANGGAL LAHIR</label>
-                        <input type="date" id="inputDOB">
+                        <!-- Maxlength 8: DDMMYYYY -->
+                        <input type="tel" id="inputDOB" placeholder="DDMMYYYY" maxlength="8">
                     </div>
                     <button class="btn-primary" onclick="checkAge()">MULAI REGISTRASI</button>
                 </div>
