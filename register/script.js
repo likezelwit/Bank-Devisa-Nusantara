@@ -38,13 +38,16 @@ const fundSource = document.getElementById('fundSource');
 const accountGoal = document.getElementById('accountGoal');
 const currency = document.getElementById('currency');
 
+/* 🔥 FIELD PENTING YANG DIBALIKIN */
+const countrySelect = document.getElementById('countrySelect'); // boleh null
+
 /* ================= INPUT FILTER ================= */
-inputNama.addEventListener('input', e => {
+inputNama?.addEventListener('input', e => {
   e.target.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, '');
 });
 
 [inputWA, inputIncome, inputPIN, emPhone].forEach(el => {
-  el.addEventListener('input', e => {
+  el?.addEventListener('input', e => {
     e.target.value = e.target.value.replace(/[^0-9]/g, '');
   });
 });
@@ -66,7 +69,7 @@ window.prevStep = () => {
 /* ================= UI ================= */
 function updateUI() {
   steps.forEach(s => s.classList.remove('active'));
-  document.getElementById(`step${currentStep}`).classList.add('active');
+  document.getElementById(`step${currentStep}`)?.classList.add('active');
 
   const percent = ((currentStep - 1) / (totalStep - 1)) * 100;
   progressLine.style.width = percent + '%';
@@ -107,7 +110,7 @@ function validateStep(step) {
   }
 
   if (step === 6) {
-    if (inputIncome.value.trim() === '')
+    if (!inputIncome.value)
       return alert("Pendapatan wajib diisi"), false;
   }
 
@@ -124,28 +127,44 @@ window.generateFinal = async () => {
   const cardNo = "0810" + Math.floor(100000000000 + Math.random() * 900000000000);
   const cvv = Math.floor(100 + Math.random() * 900);
 
+  const countryValue = countrySelect?.value || "ID";
+
   const nasabahData = {
     cardStatus: "Active",
     cardVariant: "Platinum",
     nomor_kartu: cardNo,
     cvv: cvv,
+
+    /* IDENTITAS */
     nama: inputNama.value.trim(),
     tgl_lahir: inputDOB.value,
+    country: countryValue,
+
+    /* KONTAK */
     wa: inputWA.value,
     email: inputEmail.value.trim(),
     alamat: inputAddr.value,
+
+    /* EKONOMI */
     pekerjaan: inputJob.value,
     pendapatan: inputIncome.value,
+    sumber_dana: fundSource.value,
+    tujuan_akun: accountGoal.value,
+
+    /* KEAMANAN */
+    pin: inputPIN.value,
+    pertanyaan_rahasia: secretQ.value,
+
+    /* KONTAK DARURAT */
     kontak_darurat: {
       nama: emName.value,
       hp: emPhone.value
     },
-    pin: inputPIN.value,
-    pertanyaan_rahasia: secretQ.value,
-    sumber_dana: fundSource.value,
-    tujuan_akun: accountGoal.value,
+
+    /* FINANSIAL */
     mata_uang: currency.value,
     saldo_awal: currency.value === 'IDR' ? 100000 : 10,
+
     tgl_daftar: new Date().toISOString()
   };
 
