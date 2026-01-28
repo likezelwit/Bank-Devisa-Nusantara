@@ -135,19 +135,22 @@ let currentStep = 1;
 let isFlipLocked = false;
 let finalDataReady = null;
 let userDOB = ""; 
-// Token untuk validasi URL sederhana
 let sessionToken = ""; 
 
-// --- MANAJEMEN URL (HASH STATE) ---
+// --- MANAJEMEN URL & LOCALSTORAGE (PENTING) ---
 function updateURL() {
     if (!currentMode) return;
-    // Format URL: #m=MODE|s=STEP|t=TOKEN
     const hash = `m=${currentMode}|s=${currentStep}|t=${sessionToken}`;
     window.location.hash = hash;
+    
+    // Simpan token & DOB ke LocalStorage agar tidak hilang saat refresh/tutup tab
+    localStorage.setItem('bdn_token', sessionToken);
+    localStorage.setItem('bdn_dob', userDOB);
+    localStorage.setItem('bdn_mode', currentMode);
 }
 
 function parseURL() {
-    const hash = window.location.hash.substring(1); // Hapus tanda #
+    const hash = window.location.hash.substring(1); 
     if (!hash) return null;
 
     try {
@@ -156,36 +159,41 @@ function parseURL() {
             acc[key] = val;
             return acc;
         }, {});
-
-        return params; // { m: "teen", s: "8", t: "xyz" }
+        return params;
     } catch (e) {
         return null;
     }
 }
 
-// Listener jika URL berubah manual (misal tombol back browser)
-window.addEventListener('hashchange', () => {
+// Fungsi cek apakah ada sesi tersimpan
+function checkExistingSession() {
     const params = parseURL();
-    if (params && params.m && params.s && params.t === sessionToken) {
-        // Valid token, lanjutkan
-        if (currentMode !== params.m) {
-            // Jika mode beda, re-init app
-            currentMode = params.m;
-            currentStep = parseInt(params.s);
-            document.getElementById('ageGate').style.display = 'none';
-            document.getElementById('progressContainer').style.display = 'flex';
-            initApp(true); // true = restore mode
-        } else if (currentStep !== parseInt(params.s)) {
-            // Jika step beda
-            currentStep = parseInt(params.s);
-            updateUI(currentStep);
-        }
-    } else if (params) {
-        // Token mismatch atau error, reset ke awal
-        window.location.hash = "";
-        location.reload();
+    
+    // Ambil token dari URL
+    const urlToken = params ? params.t : null;
+    
+    // Ambil token dari LocalStorage
+    const storedToken = localStorage.getItem('bdn_token');
+    const storedDOB = localStorage.getItem('bdn_dob');
+    const storedMode = localStorage.getItem('bdn_mode');
+
+    // Jika URL ada token DAN cocok dengan LocalStorage, maka Restore!
+    if (params && params.m && params.s && urlToken && urlToken === storedToken) {
+        console.log("Restoring session...");
+        currentMode = storedMode; // Set mode dari penyimpanan
+        currentStep = parseInt(params.s); // Set step dari URL
+        sessionToken = storedToken; // Set token
+        userDOB = storedDOB || ""; // Set DOB
+
+        // Langsung sembunyikan age gate dan jalankan initApp
+        document.getElementById('ageGate').style.display = 'none';
+        document.getElementById('progressContainer').style.display = 'flex';
+        initApp(true); // true = mode restore
+        return true; // Session restored
     }
-});
+    
+    return false; // No valid session
+}
 
 // --- AGE GATE LOGIC ---
 window.checkAge = () => {
@@ -201,12 +209,11 @@ window.checkAge = () => {
 
     if(age < 7) { alert("Maaf, usia minimal 7 tahun."); return; }
     
-    // Tentukan Mode
     if(age >= 7 && age <= 10) currentMode = 'child';
     else if(age >= 11 && age <= 17) currentMode = 'teen';
     else currentMode = 'adult';
 
-    // Generate Token Session
+    // Generate NEW Token
     sessionToken = Math.random().toString(36).substr(2, 12);
 
     document.getElementById('ageGate').style.display = 'none';
@@ -219,7 +226,6 @@ function initApp(isRestoring = false) {
     const formContent = document.getElementById('formContent');
     const circleWrapper = document.getElementById('circleWrapper');
     
-    // 1. Build Progress Circles
     circleWrapper.innerHTML = '';
     for(let i=1; i<=config.steps.length; i++) {
         const c = document.createElement('div');
@@ -229,7 +235,6 @@ function initApp(isRestoring = false) {
         circleWrapper.appendChild(c);
     }
 
-    // 2. Build Steps HTML
     formContent.innerHTML = '';
     config.steps.forEach((step, index) => {
         const stepDiv = document.createElement('div');
@@ -303,27 +308,20 @@ function initApp(isRestoring = false) {
         formContent.appendChild(stepDiv);
     });
 
-    // 3. Setup Input Listeners & Auto Save to URL
     setupInputListeners();
     
-    // 4. Cek apakah sedang restore atau baru mulai
     if (isRestoring) {
         updateUI(currentStep);
-        restoreFormDataFromURL(); // Mengisi ulang form
+        restoreData(); // Mengisi data yang tersimpan di localStorage jika ada
     } else {
         updateUI(1);
     }
 }
 
-function restoreFormDataFromURL() {
-    // Di sini kita bisa memeriksa URL yang lebih kompleks jika perlu
-    // Namun, karena HTML form statis, saat updateUI dipanggil, 
-    // browser akan merender form di step tersebut.
-    // Jika user ingin data tersimpan permanen, kita bisa menyimpannya ke localStorage
-    // Tapi sesuai request URL hanya untuk step.
-    
-    // Jika ingin menyimpan value input juga, kita bisa extend URL hash jadi sangat panjang.
-    // Untuk saat ini, fokus pada Step Resumable.
+// Fungsi untuk mengembalikan value input yang tersimpan (Opsional tapi disarankan)
+function restoreData() {
+    // Anda bisa menambahkan logika untuk memuat 'inputNama', dll dari localStorage jika Anda menyimpannya.
+    // Untuk saat ini, kita hanya merestore DOB yang sudah ditangani di initApp.
 }
 
 function setupInputListeners() {
@@ -335,15 +333,10 @@ function setupInputListeners() {
         const el = document.getElementById(id);
         if(el) el.addEventListener('input', (e) => e.target.value = e.target.value.replace(/[^0-9]/g, ""));
     });
-
-    // TAMBAHAN: Listener untuk menyimpan data input ke URL Hash (Opsional/Extended)
-    // Agar URL tidak terlalu panjang, kita hanya update Step secara real-time.
-    // Jika ingin menyimpan isi form, kita perlu encode data.
 }
 
 // --- NAVIGATION LOGIC ---
 window.nextStep = async (targetStep) => {
-    // Jika berpindah maju, validasi dulu
     if(targetStep > currentStep) {
         const isValid = await validateFields(currentStep);
         if(!isValid) return;
@@ -352,7 +345,7 @@ window.nextStep = async (targetStep) => {
         
         if(nextStepConfig.type === 'loading') {
             currentStep = targetStep;
-            updateURL(); // Update URL sebelum loading
+            updateURL(); // Simpan state ke URL & LocalStorage
             updateUI(currentStep);
             runLoadingSimulation(currentStep);
             return;
@@ -360,7 +353,7 @@ window.nextStep = async (targetStep) => {
     }
     
     currentStep = targetStep;
-    updateURL(); // Update URL setiap ganti step
+    updateURL(); // Simpan state
     updateUI(targetStep);
 
     if(currentStep === MODES[currentMode].steps.length) {
@@ -371,7 +364,7 @@ window.nextStep = async (targetStep) => {
 window.prevStep = () => {
     if(currentStep > 1) {
         currentStep--;
-        updateURL(); // Update URL saat mundur juga
+        updateURL();
         updateUI(currentStep);
     }
 };
@@ -674,3 +667,12 @@ window.takeScreenshot = (stepDiv) => {
         btn.innerText = "📸 SIMPAN GAMBAR KARTU";
     });
 };
+
+// --- INITIALIZATION ---
+// Jalankan pengecekan sesi saat script pertama kali dimuat
+if (checkExistingSession()) {
+    console.log("Session restored from URL.");
+} else {
+    console.log("New session or invalid URL.");
+    // Normal flow, tunggu user input di Age Gate
+}
