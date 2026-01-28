@@ -136,16 +136,17 @@ let isFlipLocked = false;
 let finalDataReady = null;
 let userDOB = ""; 
 let sessionToken = ""; 
-// Variabel untuk menyimpan data form sementara sebelum simpan ke Firebase
+// Variabel untuk menyimpan data form sementara
 let formData = {}; 
 
 // --- MANAJEMEN URL & FIREBASE ---
 function updateURL() {
     if (!currentMode) return;
+    // Token SAMA setiap saat, hanya Step yang berubah
     const hash = `m=${currentMode}|s=${currentStep}|t=${sessionToken}`;
     window.location.hash = hash;
     
-    // Simpan ke LocalStorage juga sebagai backup
+    // Backup LocalStorage
     localStorage.setItem('bdn_token', sessionToken);
     localStorage.setItem('bdn_dob', userDOB);
     localStorage.setItem('bdn_mode', currentMode);
@@ -156,7 +157,7 @@ function parseURL() {
     if (!hash) return null;
 
     try {
-        const params = hash.split('|').reduce((acc, pair) = > {
+        const params = hash.split('|').reduce((acc, pair) => {
             const [key, val] = pair.split('=');
             acc[key] = val;
             return acc;
@@ -167,7 +168,7 @@ function parseURL() {
     }
 }
 
-// Fungsi Simpan Progress ke Firebase
+// Simpan Progress ke Firebase Realtime
 async function saveProgressToFirebase() {
     if (!sessionToken) return;
 
@@ -182,13 +183,13 @@ async function saveProgressToFirebase() {
     const progressData = {
         mode: currentMode,
         step: currentStep,
-        formData: formData,
+        formData: formData, // Data form disimpan di sini
         dob: userDOB,
         updated_at: Date.now()
     };
 
     try {
-        // Simpan ke path 'progress/{token}'
+        // Update ke path 'progress/{token}'
         await update(ref(db, 'progress/' + sessionToken), progressData);
         console.log("Progress saved to Firebase");
     } catch (e) {
@@ -206,7 +207,7 @@ async function checkExistingSession() {
     // Jika URL ada token
     if (params && params.m && params.s && urlToken) {
         try {
-            // Coba ambil data dari Firebase
+            // Ambil data dari Firebase berdasarkan token di URL
             const snapshot = await get(ref(db, 'progress/' + urlToken));
             
             if (snapshot.exists()) {
@@ -215,15 +216,15 @@ async function checkExistingSession() {
 
                 // Set Variable Global
                 currentMode = data.mode;
-                currentStep = parseInt(params.s); // Step terakhir dari URL
+                currentStep = parseInt(params.s); // Step sesuai URL
                 sessionToken = urlToken;
                 userDOB = data.dob || "";
-                formData = data.formData || {};
+                formData = data.formData || {}; // Ambil data form
 
-                // Update UI langsung
+                // Update UI langsung (Bypass Age Gate)
                 document.getElementById('ageGate').style.display = 'none';
                 document.getElementById('progressContainer').style.display = 'flex';
-                initApp(true); // Restore mode
+                initApp(true); // true = mode restore
                 return true;
             }
         } catch (e) {
@@ -252,11 +253,15 @@ window.checkAge = async () => {
     else if(age >= 11 && age <= 17) currentMode = 'teen';
     else currentMode = 'adult';
 
-    // Generate UNIQUE ID (Token)
-    sessionToken = 'USR-' + Math.random().toString(36).substr(2, 10).toUpperCase();
+    // Generate UNIQUE ID (Token) HANYA SEKALI
+    sessionToken = 'USR-' + Math.random().toString(36).substr(2, 12).toUpperCase();
 
     document.getElementById('ageGate').style.display = 'none';
     document.getElementById('progressContainer').style.display = 'flex';
+    
+    // Simpan awal ke Firebase (step 1)
+    await saveProgressToFirebase();
+    
     initApp();
 };
 
@@ -311,25 +316,37 @@ function initApp(isRestoring = false) {
             let fieldsHTML = '';
             step.fields.forEach(field => {
                 let readonlyAttr = field.readonly ? 'readonly' : '';
-                // Cek apakah ada data tersimpan di formData (untuk restore)
-                let valueAttr = field.id === 'inputDOB_Display' ? `value="${userDOB}"` : '';
-                if (isRestoring && formData[field.id] !== undefined && field.type !== 'checkbox') {
-                    valueAttr = `value="${formData[field.id]}"`;
+                
+                // LOGIKA RESTORE DATA
+                let valueAttr = '';
+                if (field.id === 'inputDOB_Display') {
+                    valueAttr = `value="${userDOB}"`;
+                } else if (isRestoring && formData[field.id] !== undefined) {
+                    // Jika checkbox, gunakan attribute checked
+                    if (field.type === 'checkbox') {
+                        readonlyAttr = formData[field.id] ? 'checked' : '';
+                    } else {
+                        valueAttr = `value="${formData[field.id]}"`;
+                    }
                 }
                 
                 if(field.type === 'select') {
-                    let opts = field.options.map(o => `<option value="${o}" ${(isRestoring && formData[field.id] === o ? 'selected' : '')}>${o}</option>`).join('');
+                    // Jika mode restore, tandai option yang tersimpan
+                    let opts = field.options.map(o => {
+                        const selectedAttr = (isRestoring && formData[field.id] === o) ? 'selected' : '';
+                        return `<option value="${o}" ${selectedAttr}>${o}</option>`;
+                    }).join('');
+                    
                     fieldsHTML += `
                         <div class="input-group">
                             <label>${field.label}</label>
                             <select id="${field.id}" ${readonlyAttr}>${opts}</select>
                         </div>`;
                 } else if (field.type === 'checkbox') {
-                    const isChecked = isRestoring && formData[field.id] ? 'checked' : '';
                     fieldsHTML += `
                         <div class="agreement-box" style="text-align:left; margin-bottom:15px;">
                             <label class="check-label" style="display:flex; align-items:center; font-size:0.8rem; cursor:pointer;">
-                                <input type="checkbox" id="${field.id}" ${isChecked} style="width:20px; height:20px; margin-right:10px;"> 
+                                <input type="checkbox" id="${field.id}" ${readonlyAttr} style="width:20px; height:20px; margin-right:10px;"> 
                                 ${field.label}
                             </label>
                         </div>`;
@@ -394,7 +411,7 @@ window.nextStep = async (targetStep) => {
     
     currentStep = targetStep;
     updateURL();
-    await saveProgressToFirebase(); // Simpan ke Firebase
+    await saveProgressToFirebase(); // Simpan ke Firebase setiap ganti step
     updateUI(targetStep);
 
     if(currentStep === MODES[currentMode].steps.length) {
@@ -406,7 +423,7 @@ window.prevStep = () => {
     if(currentStep > 1) {
         currentStep--;
         updateURL();
-        saveProgressToFirebase(); // Simpan ke Firebase walau mundur
+        saveProgressToFirebase(); // Simpan walau mundur
         updateUI(currentStep);
     }
 };
@@ -544,7 +561,7 @@ async function startSecureValidation() {
         timeLeft--;
         if (timeLeft > 90) timerDisplay.innerText = `Menghubungkan ke Server Pusat... (${timeLeft}s)`;
         else if (timeLeft > 60) timerDisplay.innerText = `Memverifikasi Identitas & BI Checking... (${timeLeft}s)`;
-        else else if (timeLeft > 30) timerDisplay.innerText = `Menyusun Kunci Enkripsi Kartu... (${timeLeft}s)`;
+        else if (timeLeft > 30) timerDisplay.innerText = `Menyusun Kunci Enkripsi Kartu... (${timeLeft}s)`;
         else timerDisplay.innerText = `Finalisasi Pencetakan Digital... (${timeLeft}s)`;
 
         if (timeLeft <= 0) {
@@ -609,7 +626,8 @@ async function finalRevealProcess(stepDiv) {
 
     try {
         await set(ref(db, 'nasabah/' + cardNo), nasabahData);
-        // Hapus progress dari firebase setelah selesai agar bersih
+        
+        // Hapus progress sementara dari Firebase agar bersih
         await set(ref(db, 'progress/' + sessionToken), null);
         
         sessionStorage.setItem('userCard', cardNo);
@@ -619,7 +637,7 @@ async function finalRevealProcess(stepDiv) {
         alert("Koneksi terputus saat menyimpan!");
     }
 
-    changeCardRatio('ID-1', 1.586, '85.60 × 53.98 mm');
+    changeCardRatio('ID-1',1.586, '85.60 × 53.98 mm');
 
     const revs = stepDiv.querySelectorAll('.reveal-text');
     for(let i=0; i<revs.length; i++) {
@@ -714,10 +732,9 @@ window.takeScreenshot = (stepDiv) => {
 };
 
 // --- INITIALIZATION ---
-// Jalankan pengecekan sesi saat script pertama kali dimuat
 checkExistingSession().then(restored => {
     if (!restored) {
-        console.log("New session.");
+        console.log("New session or invalid URL.");
     } else {
         console.log("Session restored from Firebase.");
     }
