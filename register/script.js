@@ -1,16 +1,3 @@
-Oke, ini adalah upgrade besar. Kita akan menggabungkan **URL Hash System** + **Realtime Firebase Database** agar token di-update secara live setiap kali user pindah step, dan data form bisa di-*restore* kembali dari Firebase jika user membuka tab baru.
-
-Logikanya:
-1.  Saat mulai (isi DOB), buat `unique_id` (Token).
-2.  Setiap kali user klik "Lanjutkan" -> Simpan data form ke Firebase `progress/{unique_id}`.
-3.  Setiap kali user buka link:
-    *   Cek URL Hash untuk dapat `unique_id`.
-    *   Ambil data dari Firebase `progress/{unique_id}`.
-    *   Isi ulang form (Nama, WA, dll) dan loncat ke step tersebut.
-
-Silakan ganti **SELURUH** isi `script.js`:
-
-```javascript
 // --- FIREBASE IMPORT ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
@@ -735,4 +722,3 @@ checkExistingSession().then(restored => {
         console.log("Session restored from Firebase.");
     }
 });
-```
