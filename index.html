@@ -3,44 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank Devisa Nusantara | Portal Layanan Mandiri</title>
+    <title>Bank Devisa Nusantara | Portal Masa Depan</title>
     
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
     <link rel="apple-touch-icon" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
     
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Logo di Navbar biar presisi */
-        .logo-img {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            margin-right: 12px;
-            object-fit: cover;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border: 1.5px solid rgba(255,255,255,0.2);
-        }
-        .logo-wrapper {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: transform 0.2s ease;
-        }
-        .logo-wrapper:hover { transform: scale(1.02); }
-        
-        /* Logo di Footer */
-        .footer-logo-img {
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            margin-right: 12px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-    </style>
+
+    <!-- FIREBASE SDK (Untuk Statistik Nasabah Realtime) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
+            authDomain: "wifist-d3588.firebaseapp.com",
+            databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/", 
+            projectId: "wifist-d3588"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        window.firebaseDB = db; // Export ke script utama
+    </script>
 </head>
 <body>
+
+    <!-- 1. BACKGROUND ANIMATION -->
+    <div class="animated-bg"></div>
+
+    <!-- 2. AUDIO CONTROLLER (HIDDEN) -->
+    <button id="audioToggle" class="audio-btn" title="Aktifkan Suara Efek">
+        🔇
+    </button>
 
     <nav class="navbar">
         <a href="index.html" class="logo-wrapper">
@@ -56,6 +52,28 @@
     </nav>
 
     <header class="hero">
+        <!-- 3. LIVE STATS WIDGET (BARU) -->
+        <div class="live-stats-wrapper">
+            <!-- Real Data: Nasabah -->
+            <div class="stat-box real-data">
+                <div class="stat-icon">👥</div>
+                <div class="stat-text">
+                    <span class="stat-label">Total Nasabah</span>
+                    <div class="stat-value" id="countNasabah">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Fake Data: Transaksi -->
+            <div class="stat-box fake-data">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-text">
+                    <span class="stat-label">Transaksi / Detik</span>
+                    <div class="stat-value" id="fakeTransaction">Rp 0</div>
+                </div>
+                <div class="live-pulse"></div>
+            </div>
+        </div>
+
         <div class="hero-content">
             <div class="badge-container">
                 <span class="badge">OFFICIAL PORTAL 2026</span>
@@ -69,7 +87,7 @@
         <section class="menu-section">
             <h2 class="section-title">Akses Pendaftaran & Kartu</h2>
             <div class="menu-grid main-cards">
-                <a href="register/" class="menu-card highlight">
+                <a href="register/" class="menu-card highlight hover-sound">
                     <div class="card-icon">👤</div>
                     <div class="card-info">
                         <h3>Daftar Nasabah Baru</h3>
@@ -78,7 +96,7 @@
                     <span class="arrow">→</span>
                 </a>
                 
-                <a href="card-issue/" class="menu-card">
+                <a href="card-issue/" class="menu-card hover-sound">
                     <div class="card-icon">💳</div>
                     <div class="card-info">
                         <h3>Pendaftaran Kartu</h3>
@@ -92,28 +110,28 @@
         <section class="menu-section">
             <h2 class="section-title">Produk & Edukasi Keuangan</h2>
             <div class="menu-grid secondary-grid">
-                <a href="produk/" class="menu-card">
+                <a href="#" class="menu-card hover-sound">
                     <div class="card-icon">🏦</div>
                     <div class="card-info">
                         <h3>Produk & Layanan</h3>
                         <p>Tabungan, Kredit, Investasi.</p>
                     </div>
                 </a>
-                <a href="edukasi/" class="menu-card">
+                <a href="#" class="menu-card hover-sound">
                     <div class="card-icon">📘</div>
                     <div class="card-info">
                         <h3>Informasi Edukasi</h3>
                         <p>Panduan literasi keuangan.</p>
                     </div>
                 </a>
-                <a href="promo/" class="menu-card">
+                <a href="#" class="menu-card hover-sound">
                     <div class="card-icon">🎁</div>
                     <div class="card-info">
                         <h3>Promo Terbaru</h3>
                         <p>Diskon & bunga spesial.</p>
                     </div>
                 </a>
-                <a href="berita/" class="menu-card">
+                <a href="#" class="menu-card hover-sound">
                     <div class="card-icon">📰</div>
                     <div class="card-info">
                         <h3>Berita & Info</h3>
@@ -126,23 +144,23 @@
         <section class="menu-section">
             <h2 class="section-title">Bantuan & Keamanan</h2>
             <div class="menu-grid support-grid">
-                <a href="lokasi/" class="menu-card small-card">
+                <a href="#" class="menu-card small-card hover-sound">
                     <div class="card-icon-small">📍</div>
                     <h3>Lokasi</h3>
                 </a>
-                <a href="faq/" class="menu-card small-card">
+                <a href="#" class="menu-card small-card hover-sound">
                     <div class="card-icon-small">❓</div>
                     <h3>Pusat FAQ</h3>
                 </a>
-                <a href="keamanan/" class="menu-card small-card">
+                <a href="#" class="menu-card small-card hover-sound">
                     <div class="card-icon-small">🛡️</div>
                     <h3>Keamanan</h3>
                 </a>
-                <a href="kontak/" class="menu-card small-card">
+                <a href="#" class="menu-card small-card hover-sound">
                     <div class="card-icon-small">📞</div>
                     <h3>Kontak</h3>
                 </a>
-                <a href="pengaduan/" class="menu-card small-card">
+                <a href="#" class="menu-card small-card hover-sound">
                     <div class="card-icon-small">⚠️</div>
                     <h3>Lapor</h3>
                 </a>
