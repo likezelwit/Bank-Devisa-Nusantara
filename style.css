@@ -1,4 +1,3 @@
-/* ... STYLE LAMA TETAP ADA ... */
 :root {
     --bg: #f8fafc;
     --navy: #0f172a;
@@ -18,9 +17,10 @@ body {
     background-color: var(--bg);
     color: var(--text-main);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Mencegah gerakan horizontal */
     min-height: 100vh;
     position: relative;
+    width: 100%;
 }
 
 /* --- 1. ANIMATED BACKGROUND --- */
@@ -39,13 +39,14 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* --- 2. LIVE STATS WIDGET (GLASSMORPHISM) --- */
+/* --- 2. LIVE STATS WIDGET --- */
 .live-stats-wrapper {
     display: flex;
     gap: 15px;
     margin-bottom: 2rem;
     flex-wrap: wrap;
     justify-content: center;
+    width: 100%; /* Pastikan tidak melebar */
 }
 
 .stat-box {
@@ -60,34 +61,8 @@ body {
     gap: 12px;
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
     transition: transform 0.3s;
-    min-width: 180px;
-}
-
-.stat-box:hover { transform: translateY(-2px); border-color: var(--gold); }
-
-.stat-icon { font-size: 1.5rem; }
-.stat-text { display: flex; flex-direction: column; }
-.stat-label { font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-.stat-value { 
-    font-size: 1.1rem; 
-    font-weight: 800; 
-    color: var(--navy); 
-    font-family: 'Courier New', monospace; /* Biar seperti angka stok */
-}
-
-/* Pulse Indicator for Fake Data */
-.live-pulse {
-    width: 8px; height: 8px;
-    background: #22c55e;
-    border-radius: 50%;
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-    animation: pulse-green 2s infinite;
-}
-
-@keyframes pulse-green {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    min-width: 140px; /* Diperkecil sedikit agar muat di HP */
+    flex: 1 1 auto; /* Responsif otomatis */
 }
 
 /* --- 3. AUDIO BUTTON --- */
@@ -111,87 +86,268 @@ body {
 }
 .audio-btn:hover { background: var(--gold); transform: scale(1.1); }
 
-/* ... CSS LAMA (NAVBAR, HERO, CARDS, FOOTER) TETAP SAMA ... */
-
+/* --- 4. NAVBAR --- */
 .navbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 1rem 8%; background: rgba(255, 255, 255, 0.85);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5%; /* Padding lebih kecil di mobile */
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    width: 100%;
+    box-sizing: border-box;
 }
-.logo { font-size: 1.6rem; font-weight: 800; color: var(--navy); letter-spacing: -1px; }
+
+.logo { font-size: 1.2rem; font-weight: 800; color: var(--navy); letter-spacing: -0.5px; }
 .logo span { color: var(--gold); }
-.logo-img { width: 38px; height: 38px; border-radius: 10px; margin-right: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1.5px solid rgba(255,255,255,0.2); }
-.logo-wrapper { display: flex; align-items: center; text-decoration: none; transition: transform 0.2s ease; }
-.logo-wrapper:hover { transform: scale(1.02); }
 
-.status-wrapper { display: flex; align-items: center; gap: 12px; }
-.system-status { font-size: 0.65rem; background: #dcfce7; color: #166534; padding: 6px 14px; border-radius: 20px; font-weight: 700; border: 1px solid rgba(22, 101, 52, 0.1); }
-.btn-account { text-decoration: none; background: var(--navy); color: white; padding: 8px 18px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; transition: 0.3s; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15); }
-.btn-account:hover { background: var(--gold); transform: translateY(-2px); }
+.logo-img { 
+    width: 32px; height: 32px; /* Diperkecil untuk mobile */
+    border-radius: 8px; 
+    margin-right: 10px; 
+    object-fit: cover; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+    border: 1px solid rgba(0,0,0,0.05); 
+}
 
-.hero { padding: 5rem 8% 3rem; text-align: center; position: relative; }
-.badge-container { display: flex; margin-bottom: 1rem; justify-content: center; }
-.badge { padding: 6px 14px; background: var(--white); border-radius: 10px; font-size: 0.7rem; font-weight: 800; color: var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-left: 4px solid var(--gold); }
-h1 { font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -3px; }
+.logo-wrapper { display: flex; align-items: center; text-decoration: none; }
+
+/* Status Wrapper & Buttons: Mobile Friendly */
+.status-wrapper { display: flex; align-items: center; gap: 8px; }
+
+.system-status { 
+    font-size: 0.65rem; 
+    background: #dcfce7; 
+    color: #166534; 
+    padding: 4px 10px; /* Padding lebih kecil */
+    border-radius: 15px; 
+    font-weight: 700; 
+    white-space: nowrap; /* Mencegah turun baris */
+}
+
+.btn-account { 
+    text-decoration: none; 
+    background: var(--navy); 
+    color: white; 
+    padding: 6px 12px; /* Padding lebih kecil */
+    border-radius: 8px; 
+    font-size: 0.75rem; 
+    font-weight: 700; 
+    white-space: nowrap; 
+}
+
+/* --- 5. HERO --- */
+.hero { 
+    padding: 3rem 5% 2rem; /* Padding disesuaikan */
+    text-align: center; 
+    width: 100%;
+    max-width: 100%;
+}
+
+h1 { 
+    font-size: clamp(2rem, 8vw, 3.5rem); /* Ukuran font responsif */
+    line-height: 1.1; 
+    margin-bottom: 1.5rem; 
+    letter-spacing: -1px; 
+}
+
 .text-gradient { background: linear-gradient(90deg, var(--navy), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 650px; margin: 0 auto; }
+.hero p { font-size: 1rem; color: var(--text-muted); max-width: 100%; margin: 0 auto 1.5rem; }
 
-.container { padding: 0 8% 5rem; max-width: 1400px; margin: 0 auto; }
-.section-title { font-size: 1rem; font-weight: 800; margin-bottom: 2rem; color: var(--navy); opacity: 0.6; text-transform: uppercase; letter-spacing: 2px; }
-.menu-section { margin-top: 4rem; }
+/* --- 6. CONTAINER & GRID --- */
+.container { 
+    padding: 0 5% 4rem; /* Padding lebih hemat ruang di kiri kanan */
+    width: 100%; 
+    max-width: 1200px; 
+    margin: 0 auto; 
+}
 
-.menu-grid { display: grid; gap: 24px; }
+.section-title { 
+    font-size: 0.9rem; 
+    font-weight: 800; 
+    margin-bottom: 1.5rem; 
+    color: var(--navy); 
+    opacity: 0.7; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+}
+
+.menu-section { margin-top: 3rem; }
+
+.menu-grid { 
+    display: grid; 
+    gap: 20px; 
+    width: 100%; 
+}
+
+/* Grid Settings Default */
 .main-cards { grid-template-columns: repeat(2, 1fr); }
-.secondary-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.secondary-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .support-grid { grid-template-columns: repeat(5, 1fr); }
 
-.menu-card { background: var(--white); padding: 2rem; border-radius: 24px; text-decoration: none; border: 1px solid #eef2f6; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; position: relative; overflow: hidden; }
-.menu-card.highlight { background: var(--navy); color: white; border: none; box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1); }
-.menu-card.highlight h3 { color: white; }
-.menu-card.highlight p { color: #94a3b8; }
-.menu-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: var(--gold); }
+/* --- 7. CARDS --- */
+.menu-card { 
+    background: var(--white); 
+    padding: 1.5rem; /* Padding sedikit lebih kecil */
+    border-radius: 20px; 
+    text-decoration: none; 
+    border: 1px solid #eef2f6; 
+    transition: all 0.3s ease; 
+    display: flex; 
+    flex-direction: column; 
+    position: relative; 
+    overflow: hidden; 
+    width: 100%;
+}
 
-.card-icon { font-size: 2.5rem; margin-bottom: 1.2rem; }
-.card-info h3 { font-size: 1.3rem; margin-bottom: 0.6rem; color: var(--navy); }
-.card-info p { font-size: 0.9rem; color: var(--text-muted); }
-.arrow { position: absolute; bottom: 2rem; right: 2rem; font-size: 1.5rem; opacity: 0; transition: 0.3s; color: var(--gold); }
-.menu-card:hover .arrow { opacity: 1; transform: translateX(5px); }
+.card-icon { font-size: 2rem; margin-bottom: 1rem; }
+.card-info h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--navy); }
+.card-info p { font-size: 0.85rem; color: var(--text-muted); }
 
-.small-card { padding: 1.5rem; text-align: center; }
-.card-icon-small { font-size: 1.8rem; margin-bottom: 0.8rem; }
-.small-card h3 { font-size: 0.9rem; font-weight: 700; color: var(--navy); }
+.small-card { 
+    padding: 1.2rem; 
+    text-align: center; 
+}
+.card-icon-small { font-size: 1.5rem; margin-bottom: 0.6rem; }
+.small-card h3 { font-size: 0.85rem; font-weight: 700; color: var(--navy); }
 
-.footer-main { background: var(--white); padding: 5rem 8% 2rem; border-top: 1px solid #e2e8f0; margin-top: 5rem; }
-.footer-container { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 3rem; padding-bottom: 4rem; border-bottom: 1px solid #f1f5f9; }
-.footer-brand { max-width: 350px; }
-.footer-brand p { margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted); }
-.footer-links-group { display: flex; gap: 4rem; }
-.footer-col h4 { font-size: 1rem; margin-bottom: 1.5rem; color: var(--navy); }
-.footer-col a { display: block; text-decoration: none; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.8rem; transition: 0.2s; }
-.footer-col a:hover { color: var(--gold); padding-left: 5px; }
-.footer-bottom { padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-.ojk-badge { font-weight: 800; font-size: 1rem; color: var(--navy); opacity: 0.8; }
-.ojk-badge span { font-weight: 400; font-size: 0.75rem; color: var(--text-muted); margin-left: 10px; }
-.copyright { font-size: 0.8rem; color: var(--text-muted); }
+/* --- 8. FOOTER --- */
+.footer-main { 
+    background: var(--white); 
+    padding: 3rem 5% 2rem; /* Padding disesuaikan */
+    border-top: 1px solid #e2e8f0; 
+    margin-top: 4rem; 
+    width: 100%;
+}
 
-@media (max-width: 1000px) {
+.footer-container { 
+    display: flex; 
+    justify-content: space-between; 
+    flex-wrap: wrap; 
+    gap: 2rem; 
+    padding-bottom: 2rem; 
+    border-bottom: 1px solid #f1f5f9; 
+    width: 100%;
+}
+
+.footer-brand { 
+    flex: 1 1 300px; /* Responsif tapi min-width 300px */
+    min-width: 100%; /* Di mobile dia full dulu */
+    text-align: center;
+}
+
+.footer-brand p { 
+    margin-top: 1rem; 
+    font-size: 0.9rem; 
+    color: var(--text-muted); 
+}
+
+.footer-links-group { 
+    display: flex; 
+    gap: 2rem; 
+    flex: 2 1 400px; /* Mengisi sisa ruang */
+    justify-content: center;
+    flex-wrap: wrap; /* Agar turun ke bawah jika sempit */
+    width: 100%;
+}
+
+.footer-col { 
+    flex: 1 1 120px; /* Kolom footer minimal 120px */
+    text-align: center;
+}
+
+.footer-col h4 { 
+    font-size: 0.95rem; 
+    margin-bottom: 1rem; 
+    color: var(--navy); 
+}
+.footer-col a { 
+    display: block; 
+    text-decoration: none; 
+    color: var(--text-muted); 
+    font-size: 0.85rem; 
+    margin-bottom: 0.6rem; 
+    transition: 0.2s; 
+}
+.footer-col a:hover { color: var(--gold); }
+
+.footer-bottom { 
+    padding-top: 1.5rem; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    gap: 1rem; 
+    width: 100%;
+}
+
+.ojk-badge { 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    color: var(--navy); 
+    opacity: 0.8; 
+}
+.ojk-badge span { 
+    font-weight: 400; 
+    font-size: 0.7rem; 
+    color: var(--text-muted); 
+    margin-left: 8px; 
+}
+.copyright { font-size: 0.75rem; color: var(--text-muted); }
+
+
+/* --- RESPONSIVE MEDIA QUERIES (PERBAIKAN UTAMA) --- */
+
+@media (max-width: 900px) {
     .support-grid { grid-template-columns: repeat(3, 1fr); }
-    .footer-links-group { gap: 2rem; }
+    .main-cards { grid-template-columns: 1fr; } /* Kartu utama jadi 1 kolom di tablet */
+    .navbar { padding: 0.8rem 4%; }
 }
+
 @media (max-width: 768px) {
-    .navbar { padding: 1rem 5%; }
-    .hero { padding: 4rem 5% 2rem; }
-    .main-cards { grid-template-columns: 1fr; }
-    .support-grid { grid-template-columns: repeat(2, 1fr); }
-    .footer-container { flex-direction: column; text-align: center; }
-    .footer-brand { margin: 0 auto; }
-    .footer-links-group { justify-content: center; }
-    .footer-bottom { flex-direction: column; text-align: center; }
+    /* Navbar Stacks Vertically */
+    .navbar { 
+        flex-direction: column; 
+        padding: 1rem 4%; 
+        gap: 10px; 
+    }
+    
+    .status-wrapper { 
+        width: 100%; 
+        justify-content: space-between; /* Status kiri, tombol kanan */
+        margin-top: 5px;
+    }
+
+    .hero { padding: 3rem 4% 1.5rem; }
+    .footer-container { flex-direction: column; gap: 2rem; }
+    .footer-links-group { flex-direction: column; align-items: center; gap: 1.5rem; }
+    .footer-bottom { flex-direction: column; text-align: center; gap: 0.5rem; }
+    
+    /* Stats: Jadi 1 kolom di HP agar rapi */
+    .live-stats-wrapper { 
+        flex-direction: column; 
+        width: 100%; 
+    }
+    .stat-box { width: 100%; }
 }
+
 @media (max-width: 480px) {
-    .status-wrapper { flex-direction: column; align-items: flex-end; gap: 8px; }
-    .support-grid { grid-template-columns: 1fr; }
-    .live-stats-wrapper { flex-direction: column; align-items: center; }
-    .stat-box { width: 100%; justify-content: center; }
+    h1 { letter-spacing: -0.5px; } /* Huruf terlalu rapat di HP disesuaikan */
+    
+    .support-grid { 
+        grid-template-columns: repeat(2, 1fr); /* 2 kolom rapi di HP kecil */
+    }
+    
+    .card-icon { font-size: 1.8rem; } /* Ikon sedikit lebih kecil */
+    
+    /* Logo Footer: Pastikan tidak terlalu besar */
+    .footer-brand img {
+        height: 40px !important; /* Paksa tinggi gambar */
+        width: auto;
+        max-width: 100%;
+    }
+    
+    .btn-account { padding: 5px 10px; font-size: 0.7rem; }
 }
