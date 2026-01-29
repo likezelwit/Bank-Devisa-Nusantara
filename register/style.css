@@ -171,15 +171,15 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
     font-weight: 700;
 }
 
-/* CARD 3D SYSTEM */
+/* CARD 3D SYSTEM - FIXED RESPONSIVE FONTS */
 .card-scene { 
     width: 100%; 
-    max-width: 320px; /* Default ID-1 */
-    aspect-ratio: 1.586 / 1; /* Default ID-1 */
+    max-width: 320px; 
+    aspect-ratio: 1.586 / 1; 
     perspective: 1200px; 
     margin: 20px auto; 
     transition: all 0.5s ease; 
-    container-type: inline-size; 
+    container-type: inline-size; /* Critical for cqw units */
 }
 .card-scene[data-ratio="CR-79"] { max-width: 310px; }
 .card-scene[data-ratio="ID-1"] { max-width: 320px; }
@@ -194,21 +194,32 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     display: flex; flex-direction: column; justify-content: space-between; color: white; text-align: left;
 }
+
+/* --- RESPONSIVE FIX START --- */
+/* Menggunakan cqw (container query width) agar font skala secara proporsional dengan kartu */
+.bank-name { font-size: 4cqw; font-weight: 800; color: var(--gold); letter-spacing: 0.5cqw; }
+
+.card-number { font-size: 9cqw; letter-spacing: 1cqw; font-family: monospace; margin: 2cqw 0; line-height: 1.1; }
+
+.card-series { font-weight: 800; color: var(--gold); letter-spacing: 0.5cqw; font-size: 5cqw; }
+
+.name-display { font-size: 6cqw; font-weight: 600; letter-spacing: 0.5cqw; text-transform: uppercase; }
+
+.valid-thru { font-size: 4cqw; color: rgba(255,255,255,0.7); }
+/* --- RESPONSIVE FIX END --- */
+
 .card-footer { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; }
 .footer-left { text-align: left; }
 .footer-right { text-align: right; }
 
 .chip-card { width: 45px; height: 35px; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); border-radius: 6px; margin-top: 10px; }
-.bank-name { font-size: 0.7rem; font-weight: 800; color: var(--gold); letter-spacing: 1.5px; }
-.card-number { font-size: 1.3rem; letter-spacing: 2px; font-family: monospace; margin: 10px 0; }
-.card-series { font-weight: 800; color: var(--gold); letter-spacing: 1px; font-size: 0.8rem; }
 
 .card-back { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); transform: rotateY(180deg); padding: 0; display: flex; flex-direction: column; }
 .mag-stripe { width: 100%; height: 40px; background: #000; margin-top: 20px; }
 
 .cvv-area { margin: 20px 1.5rem 10px; height: 35px; background: #eee; display: flex; justify-content: flex-end; align-items: center; padding-right: 15px; border-radius: 4px; overflow: hidden; }
 .cvv-area span { font-size: 4cqw; color: #000; margin-right: 5px; font-weight: 800; }
-.cvv-code { font-weight: 700; color: #000; font-family: monospace; font-size: 12cqw; }
+.cvv-code { font-weight: 700; color: #000; font-family: monospace; font-size: 6cqw; }
 .card-terms { padding: 0 1.5rem; font-size: 2.5cqw; color: rgba(255,255,255,0.4); line-height: 1.2; text-align: left; }
 
 /* UTILS & ANIMATION */
