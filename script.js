@@ -141,7 +141,7 @@ function handlePrivacyLink() {
             if (link.innerText.includes('Privasi')) {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    window.location.href = 'privasi/index.html';
+                    window.location.href = 'privasi/';
                 });
             }
         });
