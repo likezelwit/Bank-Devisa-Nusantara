@@ -719,31 +719,6 @@ window.changeCardRatio = (type, ratio, dimensionText) => {
         cardScene.style.aspectRatio = `${ratio} / 1`;
         cardScene.setAttribute('data-ratio', type);
     }
-
-    const baseRatio = 1.586;
-    let scaleFactor = 1;
-
-    if (ratio < baseRatio) { scaleFactor = 1.1; } 
-    else { scaleFactor = 0.95; }
-    
-    const activeStepDiv = document.getElementById(`step${currentStep}`);
-    if(activeStepDiv) {
-        const cardNumber = activeStepDiv.querySelector('.card-number');
-        const nameDisplay = activeStepDiv.querySelector('.name-display');
-        const bankName = activeStepDiv.querySelector('.bank-name');
-        
-        if(cardNumber) cardNumber.style.fontSize = `${1.3 * scaleFactor}rem`;
-        if(nameDisplay) nameDisplay.style.fontSize = `${0.9 * scaleFactor}rem`; 
-        if(bankName) bankName.style.fontSize = `${0.7 * scaleFactor}rem`;
-
-        const cvvLabel = activeStepDiv.querySelector('.cvv-area span');
-        const cvvCode = activeStepDiv.querySelector('.cvv-code');
-        const cardTerms = activeStepDiv.querySelector('.card-terms');
-
-        if(cvvLabel) cvvLabel.style.fontSize = `${2.0 * scaleFactor}vw`; 
-        if(cvvCode) cvvCode.style.fontSize = `${6.0 * scaleFactor}vw`;
-        if(cardTerms) cardTerms.style.fontSize = `${7.5 * scaleFactor}px`;
-    }
 };
 
 // --- UTILITIES ---
@@ -765,11 +740,23 @@ window.toggleFlip = (stepDiv) => {
     }, 1000);
 };
 
-window.takeScreenshot = (stepDiv) => {
+// --- MODIFIED SCREENSHOT FUNCTION ---
+window.takeScreenshot = async (stepDiv) => {
     const area = stepDiv.querySelector('.capture-area');
     const btn = stepDiv.querySelector('.btn-download');
-    btn.innerText = "MENGUNDUH...";
+    const cardInner = stepDiv.querySelector('.card-inner');
+    const nama = document.getElementById('inputNama').value;
+
+    // Helper delay function
+    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // 1. Ambil Gambar DEPAN
+    btn.innerText = "Mengambil Sisi Depan...";
     
+    // Pastikan posisi depan
+    cardInner.classList.remove('is-flipped');
+    await wait(600); // Tunggu animasi selesai
+
     html2canvas(area, { 
         scale: 3, 
         useCORS: true, 
@@ -777,9 +764,32 @@ window.takeScreenshot = (stepDiv) => {
         logging: false 
     }).then(canvas => {
         const link = document.createElement('a');
-        link.download = `BDN-CARD-${document.getElementById('inputNama').value}.png`;
+        link.download = `BDN-CARD-FRONT-${nama}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
+    });
+
+    // 2. Ambil Gambar BELAKANG
+    btn.innerText = "Mengambil Sisi Belakang...";
+    await wait(500); // Delay sebelum putar
+
+    // Putar ke belakang
+    cardInner.classList.add('is-flipped');
+    await wait(600); // Tunggu animasi putar selesai
+
+    html2canvas(area, { 
+        scale: 3, 
+        useCORS: true, 
+        backgroundColor: null,
+        logging: false 
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `BDN-CARD-BACK-${nama}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+
+        // 3. Kembalikan posisi ke DEPAN lagi
+        cardInner.classList.remove('is-flipped');
         btn.innerText = "📸 SIMPAN GAMBAR KARTU";
     });
 };
