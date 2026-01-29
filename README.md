@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Firebase](https://img.shields.io/badge/Database-Firebase-orange)
 
-> **Link Akses:** [https://likezelwit.github.io/Bank-Devisa-Nusantara/](https://likezelwit.github.io/Bank-Devisa-Nusantara/)
+> **Link Akses:** [https://likezelwit.github.io/Bank-Devisa-Nusantara/](https://bankdevisa.vercel.app/)
 
 ---
 
