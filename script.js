@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initStatsSystem();
     initAudioSystem();
     handleEmptyLinks();
+    handlePrivacyLink(); // <--- FUNGSI PRIVASI DITAMBAHKAN
 });
 
 // --- 1. STATISTIK SYSTEM (REAL & FAKE) ---
@@ -119,6 +120,32 @@ function handleEmptyLinks() {
             }
         });
     });
+}
+
+// --- 3.5. HANDLE PRIVACY LINK (BARU) ---
+function handlePrivacyLink() {
+    // Mencari elemen yang memiliki atribut data-target="privacy"
+    // Anda tinggal tambahkan data-target="privacy" pada link HTML Anda
+    const privacyLink = document.querySelector('a[data-target="privacy"]');
+    
+    if (privacyLink) {
+        privacyLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Redirect ke folder privasi
+            window.location.href = 'privasi/index.html';
+        });
+    } else {
+        // Opsional: Jika tidak ada atribut, cari teks "Privasi" di footer
+        const links = document.querySelectorAll('.footer-col a');
+        links.forEach(link => {
+            if (link.innerText.includes('Privasi')) {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.href = 'privasi/index.html';
+                });
+            }
+        });
+    }
 }
 
 function showNotification(msg) {
