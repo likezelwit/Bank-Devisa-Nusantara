@@ -7,10 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Jika sudah setuju di sesi ini, jalankan fitur lain
     if(sessionStorage.getItem('disclaimerAccepted')) {
-        initStatsSystem();
         initAudioSystem();
-        handleEmptyLinks();
-        handlePrivacyLink();
+        // Fitur Stats dihilangkan karena konten sudah statis edukasi
     }
 });
 
@@ -63,64 +61,30 @@ function checkDisclaimer() {
                     banner.style.display = 'block';
                     
                     // Jalankan fitur aplikasi setelah masuk
-                    initStatsSystem();
                     initAudioSystem();
-                    handleEmptyLinks();
-                    handlePrivacyLink();
                 }, 300);
             }
         });
     }
 }
 
-// --- FUNGSI TUTUP BANNER (NEW) ---
+// --- FUNGSI TUTUP BANNER ---
 function closeBanner() {
     const banner = document.getElementById('simulasiBanner');
     if(banner) {
         banner.style.transform = "translateY(-100%)";
         setTimeout(() => {
             banner.style.display = 'none';
-        }, 300); // Tunggu animasi slide up selesai
+        }, 300); 
     }
 }
 
-// --- 1. STATISTIK SYSTEM (REAL & FAKE) ---
-function initStatsSystem() {
-    const checkDb = setInterval(() => {
-        if (window.firebaseDB) {
-            clearInterval(checkDb);
-            const db = window.firebaseDB;
-            
-            import("https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js").then(({ onValue, ref }) => {
-                const nasabahRef = ref(db, 'nasabah');
-                
-                onValue(nasabahRef, (snapshot) => {
-                    const data = snapshot.val();
-                    const count = data ? Object.keys(data).length : 0;
-                    
-                    const el = document.getElementById('countNasabah');
-                    if (el) {
-                        el.innerText = count.toLocaleString('id-ID');
-                    }
-                });
-            });
-        }
-    }, 100);
-
-    const transEl = document.getElementById('fakeTransaction');
-    if (transEl) {
-        setInterval(() => {
-            const randomVal = Math.floor(Math.random() * (80000000 - 10000000 + 1)) + 10000000;
-            transEl.innerText = "Rp " + (randomVal / 1000000).toFixed(1) + "M";
-            transEl.style.color = "#22c55e";
-            setTimeout(() => transEl.style.color = "var(--navy)", 300);
-        }, 2500);
-    }
-}
-
-// --- 2. AUDIO EXPERIENCE SYSTEM ---
+// --- AUDIO EXPERIENCE SYSTEM ---
 function initAudioSystem() {
     const btn = document.getElementById('audioToggle');
+    // Cek apakah tombol audio ada (sebagai fallback)
+    if(!btn) return;
+
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let isMuted = true;
 
@@ -161,62 +125,11 @@ function initAudioSystem() {
         }
     }
 
-    const interactiveElements = document.querySelectorAll('.menu-card, .btn-account, .logo');
+    // Pilih elemen yang interaktif untuk efek suara
+    const interactiveElements = document.querySelectorAll('.role-card, .btn-account, .logo');
     
     interactiveElements.forEach(el => {
         el.addEventListener('mouseenter', () => playSound('hover'));
         el.addEventListener('click', () => playSound('click'));
     });
-}
-
-// --- 3. HANDLE EMPTY LINKS (Notif) ---
-function handleEmptyLinks() {
-    const menuCards = document.querySelectorAll('.menu-card');
-    menuCards.forEach(card => {
-        card.addEventListener('click', function(e) {
-            const path = this.getAttribute('href');
-            if (path === "#" || path === "") {
-                e.preventDefault();
-                showNotification("🚧 Modul ini sedang dalam pengembangan.");
-            }
-        });
-    });
-}
-
-// --- 4. HANDLE PRIVACY LINK ---
-function handlePrivacyLink() {
-    const privacyLink = document.querySelector('a[href="privasi/index.html"]');
-    if (privacyLink) {
-        privacyLink.addEventListener('click', function(e) {
-            console.log("Membuka halaman privasi...");
-        });
-    }
-}
-
-function showNotification(msg) {
-    const div = document.createElement('div');
-    div.style.cssText = `
-        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-        background: #0f172a; color: white; padding: 12px 24px;
-        border-radius: 12px; font-weight: 600; font-size: 0.9rem;
-        z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        animation: slideUp 0.3s ease-out;
-    `;
-    div.innerText = msg;
-    document.body.appendChild(div);
-
-    setTimeout(() => {
-        div.style.animation = "slideDown 0.3s ease-in";
-        setTimeout(() => div.remove(), 300);
-    }, 3000);
-
-    if (!document.getElementById('notif-style')) {
-        const style = document.createElement('style');
-        style.id = 'notif-style';
-        style.innerHTML = `
-            @keyframes slideUp { from { bottom: -50px; opacity: 0; } to { bottom: 20px; opacity: 1; } }
-            @keyframes slideDown { from { bottom: 20px; opacity: 1; } to { bottom: -50px; opacity: 0; } }
-        `;
-        document.head.appendChild(style);
-    }
 }
