@@ -3,60 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank Devisa Nusantara | Simulasi Edukasi SD & SMP</title>
+    <title>Bank Devisa Nusantara | Simulasi Edukasi</title>
+    
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
+    <link rel="apple-touch-icon" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
+    
+    <!-- CSS Link -->
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FIREBASE SDK (Wajib untuk fungsi app) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
+            authDomain: "wifist-d3588.firebaseapp.com",
+            databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/", 
+            projectId: "wifist-d3588"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        window.firebaseDB = db; 
+    </script>
 </head>
 <body>
 
+    <!-- 1. DISCLAIMER OVERLAY (FULL SCREEN GATE) -->
     <div id="disclaimer-overlay">
         <div class="disclaimer-box">
+            <!-- Tombol Close (X) -->
+            <button class="btn-close-disclaimer" onclick="window.location.reload()" title="Tutup / Batal">✕</button>
+            
+            <!-- Header Disclaimer -->
             <div class="disclaimer-header">
                 <h2>⚠️ PERNYATAAN DISKLAIMER & PERJANJIAN PENGGUNA</h2>
+                <p style="margin:0; font-size:0.8rem; opacity:0.8;">Harap baca hingga selesai sebelum melanjutkan.</p>
             </div>
+            
+            <!-- ISI TEKS DISKLAIMER (SANGAT PANJANG & DETAIL) -->
             <div class="disclaimer-content">
-                <h3>1. STATUS HUKUM & LEGALITAS (BUKAN BANK ASLI)</h3>
-                <p>Anda saat ini mengakses prototipe aplikasi web bernama <strong>"Bank Devisa Nusantara" (BDN)</strong>. Kami menyatakan dengan tegas bahwa sistem ini <strong>TIDAK MERUPAKAN</strong> lembaga jasa keuangan (LJK) yang berbadan hukum. Proyek ini <strong>TIDAK memiliki izin operasional</strong> dari Otoritas Jasa Keuangan (OJK), Bank Indonesia (BI), maupun Lembaga Penjamin Simpanan (LPS). Seluruh isi, fitur, layanan, dan tampilan aplikasi ini adalah fiksi ciptaan pengembang yang dibuat semata-mata untuk tujuan <strong>edukasi, pembelajaran, dan pengujian konsep pemrograman web</strong>.</p>
                 
-                <h3>2. MEKANISME "UANG" & SALDO</h3>
-                <p>Angka "Saldo" yang tertera di layar hanyalah representasi visual. Nilai tersebut <strong>TIDAK memiliki nilai tukar mata uang asli (Rp 0)</strong> dalam dunia nyata. Fitur simulasi di dalam aplikasi ini hanyalah manipulasi variabel data, bukan pergerakan dana antar rekening bank yang valid.</p>
+                <h3>1. STATUS HUKUM & LEGALITAS (BUKAN BANK ASLI)</h3>
+                <p>
+                    Anda saat ini mengakses prototipe aplikasi web bernama <strong>"Bank Devisa Nusantara" (BDN)</strong>. Kami menyatakan dengan tegas bahwa sistem ini <strong>TIDAK MERUPAKAN</strong> lembaga jasa keuangan (LJK) yang berbadan hukum. Proyek ini <strong>TIDAK memiliki izin operasional</strong> dari Otoritas Jasa Keuangan (OJK), Bank Indonesia (BI), maupun Lembaga Penjamin Simpanan (LPS). Seluruh isi, fitur, layanan, dan tampilan aplikasi ini adalah fiksi ciptaan pengembang yang dibuat semata-mata untuk tujuan <strong>edukasi, pembelajaran, dan pengujian konsep pemrograman web</strong>.
+                </p>
 
-                <h3>3. TUJUAN EDUKASI & LITERASI DIGITAL</h3>
-                <p>Aplikasi ini dirancang sebagai "Sandbox" digital yang aman bagi siswa SD dan SMP untuk memahami User Interface (UI) perbankan modern dan melatih literasi keuangan digital tanpa risiko kehilangan uang sungguhan.</p>
+                <h3>2. MEKANISME "UANG" & SALDO (PENJELASAN TEKNIS)</h3>
+                <p>
+                    Angka "Saldo" yang tertera di layar hanyalah representasi visual dari data mentah (raw data) yang tersimpan dalam format JSON di dalam database cloud (Firebase Realtime Database). Nilai tersebut <strong>TIDAK memiliki nilai tukar mata uang asli (Rp 0)</strong> dalam dunia nyata. Tidak ada aset uang fiat (Rupiah/Dollar), mata uang kripto, emas, atau surat berharga apapun yang terkait dengan saldo ini. Fitur "Transfer", "Top Up", "QRIS", atau "Investasi" yang ada di dalam aplikasi ini hanyalah manipulasi variabel data di sisi server dan klien (client-side logic), bukan pergerakan dana antar rekening bank yang valid di dunia nyata.
+                </p>
 
-                <h3>4. LEPAS TANGGUNG JAWAB</h3>
-                <p>Dengan menekan tombol "LANJUTKAN", Anda melepaskan segala bentuk tanggung jawab hukum maupun finansial dari pengembang. BDN murni berfungsi sebagai sistem pencatatan digital untuk keperluan belajar mengajar.</p>
+                <h3>3. KEBIJAKAN PRIVASI & KEAMANAN PASSWORD</h3>
+                <div style="background:#fff7ed; padding:15px; border-left:4px solid #f97316; margin:10px 0; border-radius:0 8px 8px 0;">
+                    <strong>⛔ PERINGATAN KRUSIAL: JANGAN GUNAKAN PASSWORD ASLI!</strong>
+                </div>
+                <p>
+                    Kami sangat menyarankan agar Anda <strong>JANGAN PERNAH</strong> menggunakan Password ATM, PIN Mobile Banking, M-PIN, atau Kode OTP dari bank asli Anda saat mendaftar, login, atau mengatur keamanan di dalam aplikasi simulasi ini. Gunakan PIN fiktif atau kombinasi angka acak yang mudah diingat tetapi <strong>bukan</strong> password perbankan nyata Anda. Kami tidak mengambil tanggung jawab jika Anda secara ceroboh menggunakan kredensial keuangan nyata Anda di dalam sistem simulasi ini.
+                </p>
+                <p>
+                    Mengenai data: Nama, Email, dan Nomor Telepon yang Anda masukkan disimpan hanya untuk keperluan fungsionalitas simulasi (misal: pemanggilan nama di kartu). Kami tidak menjual data tersebut, namun Anda tetap bertanggung jawab sepenuhnya atas data yang Anda inputkan.
+                </p>
+
+                <h3>4. TUJUAN EDUKASI & LITERASI DIGITAL</h3>
+                <p>
+                    Aplikasi ini dirancang sebagai "Sandbox" atau area bermain digital yang aman bagi siswa, pelajar, mahasiswa, dan pemula teknologi. Tujuannya adalah untuk memahami User Interface (UI) perbankan modern, mempelajari logika algoritma transaksi dasar, melatih literasi keuangan digital, serta memahami flow pengelolaan rekening tanpa risiko kehilangan uang sungguhan.
+                </p>
+
+                <h3>5. PEMISAHAN DARI PHISHING & KEAMANAN SIBER</h3>
+                <p>
+                    Pelajarilah untuk membedakan antara aplikasi simulasi ini dengan aplikasi perbankan asli. Antarmuka (UI) yang dibuat mirip dimaksudkan untuk edukasi visual, bukan untuk menipu (phishing). <strong>Phishing</strong> adalah tindak kejahatan. Jangan sampai Anda terbiasa dengan alur simulasi ini lalu tidak sengaja menyerahkan data sensitif pada website asing yang terlihat mirip dengan aplikasi bank. Selalu periksa URL resmi bank Anda dan jangan pernah memberikan PIN/OTP kepada siapapun.
+                </p>
+
+                <h3>6. LEPAS TANGGUNG JAWAB (INDEMNIFICATION)</h3>
+                <p>
+                    Dengan menekan tombol "LANJUTKAN" di bawah, Anda menyatakan bahwa Anda telah membaca, memahami, dan menyetujui seluruh isi pemberitahuan ini. Anda menyetujui untuk melepas segala bentuk tanggung jawab hukum maupun finansial dari pengembang aplikasi ini. Anda tidak dapat menuntut, menggugat, atau meminta kompensasi apapun apabila terjadi kesalahpahaman yang mengakibatkan kerugian materi maupun imateri. Jangan gunakan aplikasi ini untuk keperluan transaksi bisnis nyata, pencatatan hutang piutang, atau sebagai bukti keuangan yang sah di mata hukum.
+                </p>
+                
+                <br>
+                <p style="text-align:center; font-size:0.9rem; font-weight:bold; color:#ef4444;">
+                    GUNAKAN DENGAN BIJAK. INI HANYA PERMAINAN & BELAJAR.
+                </p>
             </div>
+
+            <!-- Footer Disclaimer -->
             <div class="disclaimer-footer">
                 <label class="agreement-wrapper">
-                    <input type="checkbox" id="agreeCheck">
-                    <span>Saya telah membaca dan memahami bahwa ini adalah <strong>simulasi fiktif pendidikan</strong>.</span>
+                    <input type="checkbox" id="agreeCheck" class="agreement-checkbox">
+                    <span class="agreement-label">Saya telah membaca seluruh teks di atas, memahami bahwa ini adalah simulasi fiktif, dan tidak akan menggunakan data perbankan asli di sini.</span>
                 </label>
-                <button id="btnContinue" class="btn-continue" disabled>SAYA MENGERTI, LANJUTKAN</button>
+                <button id="btnContinue" class="btn-continue" disabled>SAYA MENGERTI SEPENUHNYA, LANJUTKAN</button>
             </div>
         </div>
     </div>
 
+    <!-- 2. BANNER SIMULASI (MUNCUL SETELAH AGREEMENT) -->
+    <div id="simulasiBanner" class="simulasi-banner">
+        ⚠️ MODE SIMULASI EDUKASI - TIDAK UNTUK TRANSAKSI UANG ASLI
+    </div>
+
+    <!-- WRAPPER APLIKASI UTAMA (BLUR SAAT DISCLAIMER AKTIF) -->
     <div id="app-wrapper" class="blurred-app">
+
+        <!-- 3. BACKGROUND (Plain per request Palet) -->
+        <div class="static-bg"></div>
+
+        <!-- 4. AUDIO CONTROLLER -->
+        <button id="audioToggle" class="audio-btn" title="Aktifkan Suara Efek">
+            🔇
+        </button>
+
+        <!-- NAVBAR -->
         <nav class="navbar">
-            <div class="logo">BDN<span>.</span></div>
-            <div class="nav-links">
-                <a href="#edukasi">Edukasi</a>
-                <a href="#peran">Peran Sistem</a>
-                <a href="#" class="btn-login">Portal Guru</a>
+            <a href="index.html" class="logo-wrapper">
+                <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" alt="BDN Logo" class="logo-img">
+                <div class="logo">BDN<span>.</span></div>
+            </a>
+            <div class="nav-right">
+                <div class="status-wrapper">
+                    <div class="system-status">Edukasi Aktif</div>
+                    <!-- Link non-fungsional sebagai placeholder -->
+                    <a href="#" class="btn-account">Beranda</a>
+                </div>
             </div>
         </nav>
 
+        <!-- HERO SECTION (UPDATED) -->
         <header class="hero">
-            <div class="hero-container">
+            <div class="hero-content-wrapper">
                 <div class="hero-text">
-                    <span class="badge">PROJECT EDUKASI 2026</span>
-                    <h1>Pentingnya Membangun <br><span class="text-gradient">Fondasi Finansial.</span></h1>
-                    <p>Mengajarkan pengelolaan uang kepada siswa SD dan SMP bukan sekadar tentang angka, melainkan tentang membentuk disiplin dan kemandirian.</p>
-                    <div class="hero-btns">
-                        <a href="#edukasi" class="btn-primary">Pelajari Literasi</a>
+                    <div class="badge-container">
+                        <span class="badge">PROGRAM EDUKASI SEKOLAH</span>
+                    </div>
+                    <h1>Simulasi Literasi Keuangan <br><span class="text-gradient">Siswa SD & SMP</span></h1>
+                    <p>Belajar mengelola uang, mencatat tabungan, dan memahami sistem kas kelas dengan metode digital yang interaktif dan aman.</p>
+                    <div class="cta-buttons">
+                        <a href="#edukasi" class="btn btn-primary">Mulai Belajar</a>
+                        <a href="#tentang" class="btn btn-outline">Tentang Program</a>
                     </div>
                 </div>
+                <!-- GAMBAR HERO (STATIC SESUAI INSTRUKSI) -->
                 <div class="hero-image">
                     <img src="hero-anak.png" alt="Simulasi Tabungan Siswa" class="img-hero">
                 </div>
@@ -64,57 +155,118 @@
         </header>
 
         <main class="container">
-            <section id="edukasi" class="section">
-                <h2>Literasi Keuangan SD & SMP</h2>
-                <div class="article-box">
-                    <p>Mengajarkan pengelolaan uang kepada siswa SD dan SMP bukan sekadar tentang angka, melainkan tentang membentuk disiplin dan kemandirian. Di masa transisi ini, siswa mulai memahami nilai dari sebuah usaha dan kesabaran dalam mencapai tujuan melalui tabungan. Literasi keuangan yang ditanamkan sejak dini akan menjadi bekal berharga bagi mereka dalam mengambil keputusan finansial yang bijak di masa depan.</p>
-                    <p>Melalui program simulasi di Bank Devisa Nusantara, siswa diajak untuk merasakan pengalaman perbankan yang nyata namun dalam lingkungan sekolah yang aman. Menabung bukan lagi sekadar menyimpan uang di celengan, melainkan proses belajar memahami sistem saldo, mutasi, dan perencanaan target keuangan secara terstruktur.</p>
-                    <p>Program ini dirancang khusus untuk mendukung kurikulum sekolah dalam mencetak generasi yang cerdas finansial. Dengan pendekatan digital yang interaktif, siswa SD akan merasa senang, sementara siswa SMP akan merasa lebih bertanggung jawab atas pengelolaan dana mereka sendiri.</p>
+            
+            <!-- 1.1 ARTIKEL EDUKASI -->
+            <section id="edukasi" class="content-section article-section">
+                <div class="section-header">
+                    <h2>Pentingnya Membangun Fondasi Finansial Sejak Dini</h2>
+                    <div class="divider"></div>
+                </div>
+                <div class="article-content">
+                    <p>
+                        Mengajarkan pengelolaan uang kepada siswa SD dan SMP bukan sekadar tentang angka, melainkan tentang membentuk disiplin dan kemandirian. Di masa transisi ini, siswa mulai memahami nilai dari sebuah usaha dan kesabaran dalam mencapai tujuan melalui tabungan. Literasi keuangan yang ditanamkan sejak dini akan menjadi bekal berharga bagi mereka dalam mengambil keputusan finansial yang bijak di masa depan.
+                    </p>
+                    <p>
+                        Melalui program simulasi di Bank Devisa Nusantara, siswa diajak untuk merasakan pengalaman perbankan yang nyata namun dalam lingkungan sekolah yang aman. Menabung bukan lagi sekadar menyimpan uang di celengan, melainkan proses belajar memahami sistem saldo, mutasi, dan perencanaan target keuangan secara terstruktur.
+                    </p>
+                    <p>
+                        Program ini dirancang khusus untuk mendukung kurikulum sekolah dalam mencetak generasi yang cerdas finansial. Dengan pendekatan digital yang interaktif, siswa SD akan merasa senang, sementara siswa SMP akan merasa lebih bertanggung jawab atas pengelolaan dana mereka sendiri.
+                    </p>
                 </div>
             </section>
 
-            <section id="peran" class="section">
-                <h2>Satu Sistem, Beragam Peran (Sesuai Kebutuhan Sekolah)</h2>
-                <div class="grid-peran">
-                    <div class="card">
+            <!-- 1.2 SATU SISTEM, BERAGAM PERAN -->
+            <section class="content-section roles-section">
+                <div class="section-header">
+                    <h2>Satu Sistem, Beragam Peran</h2>
+                    <p class="section-subtitle">(Sesuai Kebutuhan Sekolah)</p>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="roles-grid">
+                    <div class="role-card">
+                        <div class="role-icon">📒</div>
                         <h3>Buku Kas Digital</h3>
                         <p>Guru mencatat kas kelas secara transparan dan aman tanpa buku manual.</p>
                     </div>
-                    <div class="card">
+                    <div class="role-card">
+                        <div class="role-icon">🏦</div>
                         <h3>Alat Simulasi Perbankan</h3>
                         <p>Siswa belajar konsep saldo dan mutasi melalui simulasi “bank-bankan”.</p>
                     </div>
-                    <div class="card">
+                    <div class="role-card">
+                        <div class="role-icon">👨‍🏫</div>
                         <h3>Manajemen Tabungan Siswa</h3>
                         <p>Guru bertindak sebagai bendahara, sistem membantu pencatatan.</p>
                     </div>
-                    <div class="card">
-                        <h3>Reward System (Point System)</h3>
+                    <div class="role-card">
+                        <div class="role-icon">🏆</div>
+                        <h3>Reward System</h3>
                         <p>Saldo digital sebagai poin apresiasi prestasi siswa.</p>
                     </div>
                 </div>
             </section>
 
-            <section class="about-box">
-                <h2>Tentang Bank Devisa Nusantara</h2>
-                <p>Bank Devisa Nusantara (BDN) adalah sebuah platform Classroom Ledger atau alat bantu manajemen kas kelas yang dirancang khusus untuk institusi pendidikan tingkat SD dan SMP. BDN berfungsi sebagai laboratorium perbankan virtual untuk mendukung pembelajaran literasi keuangan secara aman dan terkontrol.</p>
-                <div class="anti-red-flag">
-                    <p><strong>⚠️ Pernyataan Penting (DISCLAIMER):</strong></p>
-                    <ul>
-                        <li>Bank Devisa Nusantara adalah platform simulasi pendidikan dan BUKAN lembaga keuangan resmi.</li>
-                        <li>Sistem ini tidak mengelola uang nyata, seluruh transaksi fisik berada di bawah pengawasan guru.</li>
-                        <li>BDN murni berfungsi sebagai sistem pencatatan digital untuk keperluan edukasi.</li>
-                    </ul>
+            <!-- 2. TENTANG KAMI (DISCLAIMER SECTION) -->
+            <section id="tentang" class="content-section about-section">
+                <div class="section-header">
+                    <h2>Tentang Bank Devisa Nusantara</h2>
+                    <div class="divider"></div>
+                </div>
+                <div class="about-content">
+                    <p>
+                        Bank Devisa Nusantara (BDN) adalah sebuah platform Classroom Ledger atau alat bantu manajemen kas kelas yang dirancang khusus untuk institusi pendidikan tingkat SD dan SMP. BDN berfungsi sebagai laboratorium perbankan virtual untuk mendukung pembelajaran literasi keuangan secara aman dan terkontrol.
+                    </p>
+                    
+                    <div class="legal-disclaimer-box">
+                        <h3>⚠️ Pernyataan Penting (DISCLAIMER — WAJIB UTUH)</h3>
+                        <p>
+                            Bank Devisa Nusantara adalah platform simulasi pendidikan dan BUKAN lembaga keuangan resmi, bank umum, atau penghimpun dana masyarakat.
+                        </p>
+                        <p>
+                            Sistem ini tidak mengelola uang nyata, seluruh transaksi fisik berada di bawah pengawasan guru atau sekolah.
+                        </p>
+                        <p>
+                            BDN murni berfungsi sebagai sistem pencatatan digital untuk keperluan edukasi.
+                        </p>
+                    </div>
                 </div>
             </section>
+
         </main>
 
-        <footer class="footer">
-            <div class="ojk-badge">SIMULASI - TIDAK TERDAFTAR OJK</div>
-            <p>&copy; 2026 Bank Devisa Nusantara. Bukan Bank Asli.</p>
+        <!-- FOOTER EDUKASI -->
+        <footer class="footer-main">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px; justify-content: center;">
+                        <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" class="footer-logo-img">
+                        <div class="logo">BDN<span>.</span></div>
+                    </div>
+                    <p>Aplikasi simulasi edukasi untuk meningkatkan literasi keuangan dan kemampuan manajemen kelas siswa Indonesia.</p>
+                </div>
+                <div class="footer-links-group">
+                    <div class="footer-col">
+                        <h4>Program</h4>
+                        <a href="#edukasi">Literasi SD</a>
+                        <a href="#edukasi">Literasi SMP</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Informasi</h4>
+                        <a href="#tentang">Tentang Kami</a>
+                        <a href="#">Panduan Guru</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="ojk-badge">EDUKASI <span>Bukan Lembaga Keuangan</span></div>
+                <p class="copyright">&copy; 2026 Project Edukasi Sekolah. Bukan Bank Asli.</p>
+            </div>
         </footer>
-    </div>
 
+    </div> <!-- End App Wrapper -->
+
+    <!-- SCRIPT LINK -->
     <script src="script.js"></script>
 </body>
 </html>
