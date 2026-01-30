@@ -17,7 +17,7 @@ body {
     background-color: var(--bg);
     color: var(--text-main);
     line-height: 1.6;
-    overflow-x: hidden; /* Mencegah gerakan horizontal */
+    overflow-x: hidden;
     min-height: 100vh;
     position: relative;
     width: 100%;
@@ -46,7 +46,7 @@ body {
     margin-bottom: 2rem;
     flex-wrap: wrap;
     justify-content: center;
-    width: 100%; /* Pastikan tidak melebar */
+    width: 100%;
 }
 
 .stat-box {
@@ -61,8 +61,8 @@ body {
     gap: 12px;
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
     transition: transform 0.3s;
-    min-width: 140px; /* Diperkecil sedikit agar muat di HP */
-    flex: 1 1 auto; /* Responsif otomatis */
+    min-width: 140px;
+    flex: 1 1 auto;
 }
 
 /* --- 3. AUDIO BUTTON --- */
@@ -91,7 +91,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 5%; /* Padding lebih kecil di mobile */
+    padding: 1rem 5%;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     position: sticky; top: 0; z-index: 100;
@@ -104,7 +104,7 @@ body {
 .logo span { color: var(--gold); }
 
 .logo-img { 
-    width: 32px; height: 32px; /* Diperkecil untuk mobile */
+    width: 32px; height: 32px;
     border-radius: 8px; 
     margin-right: 10px; 
     object-fit: cover; 
@@ -121,17 +121,17 @@ body {
     font-size: 0.65rem; 
     background: #dcfce7; 
     color: #166534; 
-    padding: 4px 10px; /* Padding lebih kecil */
+    padding: 4px 10px;
     border-radius: 15px; 
     font-weight: 700; 
-    white-space: nowrap; /* Mencegah turun baris */
+    white-space: nowrap; 
 }
 
 .btn-account { 
     text-decoration: none; 
     background: var(--navy); 
     color: white; 
-    padding: 6px 12px; /* Padding lebih kecil */
+    padding: 6px 12px;
     border-radius: 8px; 
     font-size: 0.75rem; 
     font-weight: 700; 
@@ -140,14 +140,14 @@ body {
 
 /* --- 5. HERO --- */
 .hero { 
-    padding: 3rem 5% 2rem; /* Padding disesuaikan */
+    padding: 3rem 5% 2rem;
     text-align: center; 
     width: 100%;
     max-width: 100%;
 }
 
 h1 { 
-    font-size: clamp(2rem, 8vw, 3.5rem); /* Ukuran font responsif */
+    font-size: clamp(2rem, 8vw, 3.5rem);
     line-height: 1.1; 
     margin-bottom: 1.5rem; 
     letter-spacing: -1px; 
@@ -158,7 +158,7 @@ h1 {
 
 /* --- 6. CONTAINER & GRID --- */
 .container { 
-    padding: 0 5% 4rem; /* Padding lebih hemat ruang di kiri kanan */
+    padding: 0 5% 4rem;
     width: 100%; 
     max-width: 1200px; 
     margin: 0 auto; 
@@ -190,7 +190,7 @@ h1 {
 /* --- 7. CARDS --- */
 .menu-card { 
     background: var(--white); 
-    padding: 1.5rem; /* Padding sedikit lebih kecil */
+    padding: 1.5rem;
     border-radius: 20px; 
     text-decoration: none; 
     border: 1px solid #eef2f6; 
@@ -216,7 +216,7 @@ h1 {
 /* --- 8. FOOTER --- */
 .footer-main { 
     background: var(--white); 
-    padding: 3rem 5% 2rem; /* Padding disesuaikan */
+    padding: 3rem 5% 2rem;
     border-top: 1px solid #e2e8f0; 
     margin-top: 4rem; 
     width: 100%;
@@ -233,8 +233,8 @@ h1 {
 }
 
 .footer-brand { 
-    flex: 1 1 300px; /* Responsif tapi min-width 300px */
-    min-width: 100%; /* Di mobile dia full dulu */
+    flex: 1 1 300px; 
+    min-width: 100%; 
     text-align: center;
 }
 
@@ -247,14 +247,14 @@ h1 {
 .footer-links-group { 
     display: flex; 
     gap: 2rem; 
-    flex: 2 1 400px; /* Mengisi sisa ruang */
+    flex: 2 1 400px; 
     justify-content: center;
-    flex-wrap: wrap; /* Agar turun ke bawah jika sempit */
+    flex-wrap: wrap; 
     width: 100%;
 }
 
 .footer-col { 
-    flex: 1 1 120px; /* Kolom footer minimal 120px */
+    flex: 1 1 120px; 
     text-align: center;
 }
 
@@ -298,16 +298,15 @@ h1 {
 .copyright { font-size: 0.75rem; color: var(--text-muted); }
 
 
-/* --- RESPONSIVE MEDIA QUERIES (PERBAIKAN UTAMA) --- */
+/* --- RESPONSIVE MEDIA QUERIES --- */
 
 @media (max-width: 900px) {
     .support-grid { grid-template-columns: repeat(3, 1fr); }
-    .main-cards { grid-template-columns: 1fr; } /* Kartu utama jadi 1 kolom di tablet */
+    .main-cards { grid-template-columns: 1fr; }
     .navbar { padding: 0.8rem 4%; }
 }
 
 @media (max-width: 768px) {
-    /* Navbar Stacks Vertically */
     .navbar { 
         flex-direction: column; 
         padding: 1rem 4%; 
@@ -316,7 +315,7 @@ h1 {
     
     .status-wrapper { 
         width: 100%; 
-        justify-content: space-between; /* Status kiri, tombol kanan */
+        justify-content: space-between; 
         margin-top: 5px;
     }
 
@@ -325,7 +324,6 @@ h1 {
     .footer-links-group { flex-direction: column; align-items: center; gap: 1.5rem; }
     .footer-bottom { flex-direction: column; text-align: center; gap: 0.5rem; }
     
-    /* Stats: Jadi 1 kolom di HP agar rapi */
     .live-stats-wrapper { 
         flex-direction: column; 
         width: 100%; 
@@ -334,17 +332,16 @@ h1 {
 }
 
 @media (max-width: 480px) {
-    h1 { letter-spacing: -0.5px; } /* Huruf terlalu rapat di HP disesuaikan */
+    h1 { letter-spacing: -0.5px; }
     
     .support-grid { 
-        grid-template-columns: repeat(2, 1fr); /* 2 kolom rapi di HP kecil */
+        grid-template-columns: repeat(2, 1fr); 
     }
     
-    .card-icon { font-size: 1.8rem; } /* Ikon sedikit lebih kecil */
+    .card-icon { font-size: 1.8rem; }
     
-    /* Logo Footer: Pastikan tidak terlalu besar */
     .footer-brand img {
-        height: 40px !important; /* Paksa tinggi gambar */
+        height: 40px !important; 
         width: auto;
         max-width: 100%;
     }
@@ -352,7 +349,6 @@ h1 {
     .btn-account { padding: 5px 10px; font-size: 0.7rem; }
 }
 
-/* ... STYLE LAMA TETAP ADA ... */
 
 /* =========================================
    MODAL DISCLAIMER & SIMULASI BANNER (WASPADA)
@@ -363,7 +359,7 @@ h1 {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background: #f8fafc;
-    z-index: 10000; /* Di atas segalanya */
+    z-index: 10000;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -422,12 +418,11 @@ h1 {
 
 .disclaimer-content {
     padding: 25px;
-    overflow-y: auto; /* WAJIB SCROLL */
+    overflow-y: auto;
     color: #334155;
     font-size: 0.95rem;
     line-height: 1.7;
     text-align: justify;
-    /* Agar terlihat padat namun enak dibaca */
     font-weight: 500; 
 }
 
@@ -465,7 +460,7 @@ h1 {
 .btn-continue {
     width: 100%;
     padding: 16px;
-    background: #cbd5e1; /* Disabled color */
+    background: #cbd5e1;
     color: #94a3b8;
     border: none;
     border-radius: 12px;
@@ -493,7 +488,7 @@ h1 {
     top: 0;
     left: 0;
     width: 100%;
-    background: #ef4444; /* Merah Terang */
+    background: #ef4444;
     color: white;
     text-align: center;
     padding: 8px;
@@ -503,7 +498,33 @@ h1 {
     letter-spacing: 0.5px;
     text-transform: uppercase;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    display: none; /* Hidden by default until accepted */
+    display: none; /* Hidden by default */
+    transform: translateY(0);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Tombol Close Banner Merah */
+.btn-close-banner {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.2);
+    color: white;
+    border: none;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+.btn-close-banner:hover {
+    background: rgba(0,0,0,0.4);
 }
 
 /* Container utama agar bisa di-hide */
