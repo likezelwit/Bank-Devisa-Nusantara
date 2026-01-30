@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank Devisa Nusantara | Education Simulation</title>
     
-    <!-- HREFLANG SEO TAGS (ADDED) -->
+    <!-- HREFLANG SEO TAGS -->
     <link rel="alternate" hreflang="id" href="https://bankdevisa.vercel.app/ID/" />
     <link rel="alternate" hreflang="en" href="https://bankdevisa.vercel.app/EN/" />
     <link rel="alternate" hreflang="x-default" href="https://bankdevisa.vercel.app/ID/" />
-
+    
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
     <link rel="apple-touch-icon" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
@@ -19,6 +19,64 @@
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FAQ SCHEMA (JSON-LD FOR RICH SNIPPETS) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "What is the purpose of Bank Devisa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bank Devisa aims to provide financial and banking education, as well as give children the opportunity to have their own account under the guidance and approval of parents."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Does Bank Devisa steal data?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We use Supabase which already employs RLS security and strict structure."
+        }
+      }, {
+        "@type": "Question",
+        "name": "What is Bank Devisa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bank Devisa is designed for play and giving children the opportunity to feel like they have their own card."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Are users allowed to enter real data?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "BDN (Bank Devisa Nusantara) strictly prohibits entering real data such as name, phone number, or even home address, because it is still a prototype and the data to be filled must be fictional."
+        }
+      }, {
+        "@type": "Question",
+        "name": "What if the user enters real data?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "BDN (Bank Devisa Nusantara) still cannot access your data due to security, and if a user reports BDN for stealing personal data, we will provide balanced witnesses."
+        }
+      }, {
+        "@type": "Question",
+        "name": "What are the benefits of BDN?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Training children to understand what money is and how transactions are done by adults, giving children the opportunity to do many things under adult guidance."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Does BDN (Bank Devisa Nusantara) store real money?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bank Devisa Nusantara is a prototype of making fictitious cards and free from real money."
+        }
+      }]
+    }
+    </script>
 
     <!-- FIREBASE SDK (Required for app functionality) -->
     <script type="module">
@@ -125,7 +183,7 @@
 
         <!-- NAVBAR -->
         <nav class="navbar">
-            <a href="index.html" class="logo-wrapper">
+            <a href="#education" class="logo-wrapper">
                 <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" alt="BDN Logo" class="logo-img">
                 <div class="logo">BDN<span>.</span></div>
             </a>
@@ -212,7 +270,7 @@
                 </div>
             </section>
 
-            <!-- 2. ABOUT US (DISCLAIMER SECTION) -->
+            <!-- 2. ABOUT US (DISCLAIMER SECTION + FAQ) -->
             <section id="tentang" class="content-section about-section">
                 <div class="section-header">
                     <h2>About Bank Devisa Nusantara</h2>
@@ -235,6 +293,49 @@
                             BDN functions purely as a digital recording system for educational purposes.
                         </p>
                     </div>
+
+                    <!-- FAQ SECTION (ADDED) -->
+                    <div class="faq-section">
+                        <h3>💡 Q&A About BDN</h3>
+                        
+                        <div class="faq-item">
+                            <h4 class="faq-question">What is the purpose of Bank Devisa?</h4>
+                            <p class="faq-answer">Bank Devisa aims to provide financial and banking education, as well as give children the opportunity to have their own account under the guidance and approval of parents.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">Does Bank Devisa steal data?</h4>
+                            <p class="faq-answer">We use Supabase which already employs RLS security and strict structure.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">What is Bank Devisa?</h4>
+                            <p class="faq-answer">Bank Devisa is designed for play and giving children the opportunity to feel like they have their own card.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">Are users allowed to enter real data?</h4>
+                            <p class="faq-answer">BDN (Bank Devisa Nusantara) strictly prohibits entering real data such as name, phone number, or even home address, because it is still a prototype and the data to be filled must be fictional.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">What if the user enters real data?</h4>
+                            <p class="faq-answer">BDN (Bank Devisa Nusantara) still cannot access your data due to security, and if a user reports BDN for stealing personal data, we will provide balanced witnesses.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">What are the benefits of BDN?</h4>
+                            <p class="faq-answer">Training children to understand what money is and how transactions are done by adults, giving children the opportunity to do many things under adult guidance.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">Does BDN (Bank Devisa Nusantara) store real money?</h4>
+                            <p class="faq-answer">Bank Devisa Nusantara is a prototype of making fictitious cards and free from real money.</p>
+                        </div>
+
+                    </div>
+                    <!-- END FAQ -->
+
                 </div>
             </section>
 
