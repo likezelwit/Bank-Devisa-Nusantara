@@ -1,13 +1,14 @@
 :root {
-    --bg: #f8fafc;
-    --navy: #0f172a;
-    --gold: #b8924e;
+    /* PALET 2 — Modern Edutech (Ungu & Cyan) */
+    --primary: #6f42c1;   /* Ungu Utama */
+    --accent: #0dcaf0;    /* Cyan */
+    --bg: #f8f9ff;        /* Background Ungu Sangat Muda */
+    --card-bg: #ffffff;
+    --text-main: #212529;
+    --text-muted: #6c757d;
     --white: #ffffff;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --blue: #3b82f6;
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(111, 66, 193, 0.1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -23,12 +24,12 @@ body {
     width: 100%;
 }
 
-/* --- 1. ANIMATED BACKGROUND --- */
+/* --- 1. ANIMATED BACKGROUND (Soft Purple Flow) --- */
 .animated-bg {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: -1;
-    background: linear-gradient(-45deg, #f8fafc, #e2e8f0, #f1f5f9, #cbd5e1);
+    background: linear-gradient(-45deg, #f8f9ff, #e0cffc, #f0f8ff, #d6eaff);
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
 }
@@ -39,39 +40,13 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* --- 2. LIVE STATS WIDGET --- */
-.live-stats-wrapper {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-}
-
-.stat-box {
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    padding: 12px 20px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
-    transition: transform 0.3s;
-    min-width: 140px;
-    flex: 1 1 auto;
-}
-
-/* --- 3. AUDIO BUTTON --- */
+/* --- 2. AUDIO BUTTON --- */
 .audio-btn {
     position: fixed;
     bottom: 20px;
     right: 20px;
     width: 45px; height: 45px;
-    background: var(--navy);
+    background: var(--primary);
     color: white;
     border: 2px solid rgba(255,255,255,0.2);
     border-radius: 50%;
@@ -81,12 +56,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
     transition: 0.3s;
 }
-.audio-btn:hover { background: var(--gold); transform: scale(1.1); }
+.audio-btn:hover { background: var(--accent); transform: scale(1.1); }
 
-/* --- 4. NAVBAR --- */
+/* --- 3. NAVBAR --- */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -95,13 +70,13 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     position: sticky; top: 0; z-index: 100;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    border-bottom: 1px solid rgba(111, 66, 193, 0.1);
     width: 100%;
     box-sizing: border-box;
 }
 
-.logo { font-size: 1.2rem; font-weight: 800; color: var(--navy); letter-spacing: -0.5px; }
-.logo span { color: var(--gold); }
+.logo { font-size: 1.2rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+.logo span { color: var(--accent); }
 
 .logo-img { 
     width: 32px; height: 32px;
@@ -113,14 +88,12 @@ body {
 }
 
 .logo-wrapper { display: flex; align-items: center; text-decoration: none; }
-
-/* Status Wrapper & Buttons: Mobile Friendly */
 .status-wrapper { display: flex; align-items: center; gap: 8px; }
 
 .system-status { 
     font-size: 0.65rem; 
-    background: #dcfce7; 
-    color: #166534; 
+    background: #e0cffc; 
+    color: var(--primary);
     padding: 4px 10px;
     border-radius: 15px; 
     font-weight: 700; 
@@ -129,21 +102,32 @@ body {
 
 .btn-account { 
     text-decoration: none; 
-    background: var(--navy); 
+    background: var(--primary); 
     color: white; 
     padding: 6px 12px;
     border-radius: 8px; 
     font-size: 0.75rem; 
     font-weight: 700; 
     white-space: nowrap; 
+    transition: 0.3s;
 }
+.btn-account:hover { background: var(--accent); }
 
-/* --- 5. HERO --- */
+/* --- 4. HERO --- */
 .hero { 
     padding: 3rem 5% 2rem;
     text-align: center; 
     width: 100%;
-    max-width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero-content {
+    margin-bottom: 3rem;
+    max-width: 800px;
 }
 
 h1 { 
@@ -151,67 +135,166 @@ h1 {
     line-height: 1.1; 
     margin-bottom: 1.5rem; 
     letter-spacing: -1px; 
+    color: var(--primary);
 }
 
-.text-gradient { background: linear-gradient(90deg, var(--navy), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.hero p { font-size: 1rem; color: var(--text-muted); max-width: 100%; margin: 0 auto 1.5rem; }
+.text-gradient { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 100%; margin: 0 auto; }
 
-/* --- 6. CONTAINER & GRID --- */
+.badge-container { margin-bottom: 1rem; }
+.badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: #e0cffc;
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 800;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* HERO IMAGE */
+.hero-image-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.img-hero {
+    max-width: 100%;
+    height: auto;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(111, 66, 193, 0.15);
+    /* Placeholder styling in case image is missing */
+    background-color: #ddd; 
+    min-height: 300px;
+    object-fit: cover;
+}
+
+/* --- 5. CONTAINER & SECTIONS --- */
 .container { 
     padding: 0 5% 4rem;
     width: 100%; 
-    max-width: 1200px; 
+    max-width: 1000px; /* Lebih fokus untuk bacaan */
     margin: 0 auto; 
 }
 
 .section-title { 
-    font-size: 0.9rem; 
+    font-size: 1.5rem; 
     font-weight: 800; 
     margin-bottom: 1.5rem; 
-    color: var(--navy); 
-    opacity: 0.7; 
-    text-transform: uppercase; 
-    letter-spacing: 1px; 
+    color: var(--primary); 
+    text-align: center;
 }
 
-.menu-section { margin-top: 3rem; }
-
-.menu-grid { 
-    display: grid; 
-    gap: 20px; 
-    width: 100%; 
+.content-section {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 10px 30px rgba(111, 66, 193, 0.05);
+    border: 1px solid var(--glass-border);
 }
 
-/* Grid Settings Default */
-.main-cards { grid-template-columns: repeat(2, 1fr); }
-.secondary-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-.support-grid { grid-template-columns: repeat(5, 1fr); }
+.divider {
+    height: 4px;
+    width: 60px;
+    background: var(--accent);
+    margin: 0 auto 2rem;
+    border-radius: 2px;
+}
 
-/* --- 7. CARDS --- */
-.menu-card { 
-    background: var(--white); 
+.article-body p {
+    font-size: 1.1rem;
+    color: #4a4a4a;
+    margin-bottom: 1.5rem;
+    text-align: justify;
+}
+
+/* --- 6. ROLES GRID --- */
+.roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.role-card {
+    background: #f8f9ff;
     padding: 1.5rem;
-    border-radius: 20px; 
-    text-decoration: none; 
-    border: 1px solid #eef2f6; 
-    transition: all 0.3s ease; 
-    display: flex; 
-    flex-direction: column; 
-    position: relative; 
-    overflow: hidden; 
-    width: 100%;
+    border-radius: 16px;
+    text-align: center;
+    transition: transform 0.3s;
 }
 
-.card-icon { font-size: 2rem; margin-bottom: 1rem; }
-.card-info h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--navy); }
-.card-info p { font-size: 0.85rem; color: var(--text-muted); }
-
-.small-card { 
-    padding: 1.2rem; 
-    text-align: center; 
+.role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(111, 66, 193, 0.1);
 }
-.card-icon-small { font-size: 1.5rem; margin-bottom: 0.6rem; }
-.small-card h3 { font-size: 0.85rem; font-weight: 700; color: var(--navy); }
+
+.role-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.role-card h3 {
+    color: var(--primary);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.role-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* --- 7. ABOUT SECTION --- */
+.about-wrapper {
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+    border-radius: 20px;
+    padding: 3rem;
+    color: white;
+}
+
+.about-content h2 {
+    color: white;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.about-content p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.disclaimer-alert {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 1.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+}
+
+.disclaimer-alert h4 {
+    color: var(--accent);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.disclaimer-alert ul {
+    padding-left: 1.5rem;
+}
+
+.disclaimer-alert li {
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.95;
+}
 
 /* --- 8. FOOTER --- */
 .footer-main { 
@@ -261,7 +344,7 @@ h1 {
 .footer-col h4 { 
     font-size: 0.95rem; 
     margin-bottom: 1rem; 
-    color: var(--navy); 
+    color: var(--primary); 
 }
 .footer-col a { 
     display: block; 
@@ -271,7 +354,7 @@ h1 {
     margin-bottom: 0.6rem; 
     transition: 0.2s; 
 }
-.footer-col a:hover { color: var(--gold); }
+.footer-col a:hover { color: var(--accent); }
 
 .footer-bottom { 
     padding-top: 1.5rem; 
@@ -286,7 +369,7 @@ h1 {
 .ojk-badge { 
     font-weight: 800; 
     font-size: 0.9rem; 
-    color: var(--navy); 
+    color: var(--primary); 
     opacity: 0.8; 
 }
 .ojk-badge span { 
@@ -297,61 +380,21 @@ h1 {
 }
 .copyright { font-size: 0.75rem; color: var(--text-muted); }
 
-
-/* --- RESPONSIVE MEDIA QUERIES --- */
-
-@media (max-width: 900px) {
-    .support-grid { grid-template-columns: repeat(3, 1fr); }
-    .main-cards { grid-template-columns: 1fr; }
-    .navbar { padding: 0.8rem 4%; }
-}
-
+/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
-    .navbar { 
-        flex-direction: column; 
-        padding: 1rem 4%; 
-        gap: 10px; 
-    }
-    
-    .status-wrapper { 
-        width: 100%; 
-        justify-content: space-between; 
-        margin-top: 5px;
-    }
-
-    .hero { padding: 3rem 4% 1.5rem; }
+    .navbar { flex-direction: column; padding: 1rem 4%; gap: 10px; }
+    .status-wrapper { width: 100%; justify-content: space-between; margin-top: 5px; }
+    .hero-content { padding: 0 1rem; }
+    .content-section { padding: 2rem 1.5rem; }
+    .roles-grid { grid-template-columns: 1fr; }
     .footer-container { flex-direction: column; gap: 2rem; }
     .footer-links-group { flex-direction: column; align-items: center; gap: 1.5rem; }
     .footer-bottom { flex-direction: column; text-align: center; gap: 0.5rem; }
-    
-    .live-stats-wrapper { 
-        flex-direction: column; 
-        width: 100%; 
-    }
-    .stat-box { width: 100%; }
+    .about-wrapper { padding: 2rem; }
 }
-
-@media (max-width: 480px) {
-    h1 { letter-spacing: -0.5px; }
-    
-    .support-grid { 
-        grid-template-columns: repeat(2, 1fr); 
-    }
-    
-    .card-icon { font-size: 1.8rem; }
-    
-    .footer-brand img {
-        height: 40px !important; 
-        width: auto;
-        max-width: 100%;
-    }
-    
-    .btn-account { padding: 5px 10px; font-size: 0.7rem; }
-}
-
 
 /* =========================================
-   MODAL DISCLAIMER & SIMULASI BANNER (WASPADA)
+   MODAL DISCLAIMER & SIMULASI BANNER (RETAINED)
    ========================================= */
 
 /* 1. DISCLAIMER OVERLAY (PINTU MASUK) */
@@ -374,14 +417,13 @@ h1 {
     max-height: 90vh;
     border-radius: 20px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    border: 2px solid var(--navy);
+    border: 2px solid var(--primary);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     position: relative;
 }
 
-/* Tombol Close (X) */
 .btn-close-disclaimer {
     position: absolute;
     top: 15px;
@@ -403,7 +445,7 @@ h1 {
 .btn-close-disclaimer:hover { background: #fecaca; transform: rotate(90deg); }
 
 .disclaimer-header {
-    background: var(--navy);
+    background: var(--primary);
     color: white;
     padding: 20px;
     text-align: center;
@@ -447,7 +489,7 @@ h1 {
 .agreement-checkbox {
     width: 24px; height: 24px;
     margin-top: 2px;
-    accent-color: var(--navy);
+    accent-color: var(--primary);
     cursor: pointer;
 }
 
@@ -471,18 +513,18 @@ h1 {
 }
 
 .btn-continue.active {
-    background: var(--navy);
+    background: var(--primary);
     color: white;
-    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3);
+    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
     cursor: pointer;
 }
 
 .btn-continue.active:hover {
-    background: var(--gold);
+    background: var(--accent);
     transform: translateY(-2px);
 }
 
-/* 2. SIMULASI BANNER (DALAM APP) */
+/* 2. SIMULASI BANNER */
 .simulasi-banner {
     position: fixed;
     top: 0;
@@ -498,33 +540,9 @@ h1 {
     letter-spacing: 0.5px;
     text-transform: uppercase;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    display: none; /* Hidden by default */
+    display: none; 
     transform: translateY(0);
     transition: transform 0.3s ease-in-out;
-}
-
-/* Tombol Close Banner Merah */
-.btn-close-banner {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.2);
-    color: white;
-    border: none;
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 24px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-}
-.btn-close-banner:hover {
-    background: rgba(0,0,0,0.4);
 }
 
 /* Container utama agar bisa di-hide */
