@@ -351,3 +351,167 @@ h1 {
     
     .btn-account { padding: 5px 10px; font-size: 0.7rem; }
 }
+
+/* ... STYLE LAMA TETAP ADA ... */
+
+/* =========================================
+   MODAL DISCLAIMER & SIMULASI BANNER (WASPADA)
+   ========================================= */
+
+/* 1. DISCLAIMER OVERLAY (PINTU MASUK) */
+#disclaimer-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #f8fafc;
+    z-index: 10000; /* Di atas segalanya */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.disclaimer-box {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 2px solid var(--navy);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Tombol Close (X) */
+.btn-close-disclaimer {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    width: 35px; height: 35px;
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+.btn-close-disclaimer:hover { background: #fecaca; transform: rotate(90deg); }
+
+.disclaimer-header {
+    background: var(--navy);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.disclaimer-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.disclaimer-content {
+    padding: 25px;
+    overflow-y: auto; /* WAJIB SCROLL */
+    color: #334155;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    text-align: justify;
+    /* Agar terlihat padat namun enak dibaca */
+    font-weight: 500; 
+}
+
+.disclaimer-content strong { color: #dc2626; }
+
+.disclaimer-footer {
+    padding: 20px;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.agreement-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.agreement-checkbox {
+    width: 24px; height: 24px;
+    margin-top: 2px;
+    accent-color: var(--navy);
+    cursor: pointer;
+}
+
+.agreement-label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.btn-continue {
+    width: 100%;
+    padding: 16px;
+    background: #cbd5e1; /* Disabled color */
+    color: #94a3b8;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: not-allowed;
+    transition: all 0.3s;
+}
+
+.btn-continue.active {
+    background: var(--navy);
+    color: white;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3);
+    cursor: pointer;
+}
+
+.btn-continue.active:hover {
+    background: var(--gold);
+    transform: translateY(-2px);
+}
+
+/* 2. SIMULASI BANNER (DALAM APP) */
+.simulasi-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #ef4444; /* Merah Terang */
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    z-index: 9000;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: none; /* Hidden by default until accepted */
+}
+
+/* Container utama agar bisa di-hide */
+#app-wrapper {
+    transition: filter 0.3s;
+}
+.blurred-app {
+    filter: blur(10px);
+    pointer-events: none;
+    opacity: 0.5;
+}
