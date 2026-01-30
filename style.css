@@ -1,556 +1,90 @@
 :root {
-    /* PALET 2 — Modern Edutech (Ungu & Cyan) */
-    --primary: #6f42c1;   /* Ungu Utama */
-    --accent: #0dcaf0;    /* Cyan */
-    --bg: #f8f9ff;        /* Background Ungu Sangat Muda */
-    --card-bg: #ffffff;
+    /* Palet 1 — The Trustworthy School (Biru & Kuning) */
+    --primary: #0056b3;
+    --accent: #ffc107;
+    --bg-body: #f4f7f6;
     --text-main: #212529;
-    --text-muted: #6c757d;
+    --success: #28a745;
     --white: #ffffff;
-    --glass-bg: rgba(255, 255, 255, 0.85);
-    --glass-border: rgba(111, 66, 193, 0.1);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: var(--bg);
+    background-color: var(--bg-body);
     color: var(--text-main);
     line-height: 1.6;
-    overflow-x: hidden;
-    min-height: 100vh;
-    position: relative;
-    width: 100%;
 }
 
-/* --- 1. ANIMATED BACKGROUND (Soft Purple Flow) --- */
-.animated-bg {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1;
-    background: linear-gradient(-45deg, #f8f9ff, #e0cffc, #f0f8ff, #d6eaff);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-}
-
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* --- 2. AUDIO BUTTON --- */
-.audio-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 45px; height: 45px;
-    background: var(--primary);
-    color: white;
-    border: 2px solid rgba(255,255,255,0.2);
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
-    z-index: 999;
+/* Layout Hero */
+.hero-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
-    transition: 0.3s;
-}
-.audio-btn:hover { background: var(--accent); transform: scale(1.1); }
-
-/* --- 3. NAVBAR --- */
-.navbar {
-    display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 1rem 5%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    position: sticky; top: 0; z-index: 100;
-    border-bottom: 1px solid rgba(111, 66, 193, 0.1);
-    width: 100%;
-    box-sizing: border-box;
+    padding: 80px 10%;
+    background: linear-gradient(135deg, var(--primary) 0%, #003d80 100%);
+    color: var(--white);
+    gap: 40px;
 }
 
-.logo { font-size: 1.2rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
-.logo span { color: var(--accent); }
+.hero-text { flex: 1; }
+.hero-text h1 { font-size: 3rem; margin-bottom: 20px; }
 
-.logo-img { 
-    width: 32px; height: 32px;
-    border-radius: 8px; 
-    margin-right: 10px; 
-    object-fit: cover; 
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-    border: 1px solid rgba(0,0,0,0.05); 
-}
-
-.logo-wrapper { display: flex; align-items: center; text-decoration: none; }
-.status-wrapper { display: flex; align-items: center; gap: 8px; }
-
-.system-status { 
-    font-size: 0.65rem; 
-    background: #e0cffc; 
-    color: var(--primary);
-    padding: 4px 10px;
-    border-radius: 15px; 
-    font-weight: 700; 
-    white-space: nowrap; 
-}
-
-.btn-account { 
-    text-decoration: none; 
-    background: var(--primary); 
-    color: white; 
-    padding: 6px 12px;
-    border-radius: 8px; 
-    font-size: 0.75rem; 
-    font-weight: 700; 
-    white-space: nowrap; 
-    transition: 0.3s;
-}
-.btn-account:hover { background: var(--accent); }
-
-/* --- 4. HERO --- */
-.hero { 
-    padding: 3rem 5% 2rem;
-    text-align: center; 
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.hero-content {
-    margin-bottom: 3rem;
-    max-width: 800px;
-}
-
-h1 { 
-    font-size: clamp(2rem, 8vw, 3.5rem);
-    line-height: 1.1; 
-    margin-bottom: 1.5rem; 
-    letter-spacing: -1px; 
-    color: var(--primary);
-}
-
-.text-gradient { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 100%; margin: 0 auto; }
-
-.badge-container { margin-bottom: 1rem; }
-.badge {
-    display: inline-block;
-    padding: 6px 16px;
-    background: #e0cffc;
-    color: var(--primary);
-    font-size: 0.8rem;
-    font-weight: 800;
-    border-radius: 50px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* HERO IMAGE */
-.hero-image-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2rem;
-}
-
+.hero-image { flex: 1; text-align: right; }
 .img-hero {
     max-width: 100%;
     height: auto;
-    border-radius: 24px;
-    box-shadow: 0 20px 40px rgba(111, 66, 193, 0.15);
-    /* Placeholder styling in case image is missing */
-    background-color: #ddd; 
-    min-height: 300px;
-    object-fit: cover;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+    animation: floating 3s ease-in-out infinite;
 }
 
-/* --- 5. CONTAINER & SECTIONS --- */
-.container { 
-    padding: 0 5% 4rem;
-    width: 100%; 
-    max-width: 1000px; /* Lebih fokus untuk bacaan */
-    margin: 0 auto; 
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
 }
 
-.section-title { 
-    font-size: 1.5rem; 
-    font-weight: 800; 
-    margin-bottom: 1.5rem; 
-    color: var(--primary); 
-    text-align: center;
-}
-
-.content-section {
-    background: var(--card-bg);
-    border-radius: 24px;
-    padding: 3rem 2rem;
-    margin-bottom: 3rem;
-    box-shadow: 0 10px 30px rgba(111, 66, 193, 0.05);
-    border: 1px solid var(--glass-border);
-}
-
-.divider {
-    height: 4px;
-    width: 60px;
-    background: var(--accent);
-    margin: 0 auto 2rem;
-    border-radius: 2px;
-}
-
-.article-body p {
-    font-size: 1.1rem;
-    color: #4a4a4a;
-    margin-bottom: 1.5rem;
-    text-align: justify;
-}
-
-/* --- 6. ROLES GRID --- */
-.roles-grid {
+/* Section Peran */
+.grid-peran {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
 }
 
-.role-card {
-    background: #f8f9ff;
-    padding: 1.5rem;
-    border-radius: 16px;
-    text-align: center;
-    transition: transform 0.3s;
+.card {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 15px;
+    border-bottom: 5px solid var(--accent);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
-.role-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(111, 66, 193, 0.1);
-}
-
-.role-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-}
-
-.role-card h3 {
-    color: var(--primary);
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-}
-
-.role-card p {
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    line-height: 1.5;
-}
-
-/* --- 7. ABOUT SECTION --- */
-.about-wrapper {
-    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
-    border-radius: 20px;
-    padding: 3rem;
-    color: white;
-}
-
-.about-content h2 {
-    color: white;
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
-}
-
-.about-content p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    margin-bottom: 2rem;
-}
-
-.disclaimer-alert {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 1.5rem;
-    border-radius: 12px;
-    backdrop-filter: blur(5px);
-}
-
-.disclaimer-alert h4 {
-    color: var(--accent);
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-}
-
-.disclaimer-alert ul {
-    padding-left: 1.5rem;
-}
-
-.disclaimer-alert li {
-    margin-bottom: 0.8rem;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    opacity: 0.95;
-}
-
-/* --- 8. FOOTER --- */
-.footer-main { 
-    background: var(--white); 
-    padding: 3rem 5% 2rem;
-    border-top: 1px solid #e2e8f0; 
-    margin-top: 4rem; 
-    width: 100%;
-}
-
-.footer-container { 
-    display: flex; 
-    justify-content: space-between; 
-    flex-wrap: wrap; 
-    gap: 2rem; 
-    padding-bottom: 2rem; 
-    border-bottom: 1px solid #f1f5f9; 
-    width: 100%;
-}
-
-.footer-brand { 
-    flex: 1 1 300px; 
-    min-width: 100%; 
-    text-align: center;
-}
-
-.footer-brand p { 
-    margin-top: 1rem; 
-    font-size: 0.9rem; 
-    color: var(--text-muted); 
-}
-
-.footer-links-group { 
-    display: flex; 
-    gap: 2rem; 
-    flex: 2 1 400px; 
-    justify-content: center;
-    flex-wrap: wrap; 
-    width: 100%;
-}
-
-.footer-col { 
-    flex: 1 1 120px; 
-    text-align: center;
-}
-
-.footer-col h4 { 
-    font-size: 0.95rem; 
-    margin-bottom: 1rem; 
-    color: var(--primary); 
-}
-.footer-col a { 
-    display: block; 
-    text-decoration: none; 
-    color: var(--text-muted); 
-    font-size: 0.85rem; 
-    margin-bottom: 0.6rem; 
-    transition: 0.2s; 
-}
-.footer-col a:hover { color: var(--accent); }
-
-.footer-bottom { 
-    padding-top: 1.5rem; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    flex-wrap: wrap; 
-    gap: 1rem; 
-    width: 100%;
-}
-
-.ojk-badge { 
-    font-weight: 800; 
-    font-size: 0.9rem; 
-    color: var(--primary); 
-    opacity: 0.8; 
-}
-.ojk-badge span { 
-    font-weight: 400; 
-    font-size: 0.7rem; 
-    color: var(--text-muted); 
-    margin-left: 8px; 
-}
-.copyright { font-size: 0.75rem; color: var(--text-muted); }
-
-/* --- RESPONSIVE --- */
-@media (max-width: 768px) {
-    .navbar { flex-direction: column; padding: 1rem 4%; gap: 10px; }
-    .status-wrapper { width: 100%; justify-content: space-between; margin-top: 5px; }
-    .hero-content { padding: 0 1rem; }
-    .content-section { padding: 2rem 1.5rem; }
-    .roles-grid { grid-template-columns: 1fr; }
-    .footer-container { flex-direction: column; gap: 2rem; }
-    .footer-links-group { flex-direction: column; align-items: center; gap: 1.5rem; }
-    .footer-bottom { flex-direction: column; text-align: center; gap: 0.5rem; }
-    .about-wrapper { padding: 2rem; }
-}
-
-/* =========================================
-   MODAL DISCLAIMER & SIMULASI BANNER (RETAINED)
-   ========================================= */
-
-/* 1. DISCLAIMER OVERLAY (PINTU MASUK) */
+/* Disclaimer Overlay */
 #disclaimer-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: #f8fafc;
-    z-index: 10000;
+    background: rgba(0,0,0,0.85);
+    z-index: 9999;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     padding: 20px;
-    box-sizing: border-box;
 }
 
 .disclaimer-box {
     background: white;
-    width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     max-height: 90vh;
     border-radius: 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    border: 2px solid var(--primary);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-}
-
-.btn-close-disclaimer {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #fee2e2;
-    color: #ef4444;
-    border: none;
-    width: 35px; height: 35px;
-    border-radius: 50%;
-    font-weight: 800;
-    font-size: 1.2rem;
-    cursor: pointer;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-}
-.btn-close-disclaimer:hover { background: #fecaca; transform: rotate(90deg); }
-
-.disclaimer-header {
-    background: var(--primary);
-    color: white;
-    padding: 20px;
-    text-align: center;
-}
-
-.disclaimer-header h2 {
-    margin: 0;
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.disclaimer-content {
-    padding: 25px;
     overflow-y: auto;
-    color: #334155;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    text-align: justify;
-    font-weight: 500; 
+    padding: 40px;
 }
 
-.disclaimer-content strong { color: #dc2626; }
+.blurred-app { filter: blur(10px); pointer-events: none; }
 
-.disclaimer-footer {
-    padding: 20px;
-    border-top: 1px solid #e2e8f0;
-    background: #f8fafc;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.agreement-wrapper {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    cursor: pointer;
-}
-
-.agreement-checkbox {
-    width: 24px; height: 24px;
-    margin-top: 2px;
-    accent-color: var(--primary);
-    cursor: pointer;
-}
-
-.agreement-label {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    cursor: pointer;
-}
-
-.btn-continue {
-    width: 100%;
-    padding: 16px;
-    background: #cbd5e1;
-    color: #94a3b8;
-    border: none;
-    border-radius: 12px;
-    font-weight: 800;
-    font-size: 1rem;
-    cursor: not-allowed;
-    transition: all 0.3s;
-}
-
-.btn-continue.active {
-    background: var(--primary);
-    color: white;
-    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
-    cursor: pointer;
-}
-
-.btn-continue.active:hover {
-    background: var(--accent);
-    transform: translateY(-2px);
-}
-
-/* 2. SIMULASI BANNER */
-.simulasi-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: #ef4444;
-    color: white;
-    text-align: center;
-    padding: 8px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    z-index: 9000;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    display: none; 
-    transform: translateY(0);
-    transition: transform 0.3s ease-in-out;
-}
-
-/* Container utama agar bisa di-hide */
-#app-wrapper {
-    transition: filter 0.3s;
-}
-.blurred-app {
-    filter: blur(10px);
-    pointer-events: none;
-    opacity: 0.5;
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-container { flex-direction: column; text-align: center; }
+    .hero-image { text-align: center; }
 }
