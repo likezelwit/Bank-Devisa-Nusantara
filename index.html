@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank Devisa Nusantara | Portal Masa Depan</title>
+    <title>Bank Devisa Nusantara | Simulasi Edukasi</title>
     
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
     <link rel="apple-touch-icon" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- FIREBASE SDK (Untuk Statistik Nasabah Realtime) -->
+    <!-- FIREBASE SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
@@ -25,177 +25,225 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        window.firebaseDB = db; // Export ke script utama
+        window.firebaseDB = db; 
     </script>
 </head>
 <body>
 
-    <!-- 1. BACKGROUND ANIMATION -->
-    <div class="animated-bg"></div>
+    <!-- 1. DISCLAIMER MODAL (GATE) -->
+    <div id="disclaimer-overlay">
+        <div class="disclaimer-box">
+            <button class="btn-close-disclaimer" onclick="window.location.reload()">✕</button>
+            
+            <div class="disclaimer-header">
+                <h2>⚠️ Pemberitahuan Penting</h2>
+            </div>
+            
+            <div class="disclaimer-content">
+                <p style="font-weight:800; color:var(--navy); margin-bottom:15px;">APLIKASI INI HANYA <span style="color:#ef4444;">SIMULASI</span>.</p>
+                <p>
+                    Proyek "Bank Devisa Nusantara" ini adalah aplikasi web <strong>simulasi</strong> yang dibuat khusus untuk tujuan pembelajaran dan edukasi anak-anak serta pelajar. Seluruh fitur yang terdapat di dalam aplikasi ini, termasuk namun tidak terbatas pada: pendaftaran rekening, penerbitan kartu kredit digital, saldo uang, transfer dana, dan transaksi keuangan lainnya, sepenuhnya bersifat <strong>fiktif dan imajinasi</strong>.
+                </p>
+                <br>
+                <p>
+                    <strong>TIDAK ADA uang asli</strong> yang digunakan, diproses, atau disimpan dalam aplikasi ini. Aplikasi ini <strong>TIDAK TERHUBUNG</strong> dengan institusi perbankan manapun di dunia nyata. Tidak ada data sensitif pribadi yang dikumpulkan untuk tujuan komersial.
+                </p>
+                <br>
+                <p>
+                    Aplikasi ini dirancang untuk membantu generasi muda memahami konsep dasar perbankan digital, cara mengelola keuangan pribadi dalam bentuk simulasi, dan bertransaksi secara digital dengan aman dalam lingkungan yang terkendali dan aman.
+                </p>
+                <br>
+                <p style="color:#64748b; font-size:0.85rem;">
+                    Dengan menekan tombol "LANJUTKAN" di bawah, Anda menyatakan bahwa Anda memahami sepenuhnya bahwa ini adalah alat simulasi belajar semata-mata dan tidak bertanggung jawab atas kesalahpahaman fungsinya sebagai aplikasi perbankan asli.
+                </p>
+            </div>
 
-    <!-- 2. AUDIO CONTROLLER (HIDDEN) -->
-    <button id="audioToggle" class="audio-btn" title="Aktifkan Suara Efek">
-        🔇
-    </button>
-
-    <nav class="navbar">
-        <a href="index.html" class="logo-wrapper">
-            <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" alt="BDN Logo" class="logo-img">
-            <div class="logo">BDN<span>.</span></div>
-        </a>
-        <div class="nav-right">
-            <div class="status-wrapper">
-                <div class="system-status">Operasional Aktif</div>
-                <a href="account/MyAccount/index.html" class="btn-account">MyAccount</a>
+            <div class="disclaimer-footer">
+                <label class="agreement-wrapper">
+                    <input type="checkbox" id="agreeCheck" class="agreement-checkbox">
+                    <span class="agreement-label">Saya mengerti dan setuju bahwa ini hanyalah simulasi edukasi.</span>
+                </label>
+                <button id="btnContinue" class="btn-continue" disabled>Lanjutkan ke Simulasi</button>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <header class="hero">
-        <!-- 3. LIVE STATS WIDGET (BARU) -->
-        <div class="live-stats-wrapper">
-            <!-- Real Data: Nasabah -->
-            <div class="stat-box real-data">
-                <div class="stat-icon">👥</div>
-                <div class="stat-text">
-                    <span class="stat-label">Total Nasabah</span>
-                    <div class="stat-value" id="countNasabah">Loading...</div>
+    <!-- 2. BANNER SIMULASI (MUNCUL SETELAH LANJUT) -->
+    <div id="simulasiBanner" class="simulasi-banner">
+        ⚠️ MODE SIMULASI EDUKASI - TIDAK UNTUK TRANSAKSI NYATA
+    </div>
+
+    <!-- WRAPPER APP (DIBLUR SAAT DISCLAIMER AKTIF) -->
+    <div id="app-wrapper" class="blurred-app">
+
+        <!-- 3. BACKGROUND ANIMATION -->
+        <div class="animated-bg"></div>
+
+        <!-- 4. AUDIO CONTROLLER (HIDDEN) -->
+        <button id="audioToggle" class="audio-btn" title="Aktifkan Suara Efek">
+            🔇
+        </button>
+
+        <nav class="navbar">
+            <a href="index.html" class="logo-wrapper">
+                <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" alt="BDN Logo" class="logo-img">
+                <div class="logo">BDN<span>.</span></div>
+            </a>
+            <div class="nav-right">
+                <div class="status-wrapper">
+                    <div class="system-status">Operasional Aktif</div>
+                    <a href="account/MyAccount/index.html" class="btn-account">MyAccount</a>
+                </div>
+            </div>
+        </nav>
+
+        <header class="hero">
+            <!-- 5. LIVE STATS WIDGET -->
+            <div class="live-stats-wrapper">
+                <!-- Real Data: Nasabah -->
+                <div class="stat-box real-data">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-text">
+                        <span class="stat-label">Total Nasabah</span>
+                        <div class="stat-value" id="countNasabah">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Fake Data: Transaksi -->
+                <div class="stat-box fake-data">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-text">
+                        <span class="stat-label">Transaksi / Detik</span>
+                        <div class="stat-value" id="fakeTransaction">Rp 0</div>
+                    </div>
+                    <div class="live-pulse"></div>
                 </div>
             </div>
 
-            <!-- Fake Data: Transaksi -->
-            <div class="stat-box fake-data">
-                <div class="stat-icon">⚡</div>
-                <div class="stat-text">
-                    <span class="stat-label">Transaksi / Detik</span>
-                    <div class="stat-value" id="fakeTransaction">Rp 0</div>
+            <div class="hero-content">
+                <div class="badge-container">
+                    <span class="badge">SIMULASI EDUKASI 2026</span>
                 </div>
-                <div class="live-pulse"></div>
+                <h1>Solusi Perbankan <br><span class="text-gradient">Masa Depan.</span></h1>
+                <p>Platform simulasi digital untuk belajar mengelola rekening, kartu kredit, dan transaksi aman bagi pelajar dan anak-anak.</p>
             </div>
-        </div>
+        </header>
 
-        <div class="hero-content">
-            <div class="badge-container">
-                <span class="badge">OFFICIAL PORTAL 2026</span>
-            </div>
-            <h1>Solusi Perbankan <br><span class="text-gradient">Masa Depan.</span></h1>
-            <p>Akses cepat layanan aktivasi kartu 0810, pendaftaran nasabah baru, dan pusat informasi keuangan digital terintegrasi.</p>
-        </div>
-    </header>
-
-    <main class="container">
-        <section class="menu-section">
-            <h2 class="section-title">Akses Pendaftaran & Kartu</h2>
-            <div class="menu-grid main-cards">
-                <a href="register/" class="menu-card highlight hover-sound">
-                    <div class="card-icon">👤</div>
-                    <div class="card-info">
-                        <h3>Daftar Nasabah Baru</h3>
-                        <p>Ajukan akun rekening & kartu digital dalam hitungan menit.</p>
-                    </div>
-                    <span class="arrow">→</span>
-                </a>
-                
-                <a href="card-issue/" class="menu-card hover-sound">
-                    <div class="card-icon">💳</div>
-                    <div class="card-info">
-                        <h3>Pendaftaran Kartu</h3>
-                        <p>Standarisasi kartu pintar seri 0810 Platinum untuk nasabah.</p>
-                    </div>
-                    <span class="arrow">→</span>
-                </a>
-            </div>
-        </section>
-
-        <section class="menu-section">
-            <h2 class="section-title">Produk & Edukasi Keuangan</h2>
-            <div class="menu-grid secondary-grid">
-                <a href="#" class="menu-card hover-sound">
-                    <div class="card-icon">🏦</div>
-                    <div class="card-info">
-                        <h3>Produk & Layanan</h3>
-                        <p>Tabungan, Kredit, Investasi.</p>
-                    </div>
-                </a>
-                <a href="#" class="menu-card hover-sound">
-                    <div class="card-icon">📘</div>
-                    <div class="card-info">
-                        <h3>Informasi Edukasi</h3>
-                        <p>Panduan literasi keuangan.</p>
-                    </div>
-                </a>
-                <a href="#" class="menu-card hover-sound">
-                    <div class="card-icon">🎁</div>
-                    <div class="card-info">
-                        <h3>Promo Terbaru</h3>
-                        <p>Diskon & bunga spesial.</p>
-                    </div>
-                </a>
-                <a href="#" class="menu-card hover-sound">
-                    <div class="card-icon">📰</div>
-                    <div class="card-info">
-                        <h3>Berita & Info</h3>
-                        <p>Update kebijakan bank.</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <section class="menu-section">
-            <h2 class="section-title">Bantuan & Keamanan</h2>
-            <div class="menu-grid support-grid">
-                <a href="#" class="menu-card small-card hover-sound">
-                    <div class="card-icon-small">📍</div>
-                    <h3>Lokasi</h3>
-                </a>
-                <a href="#" class="menu-card small-card hover-sound">
-                    <div class="card-icon-small">❓</div>
-                    <h3>Pusat FAQ</h3>
-                </a>
-                <a href="#" class="menu-card small-card hover-sound">
-                    <div class="card-icon-small">🛡️</div>
-                    <h3>Keamanan</h3>
-                </a>
-                <a href="#" class="menu-card small-card hover-sound">
-                    <div class="card-icon-small">📞</div>
-                    <h3>Kontak</h3>
-                </a>
-                <a href="#" class="menu-card small-card hover-sound">
-                    <div class="card-icon-small">⚠️</div>
-                    <h3>Lapor</h3>
-                </a>
-            </div>
-        </section>
-    </main>
-
-    <footer class="footer-main">
-        <div class="footer-container">
-            <div class="footer-brand">
-                <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                    <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" class="footer-logo-img">
-                    <div class="logo">BDN<span>.</span></div>
+        <main class="container">
+            <section class="menu-section">
+                <h2 class="section-title">Akses Pendaftaran & Kartu</h2>
+                <div class="menu-grid main-cards">
+                    <a href="register/" class="menu-card highlight hover-sound">
+                        <div class="card-icon">👤</div>
+                        <div class="card-info">
+                            <h3>Daftar Nasabah Baru</h3>
+                            <p>Ajukan akun rekening & kartu digital simulasi.</p>
+                        </div>
+                        <span class="arrow">→</span>
+                    </a>
+                    
+                    <a href="card-issue/" class="menu-card hover-sound">
+                        <div class="card-icon">💳</div>
+                        <div class="card-info">
+                            <h3>Pendaftaran Kartu</h3>
+                            <p>Standarisasi kartu pintar seri 0810 Platinum.</p>
+                        </div>
+                        <span class="arrow">→</span>
+                    </a>
                 </div>
-                <p>Membangun ekonomi bangsa melalui teknologi finansial yang inklusif dan aman.</p>
-            </div>
-            <div class="footer-links-group">
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <a href="#">Privasi</a>
-                    <a href="#">Syarat & Ketentuan</a>
+            </section>
+
+            <section class="menu-section">
+                <h2 class="section-title">Produk & Edukasi Keuangan</h2>
+                <div class="menu-grid secondary-grid">
+                    <a href="#" class="menu-card hover-sound">
+                        <div class="card-icon">🏦</div>
+                        <div class="card-info">
+                            <h3>Produk & Layanan</h3>
+                            <p>Simulasi Tabungan, Kredit, Investasi.</p>
+                        </div>
+                    </a>
+                    <a href="#" class="menu-card hover-sound">
+                        <div class="card-icon">📘</div>
+                        <div class="card-info">
+                            <h3>Informasi Edukasi</h3>
+                            <p>Panduan literasi keuangan untuk remaja.</p>
+                        </div>
+                    </a>
+                    <a href="#" class="menu-card hover-sound">
+                        <div class="card-icon">🎁</div>
+                        <div class="card-info">
+                            <h3>Promo Terbaru</h3>
+                            <p>Diskon & bunga spesial (Simulasi).</p>
+                        </div>
+                    </a>
+                    <a href="#" class="menu-card hover-sound">
+                        <div class="card-icon">📰</div>
+                        <div class="card-info">
+                            <h3>Berita & Info</h3>
+                            <p>Update kebijakan bank simulasi.</p>
+                        </div>
+                    </a>
                 </div>
-                <div class="footer-col">
-                    <h4>Media</h4>
-                    <a href="#">Facebook</a>
-                    <a href="#">Instagram</a>
-                    <a href="#">Twitter/X</a>
+            </section>
+
+            <section class="menu-section">
+                <h2 class="section-title">Bantuan & Keamanan</h2>
+                <div class="menu-grid support-grid">
+                    <a href="#" class="menu-card small-card hover-sound">
+                        <div class="card-icon-small">📍</div>
+                        <h3>Lokasi</h3>
+                    </a>
+                    <a href="#" class="menu-card small-card hover-sound">
+                        <div class="card-icon-small">❓</div>
+                        <h3>Pusat FAQ</h3>
+                    </a>
+                    <a href="#" class="menu-card small-card hover-sound">
+                        <div class="card-icon-small">🛡️</div>
+                        <h3>Keamanan</h3>
+                    </a>
+                    <a href="#" class="menu-card small-card hover-sound">
+                        <div class="card-icon-small">📞</div>
+                        <h3>Kontak</h3>
+                    </a>
+                    <a href="#" class="menu-card small-card hover-sound">
+                        <div class="card-icon-small">⚠️</div>
+                        <h3>Lapor</h3>
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer-main">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" class="footer-logo-img">
+                        <div class="logo">BDN<span>.</span></div>
+                    </div>
+                    <p>Membangun literasi keuangan bangsa melalui teknologi finansial simulasi yang inklusif dan aman.</p>
+                </div>
+                <div class="footer-links-group">
+                    <div class="footer-col">
+                        <h4>Legal</h4>
+                        <a href="privasi/index.html">Privasi</a>
+                        <a href="#">Syarat & Ketentuan</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Media</h4>
+                        <a href="#">Facebook</a>
+                        <a href="#">Instagram</a>
+                        <a href="#">Twitter/X</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="ojk-badge">OJK <span>Terdaftar & Diawasi</span></div>
-            <p class="copyright">&copy; 2026 PT Bank Devisa Nusantara. All rights reserved.</p>
-        </div>
-    </footer>
+            <div class="footer-bottom">
+                <div class="ojk-badge">SIMULASI <span>Bukan Bank Asli</span></div>
+                <p class="copyright">&copy; 2026 PT Bank Devisa Nusantara (Simulasi). Project Edukasi.</p>
+            </div>
+        </footer>
+
+    </div> <!-- End App Wrapper -->
 
     <script src="script.js"></script>
 </body>
