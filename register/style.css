@@ -23,6 +23,39 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
 .container { padding: 1rem; display: flex; justify-content: center; min-height: calc(100vh - 70px); align-items: flex-start; }
 .form-wrapper { background: white; width: 100%; max-width: 480px; padding: 1.5rem; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 0.5rem; position: relative; }
 
+/* SAFETY DISCLAIMER (NEW) */
+.safety-disclaimer-box {
+    border: 2px dashed var(--red);
+    background: #fef2f2;
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+.safety-disclaimer-box h3 {
+    color: #991b1b;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+.safety-disclaimer-box p {
+    font-size: 0.85rem;
+    color: #7f1d1d;
+    margin-bottom: 8px;
+}
+.safety-disclaimer-box ul {
+    padding-left: 20px;
+    font-size: 0.85rem;
+    color: #7f1d1d;
+}
+.safety-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; text-align: center; animation: pulse-red 2s infinite; }
+
+@keyframes pulse-red {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
 /* PROGRESS BAR */
 .progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 2rem; padding: 0 5px; }
 .progress-bar-bg { position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #f1f5f9; z-index: 1; }
@@ -108,7 +141,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
 .btn-save { background: var(--green) !important; height: 65px; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2); }
 .btn-flip { width: 100%; height: 55px; background: #f1f5f9; color: var(--navy); border: 2px solid #e2e8f0; border-radius: 18px; font-weight: 700; cursor: pointer; }
 
-/* RATIO SELECTOR (FITUR BARU) */
+/* RATIO SELECTOR */
 .ratio-selector-area {
     background: #f8fafc;
     padding: 15px;
@@ -171,7 +204,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
     font-weight: 700;
 }
 
-/* CARD 3D SYSTEM - FIXED RESPONSIVE FONTS */
+/* CARD 3D SYSTEM */
 .card-scene { 
     width: 100%; 
     max-width: 320px; 
@@ -179,7 +212,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
     perspective: 1200px; 
     margin: 20px auto; 
     transition: all 0.5s ease; 
-    container-type: inline-size; /* Critical for cqw units */
+    container-type: inline-size; 
 }
 .card-scene[data-ratio="CR-79"] { max-width: 310px; }
 .card-scene[data-ratio="ID-1"] { max-width: 320px; }
@@ -195,28 +228,20 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
     display: flex; flex-direction: column; justify-content: space-between; color: white; text-align: left;
 }
 
-/* --- RESPONSIVE FIX START --- */
-/* Menggunakan cqw (container query width) agar font skala secara proporsional dengan kartu */
+/* RESPONSIVE FIX */
 .bank-name { font-size: 4cqw; font-weight: 800; color: var(--gold); letter-spacing: 0.5cqw; }
-
 .card-number { font-size: 9cqw; letter-spacing: 1cqw; font-family: monospace; margin: 2cqw 0; line-height: 1.1; }
-
 .card-series { font-weight: 800; color: var(--gold); letter-spacing: 0.5cqw; font-size: 5cqw; }
-
 .name-display { font-size: 6cqw; font-weight: 600; letter-spacing: 0.5cqw; text-transform: uppercase; }
-
 .valid-thru { font-size: 4cqw; color: rgba(255,255,255,0.7); }
-/* --- RESPONSIVE FIX END --- */
 
 .card-footer { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; }
 .footer-left { text-align: left; }
 .footer-right { text-align: right; }
-
 .chip-card { width: 45px; height: 35px; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); border-radius: 6px; margin-top: 10px; }
 
 .card-back { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); transform: rotateY(180deg); padding: 0; display: flex; flex-direction: column; }
 .mag-stripe { width: 100%; height: 40px; background: #000; margin-top: 20px; }
-
 .cvv-area { margin: 20px 1.5rem 10px; height: 35px; background: #eee; display: flex; justify-content: flex-end; align-items: center; padding-right: 15px; border-radius: 4px; overflow: hidden; }
 .cvv-area span { font-size: 4cqw; color: #000; margin-right: 5px; font-weight: 800; }
 .cvv-code { font-weight: 700; color: #000; font-family: monospace; font-size: 6cqw; }
@@ -231,7 +256,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--nav
 @keyframes cardGlow { from { box-shadow: 0 0 20px rgba(79, 70, 229, 0.2); } to { box-shadow: 0 0 40px rgba(184, 146, 78, 0.6); } }
 .hidden { display: none !important; }
 
-/* --- CUSTOM MODAL & GLOBAL LOADER --- */
+/* CUSTOM MODAL & GLOBAL LOADER */
 .loader-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(255, 255, 255, 0.95);
