@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bank Devisa Nusantara</title>
+    <script>
+        // Cek bahasa browser user
+        const userLang = navigator.language || navigator.userLanguage; 
+        
+        // Kalau bahasa browser-nya mengandung 'id' (Indonesia)
+        if (userLang.includes('id')) {
+            window.location.href = "/ID/";
+        } else {
+            // Selain itu (Inggris atau bahasa lain), lempar ke EN
+            window.location.href = "/EN/";
+        }
+    </script>
+    <link rel="canonical" href="https://bankdevisa.vercel.app/ID/">
+</head>
+<body>
+    <p>Redirecting to your language...</p>
+</body>
+</html>
