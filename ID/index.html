@@ -20,6 +20,64 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- FAQ SCHEMA (JSON-LD FOR RICH SNIPPETS) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "Bank Devisa Bertujuan Untuk Apa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bank devisa bertujuan atas edukasi keuangan dan bank serta memberikan kesempatan bagi anak untuk mempunyai rekening sendiri atas bimbingan dan persetujuan orang tua."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Apakah bank devisa mencuri data?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Kita menggunakan Supabase sudah menggunakan keamanan RLS dan struktur yang ketat."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Apa itu bank devisa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bank Devisa sendiri di rancang untuk bermain dan memberikan kesempatan anak merasakan mempunyai kartu sendiri."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Apakah pengguna boleh memasukan data asli?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "BDN (Bank Devisa Nusantara) sangat melarang keras memberikan data asli seperti nama nomor telepon bahkan alamat rumah karna itu tetap prototype data yang harus di isi adalah fiktif."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Bagaimana jika pengguna memberikan data asli?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "BDN (Bank Devisa Nusantara) tetap tidak bisa mengakses datamu karna keamanan serta jika pengguna melaporkan BDN atas tuduhan pencurian data pribadi kami akan memberikan saksi yang imbang."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Apa keuntungan dari BDN?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Melatih anak memahami apa itu uang dan bagaimana transaksi di lakukan orang dewasa anak anak berkesempatan untuk melakukan banyak hal di bimbingan orang dewasa."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Apakah BDN (Bank Devisa Nusantara) menyimpan uang asli?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bank Devisa Nusantara adalah sebuah prototype pembuatan kartu fiktif dan bebas dari uang nyata."
+        }
+      }]
+    }
+    </script>
+
     <!-- FIREBASE SDK (Wajib untuk fungsi app) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -212,7 +270,7 @@
                 </div>
             </section>
 
-            <!-- 2. TENTANG KAMI (DISCLAIMER SECTION) -->
+            <!-- 2. TENTANG KAMI (DISCLAIMER SECTION + FAQ) -->
             <section id="tentang" class="content-section about-section">
                 <div class="section-header">
                     <h2>Tentang Bank Devisa Nusantara</h2>
@@ -235,6 +293,49 @@
                             BDN murni berfungsi sebagai sistem pencatatan digital untuk keperluan edukasi.
                         </p>
                     </div>
+
+                    <!-- BAGIAN FAQ BARU (DARI INPUT USER) -->
+                    <div class="faq-section">
+                        <h3>💡 Tanya Jawab Seputar BDN</h3>
+                        
+                        <div class="faq-item">
+                            <h4 class="faq-question">Bank Devisa Bertujuan Untuk Apa?</h4>
+                            <p class="faq-answer">Bank devisa bertujuan atas edukasi keuangan dan bank serta memberikan kesempatan bagi anak untuk mempunyai rekening sendiri atas bimbingan dan persetujuan orang tua.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">Apakah bank devisa mencuri data?</h4>
+                            <p class="faq-answer">Kita menggunakan Supabase sudah menggunakan keamanan RLS dan struktur yang ketat.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">Apa itu bank devisa?</h4>
+                            <p class="faq-answer">Bank Devisa sendiri di rancang untuk bermain dan memberikan kesempatan anak merasakan mempunyai kartu sendiri.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">Apakah pengguna boleh memasukan data asli?</h4>
+                            <p class="faq-answer">BDN (Bank Devisa Nusantara) sangat melarang keras memberikan data asli seperti nama nomor telepon bahkan alamat rumah karna itu tetap prototype data yang harus di isi adalah fiktif.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">Bagaimana jika pengguna memberikan data asli?</h4>
+                            <p class="faq-answer">BDN (Bank Devisa Nusantara) tetap tidak bisa mengakses datamu karna keamanan serta jika pengguna melaporkan BDN atas tuduhan pencurian data pribadi kami akan memberikan saksi yang imbang.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">Apa keuntungan dari BDN?</h4>
+                            <p class="faq-answer">Melatih anak memahami apa itu uang dan bagaimana transaksi di lakukan orang dewasa anak anak berkesempatan untuk melakukan banyak hal di bimbingan orang dewasa.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4 class="faq-question">Apakah BDN (Bank Devisa Nusantara) menyimpan uang asli?</h4>
+                            <p class="faq-answer">Bank Devisa Nusantara adalah sebuah prototype pembuatan kartu fiktif dan bebas dari uang nyata.</p>
+                        </div>
+
+                    </div>
+                    <!-- END FAQ -->
+
                 </div>
             </section>
 
