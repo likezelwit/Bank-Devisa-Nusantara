@@ -1,22 +1,84 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("BDN Main Portal 2026 - Bank of The Future Edition Loaded.");
+    console.log("BDN Main Portal 2026 - Educational Simulation Loaded.");
 
-    initStatsSystem();
-    initAudioSystem();
-    handleEmptyLinks();
-    handlePrivacyLink(); // <--- FUNGSI PRIVASI DITAMBAHKAN
+    // 1. CEK DISCLAIMER (SAAT PERTAMA KALI BUKA)
+    checkDisclaimer();
+    
+    // Jika sudah setuju, jalankan fitur lain
+    if(localStorage.getItem('disclaimerAccepted')) {
+        initStatsSystem();
+        initAudioSystem();
+        handleEmptyLinks();
+        handlePrivacyLink();
+    }
 });
+
+// --- FUNGSI DISCLAIMER UTAMA ---
+function checkDisclaimer() {
+    const overlay = document.getElementById('disclaimer-overlay');
+    const wrapper = document.getElementById('app-wrapper');
+    const banner = document.getElementById('simulasiBanner');
+    const checkbox = document.getElementById('agreeCheck');
+    const btnContinue = document.getElementById('btnContinue');
+
+    // Cek apakah user sudah setuju sebelumnya
+    if (localStorage.getItem('disclaimerAccepted')) {
+        // Sembunyikan modal, tampilkan aplikasi dan banner
+        overlay.style.display = 'none';
+        wrapper.classList.remove('blurred-app');
+        wrapper.style.pointerEvents = 'all';
+        banner.style.display = 'block';
+    } else {
+        // Tampilkan modal, blur aplikasi
+        overlay.style.display = 'flex';
+        wrapper.classList.add('blurred-app');
+        banner.style.display = 'none';
+    }
+
+    // Logic Checkbox & Button
+    if(checkbox && btnContinue) {
+        checkbox.addEventListener('change', function() {
+            if(this.checked) {
+                btnContinue.removeAttribute('disabled');
+                btnContinue.classList.add('active');
+            } else {
+                btnContinue.setAttribute('disabled', 'true');
+                btnContinue.classList.remove('active');
+            }
+        });
+
+        // Logic Tombol Lanjutkan
+        btnContinue.addEventListener('click', function() {
+            if(checkbox.checked) {
+                // Simpan status agar tidak muncul lagi
+                localStorage.setItem('disclaimerAccepted', 'true');
+                
+                // Animasi transisi keluar
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    wrapper.classList.remove('blurred-app');
+                    wrapper.style.pointerEvents = 'all';
+                    banner.style.display = 'block';
+                    
+                    // Jalankan fitur aplikasi setelah masuk
+                    initStatsSystem();
+                    initAudioSystem();
+                    handleEmptyLinks();
+                    handlePrivacyLink();
+                }, 300);
+            }
+        });
+    }
+}
 
 // --- 1. STATISTIK SYSTEM (REAL & FAKE) ---
 function initStatsSystem() {
-    // A. REAL DATA: Hitung Total Nasabah dari Firebase
-    // Kita tunggu sampai firebaseDB siap (di-export dari module di head)
     const checkDb = setInterval(() => {
         if (window.firebaseDB) {
             clearInterval(checkDb);
             const db = window.firebaseDB;
             
-            // Gunakan onValue agar update real-time kalau ada nasabah baru daftar
             import("https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js").then(({ onValue, ref }) => {
                 const nasabahRef = ref(db, 'nasabah');
                 
@@ -24,10 +86,8 @@ function initStatsSystem() {
                     const data = snapshot.val();
                     const count = data ? Object.keys(data).length : 0;
                     
-                    // Tampilkan ke UI
                     const el = document.getElementById('countNasabah');
                     if (el) {
-                        // Format angka: 1.420
                         el.innerText = count.toLocaleString('id-ID');
                     }
                 });
@@ -35,18 +95,14 @@ function initStatsSystem() {
         }
     }, 100);
 
-    // B. FAKE DATA: Simulasi Transaksi / Detik
     const transEl = document.getElementById('fakeTransaction');
     if (transEl) {
         setInterval(() => {
-            // Random angka antara 10 Juta sampai 80 Juta
             const randomVal = Math.floor(Math.random() * (80000000 - 10000000 + 1)) + 10000000;
             transEl.innerText = "Rp " + (randomVal / 1000000).toFixed(1) + "M";
-            
-            // Efek visual kecil (flash warna)
             transEl.style.color = "#22c55e";
             setTimeout(() => transEl.style.color = "var(--navy)", 300);
-        }, 2500); // Update tiap 2.5 detik
+        }, 2500);
     }
 }
 
@@ -56,19 +112,15 @@ function initAudioSystem() {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let isMuted = true;
 
-    // Toggle Mute/Unmute
     btn.onclick = () => {
         isMuted = !isMuted;
         btn.innerText = isMuted ? "🔇" : "🔊";
         
-        // Resume AudioContext (Browser Policy butuh interaksi user)
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
         }
     };
 
-    // Fungsi Buat Suara Sintetis (Oscillator)
-    // Suara "Blip" futuristik tanpa perlu file mp3 eksternal
     function playSound(type) {
         if (isMuted) return;
 
@@ -79,7 +131,6 @@ function initAudioSystem() {
         gainNode.connect(audioCtx.destination);
 
         if (type === 'hover') {
-            // Suara rendah halus
             osc.type = 'sine';
             osc.frequency.setValueAtTime(200, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1);
@@ -88,7 +139,6 @@ function initAudioSystem() {
             osc.start();
             osc.stop(audioCtx.currentTime + 0.1);
         } else if (type === 'click') {
-            // Suara 'ting' tinggi
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(600, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
@@ -99,7 +149,6 @@ function initAudioSystem() {
         }
     }
 
-    // Pasang Event Listener ke semua tombol/kartu
     const interactiveElements = document.querySelectorAll('.menu-card, .btn-account, .logo');
     
     interactiveElements.forEach(el => {
@@ -122,28 +171,13 @@ function handleEmptyLinks() {
     });
 }
 
-// --- 3.5. HANDLE PRIVACY LINK (BARU) ---
+// --- 4. HANDLE PRIVACY LINK ---
 function handlePrivacyLink() {
-    // Mencari elemen yang memiliki atribut data-target="privacy"
-    // Anda tinggal tambahkan data-target="privacy" pada link HTML Anda
-    const privacyLink = document.querySelector('a[data-target="privacy"]');
-    
+    const privacyLink = document.querySelector('a[href="privasi/index.html"]');
     if (privacyLink) {
         privacyLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Redirect ke folder privasi
-            window.location.href = 'privasi/index.html';
-        });
-    } else {
-        // Opsional: Jika tidak ada atribut, cari teks "Privasi" di footer
-        const links = document.querySelectorAll('.footer-col a');
-        links.forEach(link => {
-            if (link.innerText.includes('Privasi')) {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.location.href = 'privasi/';
-                });
-            }
+            // Biarkan default behavior bekerja, tapi bisa ditambah logika lain jika perlu
+            console.log("Membuka halaman privasi...");
         });
     }
 }
@@ -165,7 +199,6 @@ function showNotification(msg) {
         setTimeout(() => div.remove(), 300);
     }, 3000);
 
-    // Inject animation CSS if not exists
     if (!document.getElementById('notif-style')) {
         const style = document.createElement('style');
         style.id = 'notif-style';
