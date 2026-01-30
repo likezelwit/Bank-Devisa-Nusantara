@@ -1,21 +1,21 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank Devisa Nusantara | Simulasi Edukasi</title>
+    <title>Bank Devisa Nusantara | Simulasi Edukasi SD & SMP</title>
     
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
     <link rel="apple-touch-icon" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
     
-    <!-- CSS Link (Asumsi file style.css ada di folder yang sama) -->
+    <!-- CSS Link -->
     <link rel="stylesheet" href="style.css">
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- FIREBASE SDK (Wajib untuk fungsi app) -->
+    <!-- FIREBASE SDK (Wajib untuk fungsi app sesuai source code asli) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
@@ -118,6 +118,7 @@
             🔇
         </button>
 
+        <!-- NAVBAR -->
         <nav class="navbar">
             <a href="index.html" class="logo-wrapper">
                 <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" alt="BDN Logo" class="logo-img">
@@ -125,123 +126,102 @@
             </a>
             <div class="nav-right">
                 <div class="status-wrapper">
-                    <div class="system-status">Simulasi Aktif</div>
-                    <a href="account/MyAccount/index.html" class="btn-account">MyAccount</a>
+                    <div class="system-status">Simulasi Edukasi</div>
+                    <!-- Link non-aktif untuk showcase -->
+                    <span class="btn-account" style="background:var(--primary); cursor:default;">Info Sekolah</span>
                 </div>
             </div>
         </nav>
 
+        <!-- HERO SECTION -->
         <header class="hero">
-            <div class="live-stats-wrapper">
-                <div class="stat-box real-data">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-text">
-                        <span class="stat-label">Total User</span>
-                        <div class="stat-value" id="countNasabah">Loading...</div>
-                    </div>
-                </div>
-                <div class="stat-box fake-data">
-                    <div class="stat-icon">⚡</div>
-                    <div class="stat-text">
-                        <span class="stat-label">Fake Transaksi</span>
-                        <div class="stat-value" id="fakeTransaction">Rp 0</div>
-                    </div>
-                    <div class="live-pulse"></div>
-                </div>
-            </div>
-
             <div class="hero-content">
                 <div class="badge-container">
                     <span class="badge">PROJECT EDUKASI 2026</span>
                 </div>
-                <h1>Solusi Perbankan <br><span class="text-gradient">Masa Depan.</span></h1>
+                <h1>Solusi Literasi <br><span class="text-gradient">Masa Depan.</span></h1>
                 <p>Platform simulasi digital gratis untuk belajar logika keuangan, memahami antarmuka bank, dan transaksi aman tanpa risiko kehilangan uang.</p>
+            </div>
+            
+            <!-- HERO IMAGE (STATIS SESUAI INSTRUKSI) -->
+            <div class="hero-image-wrapper">
+                <img src="hero-anak.png" alt="Simulasi Tabungan Siswa" class="img-hero">
             </div>
         </header>
 
         <main class="container">
-            <section class="menu-section">
-                <h2 class="section-title">Akses Pendaftaran & Kartu</h2>
-                <div class="menu-grid main-cards">
-                    <a href="register/" class="menu-card highlight hover-sound">
-                        <div class="card-icon">👤</div>
-                        <div class="card-info">
-                            <h3>Daftar Akun</h3>
-                            <p>Buat rekening & kartu simulasi gratis.</p>
-                        </div>
-                        <span class="arrow">→</span>
-                    </a>
-                    
-                    <a href="card-issue/" class="menu-card hover-sound">
-                        <div class="card-icon">💳</div>
-                        <div class="card-info">
-                            <h3>Issue Kartu</h3>
-                            <p>Terbitkan kartu digital 0810 Platinum.</p>
-                        </div>
-                        <span class="arrow">→</span>
-                    </a>
+            <!-- 1.1 ARTIKEL EDUKASI -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Pentingnya Membangun Fondasi Finansial Sejak Dini</h2>
+                    <div class="divider"></div>
+                </div>
+                
+                <article class="article-body">
+                    <p>
+                        Mengajarkan pengelolaan uang kepada siswa SD dan SMP bukan sekadar tentang angka, melainkan tentang membentuk disiplin dan kemandirian. Di masa transisi ini, siswa mulai memahami nilai dari sebuah usaha dan kesabaran dalam mencapai tujuan melalui tabungan. Literasi keuangan yang ditanamkan sejak dini akan menjadi bekal berharga bagi mereka dalam mengambil keputusan finansial yang bijak di masa depan.
+                    </p>
+                    <p>
+                        Melalui program simulasi di Bank Devisa Nusantara, siswa diajak untuk merasakan pengalaman perbankan yang nyata namun dalam lingkungan sekolah yang aman. Menabung bukan lagi sekadar menyimpan uang di celengan, melainkan proses belajar memahami sistem saldo, mutasi, dan perencanaan target keuangan secara terstruktur.
+                    </p>
+                    <p>
+                        Program ini dirancang khusus untuk mendukung kurikulum sekolah dalam mencetak generasi yang cerdas finansial. Dengan pendekatan digital yang interaktif, siswa SD akan merasa senang, sementara siswa SMP akan merasa lebih bertanggung jawab atas pengelolaan dana mereka sendiri.
+                    </p>
+                </article>
+            </section>
+
+            <!-- 1.2 SATU SISTEM, BERAGAM PERAN -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Satu Sistem, Beragam Peran (Sesuai Kebutuhan Sekolah)</h2>
+                    <div class="divider"></div>
+                </div>
+
+                <div class="roles-grid">
+                    <div class="role-card">
+                        <div class="role-icon">📘</div>
+                        <h3>Buku Kas Digital</h3>
+                        <p>Guru mencatat kas kelas secara transparan dan aman tanpa buku manual.</p>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon">🏦</div>
+                        <h3>Alat Simulasi Perbankan</h3>
+                        <p>Siswa belajar konsep saldo dan mutasi melalui simulasi “bank-bankan”.</p>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon">💰</div>
+                        <h3>Manajemen Tabungan Siswa</h3>
+                        <p>Guru bertindak sebagai bendahara, sistem membantu pencatatan.</p>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon">🏆</div>
+                        <h3>Reward System (Point System)</h3>
+                        <p>Saldo digital sebagai poin apresiasi prestasi siswa.</p>
+                    </div>
                 </div>
             </section>
 
-            <section class="menu-section">
-                <h2 class="section-title">Fitur Simulasi</h2>
-                <div class="menu-grid secondary-grid">
-                    <a href="#" class="menu-card hover-sound">
-                        <div class="card-icon">📊</div>
-                        <div class="card-info">
-                            <h3>Dashboard</h3>
-                            <p>Cek saldo & riwayat fiktif.</p>
+            <!-- 2. TENTANG KAMI (ANTI RED FLAG) -->
+            <section class="content-section about-section">
+                <div class="about-wrapper">
+                    <div class="about-content">
+                        <h2>Tentang Bank Devisa Nusantara</h2>
+                        <p>
+                            Bank Devisa Nusantara (BDN) adalah sebuah platform Classroom Ledger atau alat bantu manajemen kas kelas yang dirancang khusus untuk institusi pendidikan tingkat SD dan SMP. BDN berfungsi sebagai laboratorium perbankan virtual untuk mendukung pembelajaran literasi keuangan secara aman dan terkontrol.
+                        </p>
+                        
+                        <div class="disclaimer-alert">
+                            <h4>⚠️ Pernyataan Penting (DISCLAIMER — WAJIB UTUH)</h4>
+                            <ul>
+                                <li>Bank Devisa Nusantara adalah platform simulasi pendidikan dan BUKAN lembaga keuangan resmi, bank umum, atau penghimpun dana masyarakat.</li>
+                                <li>Sistem ini tidak mengelola uang nyata, seluruh transaksi fisik berada di bawah pengawasan guru atau sekolah.</li>
+                                <li>BDN murni berfungsi sebagai sistem pencatatan digital untuk keperluan edukasi.</li>
+                            </ul>
                         </div>
-                    </a>
-                    <a href="#" class="menu-card hover-sound">
-                        <div class="card-icon">💸</div>
-                        <div class="card-info">
-                            <h3>Transfer</h3>
-                            <p>Simulasi antar user sesi.</p>
-                        </div>
-                    </a>
-                    <a href="#" class="menu-card hover-sound">
-                        <div class="card-icon">📈</div>
-                        <div class="card-info">
-                            <h3>Investasi</h3>
-                            <p>Simulasi pasar saham & emas.</p>
-                        </div>
-                    </a>
-                    <a href="#" class="menu-card hover-sound">
-                        <div class="card-icon">🔐</div>
-                        <div class="card-info">
-                            <h3>Keamanan</h3>
-                            <p>Edukasi anti-phishing.</p>
-                        </div>
-                    </a>
+                    </div>
                 </div>
             </section>
 
-            <section class="menu-section">
-                <h2 class="section-title">Bantuan & Informasi</h2>
-                <div class="menu-grid support-grid">
-                    <a href="#" class="menu-card small-card hover-sound">
-                        <div class="card-icon-small">❓</div>
-                        <h3>FAQ</h3>
-                    </a>
-                    <a href="#" class="menu-card small-card hover-sound">
-                        <div class="card-icon-small">🛡️</div>
-                        <h3>Tips Aman</h3>
-                    </a>
-                    <a href="#" class="menu-card small-card hover-sound">
-                        <div class="card-icon-small">📞</div>
-                        <h3>Kontak Dev</h3>
-                    </a>
-                    <a href="privasi/index.html" class="menu-card small-card hover-sound">
-                        <div class="card-icon-small">🔒</div>
-                        <h3>Privasi</h3>
-                    </a>
-                    <a href="#" class="menu-card small-card hover-sound">
-                        <div class="card-icon-small">ℹ️</div>
-                        <h3>Tentang</h3>
-                    </a>
-                </div>
-            </section>
         </main>
 
         <footer class="footer-main">
@@ -256,7 +236,7 @@
                 <div class="footer-links-group">
                     <div class="footer-col">
                         <h4>Legal</h4>
-                        <a href="privasi/index.html">Kebijakan Privasi</a>
+                        <a href="#">Kebijakan Privasi</a>
                         <a href="#">Syarat Penggunaan</a>
                     </div>
                     <div class="footer-col">
@@ -274,7 +254,7 @@
 
     </div> <!-- End App Wrapper -->
 
-    <!-- SCRIPT LINK (Asumsi file script.js ada) -->
+    <!-- SCRIPT LINK -->
     <script src="script.js"></script>
 </body>
 </html>
