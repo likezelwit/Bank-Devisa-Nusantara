@@ -1,0 +1,272 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Devisa Nusantara | Education Simulation</title>
+    
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
+    <link rel="apple-touch-icon" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
+    
+    <!-- CSS Link -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FIREBASE SDK (Required for app functionality) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
+            authDomain: "wifist-d3588.firebaseapp.com",
+            databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/", 
+            projectId: "wifist-d3588"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        window.firebaseDB = db; 
+    </script>
+</head>
+<body>
+
+    <!-- 1. DISCLAIMER OVERLAY (FULL SCREEN GATE) -->
+    <div id="disclaimer-overlay">
+        <div class="disclaimer-box">
+            <!-- Close Button (X) -->
+            <button class="btn-close-disclaimer" onclick="window.location.reload()" title="Close / Cancel">✕</button>
+            
+            <!-- Disclaimer Header -->
+            <div class="disclaimer-header">
+                <h2>⚠️ DISCLAIMER & USER AGREEMENT</h2>
+                <p style="margin:0; font-size:0.8rem; opacity:0.8;">Please read to the end before continuing.</p>
+            </div>
+            
+            <!-- DISCLAIMER TEXT CONTENT (VERY LONG & DETAILED) -->
+            <div class="disclaimer-content">
+                
+                <h3>1. LEGAL STATUS & LEGITIMACY (NOT A REAL BANK)</h3>
+                <p>
+                    You are currently accessing a web application prototype named <strong>"Bank Devisa Nusantara" (BDN)</strong>. We expressly state that this system is <strong>NOT</strong> a legal financial services institution (LJK). This project <strong>DOES NOT have an operational license</strong> from the Financial Services Authority (OJK), Bank Indonesia (BI), or the Indonesia Deposit Insurance Corporation (LPS). All content, features, services, and appearance of this application are fictional creations by the developer, made solely for the purpose of <strong>education, learning, and testing web programming concepts</strong>.
+                </p>
+
+                <h3>2. "MONEY" & BALANCE MECHANISM (TECHNICAL EXPLANATION)</h3>
+                <p>
+                    The "Balance" figures displayed on the screen are merely visual representations of raw data stored in JSON format within a cloud database (Firebase Realtime Database). These values <strong>have NO real currency exchange value (Rp 0)</strong> in the real world. There are no fiat currency assets (Rupiah/Dollar), cryptocurrencies, gold, or securities associated with this balance. Features such as "Transfer", "Top Up", "QRIS", or "Investment" within this application are simply variable data manipulations on the server and client side (client-side logic), not valid fund movements between real-world bank accounts.
+                </p>
+
+                <h3>3. PRIVACY POLICY & PASSWORD SECURITY</h3>
+                <div style="background:#fff7ed; padding:15px; border-left:4px solid #f97316; margin:10px 0; border-radius:0 8px 8px 0;">
+                    <strong>⛔ CRITICAL WARNING: DO NOT USE REAL PASSWORDS!</strong>
+                </div>
+                <p>
+                    We strongly advise that you <strong>NEVER</strong> use your ATM Password, Mobile Banking PIN, M-PIN, or OTP Code from your real bank when registering, logging in, or setting security within this simulation application. Use a fictional PIN or a random number combination that is easy to remember but <strong>not</strong> your real banking password. We assume no responsibility if you recklessly use real financial credentials within this simulation system.
+                </p>
+                <p>
+                    Regarding data: The Name, Email, and Phone Number you enter are stored solely for the functionality of the simulation (e.g., name calling on cards). We do not sell this data, but you remain fully responsible for the data you input.
+                </p>
+
+                <h3>4. EDUCATIONAL PURPOSE & DIGITAL LITERACY</h3>
+                <p>
+                    This application is designed as a "Sandbox" or safe digital playground for students, learners, and technology beginners. Its purpose is to understand modern banking User Interfaces (UI), learn basic transaction algorithm logic, practice digital financial literacy, and understand account management flow without the risk of losing real money.
+                </p>
+
+                <h3>5. SEPARATION FROM PHISHING & CYBER SECURITY</h3>
+                <p>
+                    Learn to distinguish between this simulation application and real banking applications. The similar interface (UI) is intended for visual education, not for deception (phishing). <strong>Phishing</strong> is a criminal act. Do not get used to this simulation flow and then accidentally surrender sensitive data to foreign websites that look like banking apps. Always check your bank's official URL and never give your PIN/OTP to anyone.
+                </p>
+
+                <h3>6. LIABILITY WAIVER (INDEMNIFICATION)</h3>
+                <p>
+                    By pressing the "CONTINUE" button below, you declare that you have read, understood, and agreed to the entire contents of this notice. You agree to waive all forms of legal and financial responsibility from the application developer. You cannot sue, demand, or request any compensation should any misunderstanding occur resulting in material or immaterial loss. Do not use this application for real business transactions, debt recording, or as valid financial proof in the eyes of the law.
+                </p>
+                
+                <br>
+                <p style="text-align:center; font-size:0.9rem; font-weight:bold; color:#ef4444;">
+                    USE WISELY. THIS IS JUST A GAME & LEARNING TOOL.
+                </p>
+            </div>
+
+            <!-- Disclaimer Footer -->
+            <div class="disclaimer-footer">
+                <label class="agreement-wrapper">
+                    <input type="checkbox" id="agreeCheck" class="agreement-checkbox">
+                    <span class="agreement-label">I have read all the text above, understand that this is a fictional simulation, and will not use real banking data here.</span>
+                </label>
+                <button id="btnContinue" class="btn-continue" disabled>I FULLY UNDERSTAND, CONTINUE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. SIMULATION BANNER (APPEARS AFTER AGREEMENT) -->
+    <div id="simulasiBanner" class="simulasi-banner">
+        ⚠️ EDUCATION SIMULATION MODE - NOT FOR REAL MONEY TRANSACTIONS
+    </div>
+
+    <!-- MAIN APP WRAPPER (BLURRED WHEN DISCLAIMER ACTIVE) -->
+    <div id="app-wrapper" class="blurred-app">
+
+        <!-- 3. BACKGROUND (Plain per request Palet) -->
+        <div class="static-bg"></div>
+
+        <!-- 4. AUDIO CONTROLLER -->
+        <button id="audioToggle" class="audio-btn" title="Activate Sound Effects">
+            🔇
+        </button>
+
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <a href="index.html" class="logo-wrapper">
+                <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" alt="BDN Logo" class="logo-img">
+                <div class="logo">BDN<span>.</span></div>
+            </a>
+            <div class="nav-right">
+                <div class="status-wrapper">
+                    <div class="system-status">Education Active</div>
+                    <!-- Non-functional link as placeholder -->
+                    <a href="#" class="btn-account">Home</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- HERO SECTION (UPDATED) -->
+        <header class="hero">
+            <div class="hero-content-wrapper">
+                <div class="hero-text">
+                    <div class="badge-container">
+                        <span class="badge">SCHOOL EDUCATION PROGRAM</span>
+                    </div>
+                    <h1>Financial Literacy Simulation <br><span class="text-gradient">For Elementary & Junior High</span></h1>
+                    <p>Learn to manage money, record savings, and understand class cash systems with interactive and safe digital methods.</p>
+                    <div class="cta-buttons">
+                        <a href="#edukasi" class="btn btn-primary">Start Learning</a>
+                        <a href="#tentang" class="btn btn-outline">About Program</a>
+                    </div>
+                </div>
+                <!-- HERO IMAGE (STATIC AS PER INSTRUCTION) -->
+                <div class="hero-image">
+                    <img src="hero-anak.png" alt="Student Savings Simulation" class="img-hero">
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            
+            <!-- 1.1 EDUCATION ARTICLE -->
+            <section id="edukasi" class="content-section article-section">
+                <div class="section-header">
+                    <h2>The Importance of Building Financial Foundations Early</h2>
+                    <div class="divider"></div>
+                </div>
+                <div class="article-content">
+                    <p>
+                        Teaching money management to elementary and junior high school students is not just about numbers, but about forming discipline and independence. During this transition, students begin to understand the value of effort and patience in achieving goals through savings. Financial literacy instilled early will be a valuable provision for them in making wise financial decisions in the future.
+                    </p>
+                    <p>
+                        Through the simulation program at Bank Devisa Nusantara, students are invited to experience real banking experiences but within a safe school environment. Saving is no longer just storing money in a piggy bank, but a learning process to understand balance systems, mutations, and structured financial target planning.
+                    </p>
+                    <p>
+                        This program is specifically designed to support the school curriculum in creating a financially intelligent generation. With an interactive digital approach, elementary students will feel happy, while junior high students will feel more responsible for managing their own funds.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 1.2 ONE SYSTEM, VARIOUS ROLES -->
+            <section class="content-section roles-section">
+                <div class="section-header">
+                    <h2>One System, Various Roles</h2>
+                    <p class="section-subtitle">(According to School Needs)</p>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="roles-grid">
+                    <div class="role-card">
+                        <div class="role-icon">📒</div>
+                        <h3>Digital Cash Book</h3>
+                        <p>Teachers record class cash transparently and securely without manual books.</p>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon">🏦</div>
+                        <h3>Banking Simulation Tool</h3>
+                        <p>Students learn balance and mutation concepts through "play banking" simulation.</p>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon">👨‍🏫</div>
+                        <h3>Student Savings Management</h3>
+                        <p>Teachers act as treasurers, the system assists in recording.</p>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-icon">🏆</div>
+                        <h3>Reward System</h3>
+                        <p>Digital balance as points of appreciation for student achievements.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. ABOUT US (DISCLAIMER SECTION) -->
+            <section id="tentang" class="content-section about-section">
+                <div class="section-header">
+                    <h2>About Bank Devisa Nusantara</h2>
+                    <div class="divider"></div>
+                </div>
+                <div class="about-content">
+                    <p>
+                        Bank Devisa Nusantara (BDN) is a Classroom Ledger platform or class cash management tool designed specifically for educational institutions at the Elementary (SD) and Junior High (SMP) levels. BDN functions as a virtual banking laboratory to support financial literacy learning safely and under control.
+                    </p>
+                    
+                    <div class="legal-disclaimer-box">
+                        <h3>⚠️ Important Statement (DISCLAIMER — MUST BE FULL)</h3>
+                        <p>
+                            Bank Devisa Nusantara is an educational simulation platform and NOT an official financial institution, commercial bank, or public fund collector.
+                        </p>
+                        <p>
+                            This system does not manage real money; all physical transactions are under the supervision of the teacher or school.
+                        </p>
+                        <p>
+                            BDN functions purely as a digital recording system for educational purposes.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- EDUCATION FOOTER -->
+        <footer class="footer-main">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px; justify-content: center;">
+                        <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" class="footer-logo-img">
+                        <div class="logo">BDN<span>.</span></div>
+                    </div>
+                    <p>Educational simulation application to improve financial literacy and class management skills of Indonesian students.</p>
+                </div>
+                <div class="footer-links-group">
+                    <div class="footer-col">
+                        <h4>Program</h4>
+                        <a href="#edukasi">Elementary Literacy</a>
+                        <a href="#edukasi">Junior High Literacy</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Information</h4>
+                        <a href="#tentang">About Us</a>
+                        <a href="#">Teacher Guide</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="ojk-badge">EDUCATION <span>Not a Financial Institution</span></div>
+                <p class="copyright">&copy; 2026 School Education Project. Not a Real Bank.</p>
+            </div>
+        </footer>
+
+    </div> <!-- End App Wrapper -->
+
+    <!-- SCRIPT LINK -->
+    <script src="script.js"></script>
+</body>
+</html>
