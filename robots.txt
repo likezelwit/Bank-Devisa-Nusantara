@@ -1,12 +1,13 @@
 User-agent: *
-# Jangan indeks halaman login/akun yang minta data simulasi sensitif
-Disallow: /account/
-Disallow: /dashboard/
-Disallow: /topup/
-
-# Tetap biarkan folder edukasi dan produk terbaca
+# Beri akses ke halaman utama bahasa
+Allow: /ID/
+Allow: /EN/
 Allow: /edukasi/
 Allow: /produk/
 
-# Arahkan ke sitemap kalau nanti lu sudah jadi buat
+# Tetap blokir halaman yang emang rahasia/private
+Disallow: /account/
+Disallow: /topup/
+
+# Sitemap harus di baris paling bawah
 Sitemap: https://bankdevisa.vercel.app/sitemap.xml
