@@ -18,7 +18,7 @@ const MODES = {
         name: "Anak (7-10 Tahun)",
         steps: [
             { id: 1, title: "01. Identitas Anak", fields: [
-                { id: "inputNama", label: "Nama Lengkap", type: "text", placeholder: "NAMA LENGKAP", validate: "min3" },
+                { id: "inputNama", label: "Nama Lengkap (Simulasi)", type: "text", placeholder: "NAMA LENGKAP", validate: "min3" },
                 { id: "inputDOB_Display", label: "Tanggal Lahir", type: "text", readonly: true }
             ]},
             { id: 2, title: "02. Cita-Cita", fields: [
@@ -26,10 +26,11 @@ const MODES = {
             ]},
             { id: 3, title: "03. Data Wali", fields: [
                 { id: "waliName", label: "Nama Orang Tua/Wali", type: "text", placeholder: "Nama Wali", validate: "min3" },
-                { id: "inputWA", label: "WhatsApp Wali", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" }
+                { id: "inputWA", label: "WhatsApp Wali (Boleh Fiktif)", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" }
             ]},
+            // DIUBAH: "PIN" -> "Kode Rahasia"
             { id: 4, title: "04. Keamanan", fields: [
-                { id: "inputPW", label: "6 Digit PIN", type: "password", maxlength: 6, validate: "len6" }
+                { id: "inputPW", label: "6 Digit Kode Rahasia", type: "password", maxlength: 6, validate: "len6" }
             ]},
             { id: 5, title: "05. Janji Nasabah", fields: [
                 { id: "checkAgree", label: "Saya Janji Rajin Menabung", type: "checkbox", validate: "checked" }
@@ -44,12 +45,12 @@ const MODES = {
         name: "Remaja (11-17 Tahun)",
         steps: [
             { id: 1, title: "01. Identitas", fields: [
-                { id: "inputNama", label: "Nama Lengkap", type: "text", placeholder: "NAMA ANDA", validate: "min3" },
+                { id: "inputNama", label: "Nama Lengkap (Simulasi)", type: "text", placeholder: "NAMA ANDA", validate: "min3" },
                 { id: "inputDOB_Display", label: "Tanggal Lahir", type: "text", readonly: true }
             ]},
             { id: 2, title: "02. Kontak", fields: [
-                { id: "inputWA", label: "WhatsApp", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
-                { id: "inputEmail", label: "Email", type: "email", placeholder: "nama@email.com", validate: "email" }
+                { id: "inputWA", label: "WhatsApp (Boleh Fiktif)", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
+                { id: "inputEmail", label: "Email (Boleh Fiktif)", type: "email", placeholder: "nama@email.com", validate: "email" }
             ]},
             { id: 3, title: "03. Pendidikan", fields: [
                 { id: "jobType", label: "Nama Sekolah", type: "text", placeholder: "SMA Negeri 1", validate: "min3" }
@@ -61,8 +62,9 @@ const MODES = {
                 { id: "emName", label: "Nama Penanggung Jawab", type: "text", placeholder: "Nama Orang Tua", validate: "min3" },
                 { id: "emPhone", label: "No. HP Darurat", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit10-13" }
             ]},
+            // DIUBAH: "PIN" -> "Kode Rahasia"
             { id: 6, title: "06. Keamanan", fields: [
-                { id: "inputPW", label: "6 Digit PIN", type: "password", maxlength: 6, validate: "len6" }
+                { id: "inputPW", label: "6 Digit Kode Rahasia", type: "password", maxlength: 6, validate: "len6" }
             ]},
             { id: 7, title: "07. Analisis Data", type: "loading", msg: "Menghubungkan ke Database Sekolah..." },
             { id: 8, title: "08. Konfirmasi", fields: [
@@ -81,12 +83,12 @@ const MODES = {
         name: "Dewasa (18+ Tahun)",
         steps: [
             { id: 1, title: "01. Identitas", fields: [
-                { id: "inputNama", label: "Nama Lengkap KTP", type: "text", placeholder: "NAMA LENGKAP", validate: "min3" },
+                { id: "inputNama", label: "Nama Lengkap KTP (Simulasi)", type: "text", placeholder: "NAMA LENGKAP", validate: "min3" },
                 { id: "inputDOB_Display", label: "Tanggal Lahir", type: "text", readonly: true }
             ]},
             { id: 2, title: "02. Kontak Utama", fields: [
-                { id: "inputWA", label: "WhatsApp", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
-                { id: "inputEmail", label: "Email", type: "email", placeholder: "nama@email.com", validate: "email" }
+                { id: "inputWA", label: "WhatsApp (Boleh Fiktif)", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
+                { id: "inputEmail", label: "Email (Boleh Fiktif)", type: "email", placeholder: "nama@email.com", validate: "email" }
             ]},
             { id: 3, title: "03. Domisili", fields: [
                 { id: "address", label: "Alamat Lengkap", type: "text", placeholder: "Jalan, No Rumah...", validate: "min5" }
@@ -107,8 +109,9 @@ const MODES = {
                 { id: "emName", label: "Nama Darurat", type: "text", validate: "min3" },
                 { id: "emRelation", label: "Hubungan", type: "text", placeholder: "Keluarga", validate: "min3" }
             ]},
+            // DIUBAH: "PIN" -> "Kode Rahasia"
             { id: 9, title: "09. Keamanan 1", fields: [
-                { id: "inputPW", label: "6 Digit PIN", type: "password", maxlength: 6, validate: "len6" }
+                { id: "inputPW", label: "6 Digit Kode Rahasia", type: "password", maxlength: 6, validate: "len6" }
             ]},
             { id: 10, title: "10. Keamanan 2", fields: [
                 { id: "secQuestion", label: "Pertanyaan Rahasia", type: "text", placeholder: "Nama Ibu Kandung?", validate: "min3" }
@@ -528,7 +531,8 @@ function validateFields(stepIndex) {
             if(val.length < 5) { showModal("Data Kurang", `${field.label} terlalu singkat!`); return false; }
         }
         if(field.validate === "len6") {
-            if(val.length !== 6) { showModal("PIN Salah", `${field.label} harus tepat 6 digit!`); return false; }
+            // DIUBAH: Pesan error "PIN" -> "Kode"
+            if(val.length !== 6) { showModal("Kode Salah", `${field.label} harus tepat 6 digit!`); return false; }
         }
         if(field.validate === "digit11-13") {
             if(val.length < 11 || val.length > 13) { showModal("Format Salah", `${field.label} harus 11-13 digit!`); return false; }
