@@ -2,10 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("BDN Main Portal 2026 - Educational Simulation Loaded.");
 
     // 1. CEK DISCLAIMER (SAAT PERTAMA KALI BUKA)
+    // Menggunakan sessionStorage agar muncul lagi setiap sesi browser baru
     checkDisclaimer();
     
-    // Jika sudah setuju, jalankan fitur lain
-    if(localStorage.getItem('disclaimerAccepted')) {
+    // Jika sudah setuju di sesi ini, jalankan fitur lain
+    if(sessionStorage.getItem('disclaimerAccepted')) {
         initStatsSystem();
         initAudioSystem();
         handleEmptyLinks();
@@ -21,8 +22,8 @@ function checkDisclaimer() {
     const checkbox = document.getElementById('agreeCheck');
     const btnContinue = document.getElementById('btnContinue');
 
-    // Cek apakah user sudah setuju sebelumnya
-    if (localStorage.getItem('disclaimerAccepted')) {
+    // Cek sessionStorage (Berbeda dengan localStorage: Reset saat browser tutup)
+    if (sessionStorage.getItem('disclaimerAccepted')) {
         // Sembunyikan modal, tampilkan aplikasi dan banner
         overlay.style.display = 'none';
         wrapper.classList.remove('blurred-app');
@@ -50,8 +51,8 @@ function checkDisclaimer() {
         // Logic Tombol Lanjutkan
         btnContinue.addEventListener('click', function() {
             if(checkbox.checked) {
-                // Simpan status agar tidak muncul lagi
-                localStorage.setItem('disclaimerAccepted', 'true');
+                // Simpan status di sessionStorage (Hanya bertahan sesi ini)
+                sessionStorage.setItem('disclaimerAccepted', 'true');
                 
                 // Animasi transisi keluar
                 overlay.style.opacity = '0';
@@ -69,6 +70,17 @@ function checkDisclaimer() {
                 }, 300);
             }
         });
+    }
+}
+
+// --- FUNGSI TUTUP BANNER (NEW) ---
+function closeBanner() {
+    const banner = document.getElementById('simulasiBanner');
+    if(banner) {
+        banner.style.transform = "translateY(-100%)";
+        setTimeout(() => {
+            banner.style.display = 'none';
+        }, 300); // Tunggu animasi slide up selesai
     }
 }
 
@@ -176,7 +188,6 @@ function handlePrivacyLink() {
     const privacyLink = document.querySelector('a[href="privasi/index.html"]');
     if (privacyLink) {
         privacyLink.addEventListener('click', function(e) {
-            // Biarkan default behavior bekerja, tapi bisa ditambah logika lain jika perlu
             console.log("Membuka halaman privasi...");
         });
     }
