@@ -150,17 +150,75 @@
         .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* --- CUSTOM MODAL / POPUP STYLES (BARU) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+        .modal-box {
+            background: white;
+            width: 85%; max-width: 400px;
+            border-radius: 24px;
+            padding: 24px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+
+        .modal-icon { font-size: 3rem; margin-bottom: 15px; }
+        .modal-title { font-size: 1.2rem; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+        .modal-msg { color: #64748b; font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5; }
+
+        .modal-input {
+            width: 100%; padding: 14px; border-radius: 12px;
+            border: 2px solid #e2e8f0; font-size: 1.1rem;
+            text-align: center; font-weight: 700; outline: none;
+            margin-bottom: 20px; box-sizing: border-box;
+            -webkit-appearance: none;
+        }
+        .modal-input:focus { border-color: var(--accent); }
+
+        .modal-btns { display: flex; gap: 10px; }
+        .btn-modal {
+            flex: 1; padding: 14px; border-radius: 12px; border: none;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer;
+        }
+        .btn-modal-outline { background: #f1f5f9; color: #64748b; }
+        .btn-modal-primary { background: var(--dark); color: white; }
+        .btn-modal-primary.danger { background: #ef4444; }
+
+        /* TOAST NOTIFICATION */
+        #toast-container { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 2100; width: 90%; max-width: 400px; pointer-events: none; }
+        .toast-msg {
+            background: var(--dark); color: white; padding: 12px 20px;
+            border-radius: 50px; text-align: center;
+            font-size: 0.85rem; font-weight: 600;
+            margin-top: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            opacity: 0; transform: translateY(20px); transition: all 0.4s ease;
+        }
+        .toast-msg.show { opacity: 1; transform: translateY(0); }
+        .toast-msg.success { background: var(--success); }
+        .toast-msg.error { background: #ef4444; }
+
     </style>
 </head>
 <body>
 
-    <!-- SECURITY CHECK -->
+    <!-- SECURITY CHECK & REDIRECT LOGIC -->
     <script>
-        if(!localStorage.getItem('userCard')) {
-            // Jika tidak login, redirect ke file login asumsi (index.html di luar folder jika ada)
-            // Karena ini SPA tunggal, kita asumsikan jika reload harus ada session.
-            // alert("Silakan Login Terlebih Dahulu"); 
-            // window.location.href = './login.html'; // Sesuaikan dengan file login kamu
+        const myCard = localStorage.getItem('userCard');
+        // Jika tidak ada userCard, lempar ke account/
+        if(!myCard) {
+            window.location.href = './account/';
         }
     </script>
 
@@ -217,13 +275,13 @@
 
             <div class="section-title">Investasi & Pinjaman</div>
             <div class="menu-grid">
-                <div onclick="alert('Fitur Investasi Segera Hadir')" class="feature-card">
+                <div onclick="showAlert('Fitur Investasi Segera Hadir')" class="feature-card">
                     <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg><h3>Reksa</h3>
                 </div>
-                <div onclick="alert('Fitur Emas Segera Hadir')" class="feature-card">
+                <div onclick="showAlert('Fitur Emas Segera Hadir')" class="feature-card">
                     <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg><h3>Emas</h3>
                 </div>
-                <div onclick="alert('Fitur Pinjaman Segera Hadir')" class="feature-card">
+                <div onclick="showAlert('Fitur Pinjaman Segera Hadir')" class="feature-card">
                     <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><h3>Pinjaman</h3>
                 </div>
                  <!-- SETTINGS BUTTON DI MENU GRID UNTUK AKSES MUDAH -->
@@ -432,7 +490,7 @@
                 <div style="font-size:2.5rem;">🔐</div>
                 <h3>Verifikasi Kunci</h3>
                 <p style="color:#64748b; font-size:0.8rem;">Masukkan CodeQR untuk generate.</p>
-                <input type="password" id="qp-inputCode" placeholder="••••••••" autocomplete="off" style="width:100%; padding:15px; border-radius:12px; border:2px solid #e2e8f0; margin-top:15px; text-align:center;">
+                <input type="password" id="qp-inputCode" placeholder="•••••••" autocomplete="off" style="width:100%; padding:15px; border-radius:12px; border:2px solid #e2e8f0; margin-top:15px; text-align:center;">
                 <button class="btn-main" id="qp-btnVerify" style="margin-top:20px;">VERIFIKASI</button>
             </div>
 
@@ -509,6 +567,25 @@
         </div>
     </div>
 
+    <!-- CUSTOM MODAL COMPONENT -->
+    <div id="customModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-icon" id="modalIcon">⚠️</div>
+            <h3 class="modal-title" id="modalTitle">Judul</h3>
+            <p class="modal-msg" id="modalMsg">Pesan disini...</p>
+            
+            <!-- Input Field (Hanya muncul jika prompt) -->
+            <input type="password" id="modalInput" class="modal-input hidden" placeholder="••••••">
+            
+            <div class="modal-btns" id="modalBtns">
+                <!-- Buttons injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -523,9 +600,121 @@
         const db = getDatabase(app);
 
         // GLOBAL VARIABLES
-        const myCard = localStorage.getItem('userCard');
+        // myCard sudah diambil di awal script
         let html5QrCode = null; // Untuk Scanner
         let globalUserData = null; // Cache user data
+
+        // --- MODAL & ALERT SYSTEM (CUSTOM) ---
+        // Fungsi pembantu untuk menampilkan custom alert
+        window.showAlert = (msg) => {
+            const modal = document.getElementById('customModal');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMsg');
+            const btns = document.getElementById('modalBtns');
+            const input = document.getElementById('modalInput');
+
+            input.classList.add('hidden'); // Sembunyikan input
+            icon.innerText = "ℹ️";
+            title.innerText = "Informasi";
+            message.innerText = msg;
+
+            btns.innerHTML = `<button class="btn-modal btn-modal-primary" onclick="closeModal()">OK</button>`;
+
+            modal.classList.add('active');
+        };
+
+        // Fungsi pembantu untuk menampilkan custom confirm
+        window.showConfirm = (msg, onYes, onNo) => {
+            const modal = document.getElementById('customModal');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMsg');
+            const btns = document.getElementById('modalBtns');
+            const input = document.getElementById('modalInput');
+
+            input.classList.add('hidden');
+            icon.innerText = "❓";
+            title.innerText = "Konfirmasi";
+            message.innerText = msg;
+
+            btns.innerHTML = `
+                <button class="btn-modal btn-modal-outline" id="btnNo">Batal</button>
+                <button class="btn-modal btn-modal-primary" id="btnYes">Ya</button>
+            `;
+
+            document.getElementById('btnYes').onclick = () => {
+                closeModal();
+                if(onYes) onYes();
+            };
+            document.getElementById('btnNo').onclick = () => {
+                closeModal();
+                if(onNo) onNo();
+            };
+
+            modal.classList.add('active');
+        };
+
+        // Fungsi pembantu untuk menampilkan custom input (menggantikan prompt)
+        window.showInputModal = (msg, type, callback) => {
+            const modal = document.getElementById('customModal');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMsg');
+            const btns = document.getElementById('modalBtns');
+            const input = document.getElementById('modalInput');
+
+            input.classList.remove('hidden'); // Tampilkan input
+            input.type = type; // text atau password
+            input.value = "";
+            setTimeout(() => input.focus(), 100);
+
+            icon.innerText = "🔐";
+            title.innerText = "Keamanan";
+            message.innerText = msg;
+
+            btns.innerHTML = `
+                <button class="btn-modal btn-modal-outline" id="btnCancel">Batal</button>
+                <button class="btn-modal btn-modal-primary" id="btnSubmit">Kirim</button>
+            `;
+
+            // Handle enter key
+            input.onkeydown = (e) => {
+                if(e.key === 'Enter') document.getElementById('btnSubmit').click();
+            };
+
+            document.getElementById('btnSubmit').onclick = () => {
+                closeModal();
+                if(callback) callback(input.value);
+            };
+            document.getElementById('btnCancel').onclick = () => {
+                closeModal();
+            };
+
+            modal.classList.add('active');
+        };
+
+        window.closeModal = () => {
+            document.getElementById('customModal').classList.remove('active');
+        };
+
+        // Toast Notification (Popup Kecil)
+        window.showToast = (msg, type = 'info') => {
+            const container = document.getElementById('toast-container');
+            const div = document.createElement('div');
+            div.className = `toast-msg ${type}`;
+            div.innerText = msg;
+            container.appendChild(div);
+
+            // Animate in
+            setTimeout(() => div.classList.add('show'), 10);
+
+            // Remove after 3s
+            setTimeout(() => {
+                div.classList.remove('show');
+                setTimeout(() => div.remove(), 400);
+            }, 3000);
+        };
 
         // === 1. SPA NAVIGATION LOGIC ===
         window.openSPA = (pageId) => {
@@ -573,14 +762,20 @@
 
         // === 2. DASHBOARD LOGIC ===
         async function initDashboard() {
-            if(!myCard) return;
+            if(!myCard) {
+                window.location.href = './account/';
+                return;
+            }
             try {
                 const snap = await get(child(ref(db), `nasabah/${myCard}`));
                 if(snap.exists()) {
                     const data = snap.val();
                     globalUserData = data; // Cache data
 
-                    if (data.MyAccount !== "active") { window.location.reload(); return; }
+                    if (data.MyAccount !== "active") { 
+                        window.location.href = './account/';
+                        return; 
+                    }
 
                     document.getElementById('namaNasabah').innerText = data.nama || data.name || "Nasabah";
                     document.getElementById('nomorKartu').innerText = myCard.replace(/.{4}/g, '$& ');
@@ -610,6 +805,9 @@
                     else saldoElem.style.fontSize = "2.4rem";
 
                     renderHistory(country);
+                } else {
+                    // Data tidak ditemukan di Firebase
+                    window.location.href = './account/';
                 }
             } catch (err) { console.error(err); }
         }
@@ -711,24 +909,29 @@
         document.getElementById('tf-btnProses').onclick = async () => {
             if(!globalUserData) await initDashboard(); // Ensure data
             
-            const pin = prompt("Masukkan PIN Anda:");
-            if(pin !== String(globalUserData.pin)) return alert("PIN Salah!");
+            // GANTI PROMPT DENGAN MODAL INPUT
+            showInputModal("Masukkan PIN Anda untuk verifikasi:", "password", async (pin) => {
+                if(pin !== String(globalUserData.pin)) {
+                    showAlert("PIN Salah!");
+                    return;
+                }
 
-            try {
-                const updates = {};
-                updates[`nasabah/${myCard}/saldo`] = globalUserData.saldo - tfRawNominal;
-                // Add logic for currency conversion receipt value if needed
-                updates[`nasabah/${tfTargetData.card}/saldo`] = tfTargetData.saldo + tfRawNominal;
+                try {
+                    const updates = {};
+                    updates[`nasabah/${myCard}/saldo`] = globalUserData.saldo - tfRawNominal;
+                    // Add logic for currency conversion receipt value if needed
+                    updates[`nasabah/${tfTargetData.card}/saldo`] = tfTargetData.saldo + tfRawNominal;
 
-                await update(ref(db), updates);
-                alert("Transfer Berhasil!");
-                openSPA('main-dashboard');
-                initDashboard();
-                // Reset inputs
-                document.getElementById('tf-targetCard').value = "";
-                document.getElementById('tf-amountDisplay').value = "";
-                document.getElementById('tf-boxPenerima').style.display = 'none';
-            } catch(e) { alert("Gagal transfer: " + e.message); }
+                    await update(ref(db), updates);
+                    showToast("Transfer Berhasil!", "success");
+                    openSPA('main-dashboard');
+                    initDashboard();
+                    // Reset inputs
+                    document.getElementById('tf-targetCard').value = "";
+                    document.getElementById('tf-amountDisplay').value = "";
+                    document.getElementById('tf-boxPenerima').style.display = 'none';
+                } catch(e) { showAlert("Gagal transfer: " + e.message); }
+            });
         };
 
         // === 4. TOPUP LOGIC ===
@@ -757,7 +960,7 @@
         };
 
         window.goToTopupPin = () => {
-            if(tuNominal <= 0) return alert("Masukkan nominal!");
+            if(tuNominal <= 0) return showAlert("Masukkan nominal!");
             document.getElementById('tu-step1').classList.add('hidden');
             document.getElementById('tu-step2').classList.remove('hidden');
         };
@@ -777,7 +980,7 @@
         async function verifyTopupPin() {
             if(!globalUserData) await initDashboard();
             if(tuPin !== String(globalUserData.pin)) {
-                alert("PIN Salah!"); tuPin = ""; updateTopupDots(); return;
+                showAlert("PIN Salah!"); tuPin = ""; updateTopupDots(); return;
             }
             
             document.getElementById('tu-step2').classList.add('hidden');
@@ -795,7 +998,7 @@
                     globalUserData.saldo += tuNominal; // Update local cache
                 }, 1500);
             } catch(e) {
-                alert("Gagal topup"); resetTopup();
+                showAlert("Gagal topup"); resetTopup();
             }
         }
 
@@ -829,12 +1032,12 @@
                         document.getElementById('qs-step1').classList.add('hidden');
                         document.getElementById('qs-step2').classList.remove('hidden');
                     } else {
-                        alert("QR Tidak Dikenali / Diri Sendiri");
+                        showAlert("QR Tidak Dikenali / Diri Sendiri");
                         initScanner();
                     }
                 });
             } catch(err) {
-                alert("Kamera Error: " + err);
+                showAlert("Kamera Error: " + err);
             }
         }
 
@@ -847,14 +1050,12 @@
 
         window.goToQrPin = () => {
             qsNominal = Number(document.getElementById('qs-amount').value);
-            if(qsNominal < 1000) return alert("Minimal Rp 1.000");
+            if(qsNominal < 1000) return showAlert("Minimal Rp 1.000");
             document.getElementById('qs-step2').classList.add('hidden');
             document.getElementById('qs-step3').classList.remove('hidden');
         };
 
         document.getElementById('qs-step3').onclick = (e) => {
-            // Handle Numpad clicks if needed, but simpler to use input or simple logic here
-            // For simplicity, using a simplified PIN handling similar to Topup but hidden input
             if(e.target.classList.contains('num-btn')) {
                  const n = e.target.innerText;
                  if(n === 'C') { qsPin=""; }
@@ -871,7 +1072,7 @@
         async function processQrTransfer() {
             if(!globalUserData) await initDashboard();
             if(qsPin !== String(globalUserData.pin)) {
-                alert("PIN Salah!"); qsPin = ""; 
+                showAlert("PIN Salah!"); qsPin = ""; 
                 const dots = document.getElementById('qs-pinDots').children;
                 for(let d of dots) d.classList.remove('active');
                 return;
@@ -895,7 +1096,7 @@
                 document.getElementById('qs-success').style.display = 'block';
                 globalUserData.saldo -= qsNominal; // Update cache
             } catch(e) {
-                alert("Gagal Transfer"); openSPA('page-qrscan');
+                showAlert("Gagal Transfer"); openSPA('page-qrscan');
             }
         }
 
@@ -952,7 +1153,7 @@
                 showMyQR();
                 localStorage.setItem('qrVerified', 'true');
             } else {
-                alert("Kode Salah!");
+                showAlert("Kode Salah!");
             }
         };
 
@@ -984,27 +1185,27 @@
                 globalUserData.qrActive = isChecked; // Cache update
                 if(!isChecked) localStorage.removeItem('qrVerified');
             } catch(e) {
-                alert("Gagal update setting");
+                showAlert("Gagal update setting");
                 document.getElementById('set-switchQR').checked = !isChecked;
             }
         };
 
         // === LOGOUT ===
         document.getElementById('btnLogout').onclick = async () => {
-            if(confirm("Keluar dari akun?")) {
+            showConfirm("Keluar dari akun?", async () => {
                 if(myCard) {
                     try { await update(ref(db, `nasabah/${myCard}`), { MyAccount: "nonactive" }); } catch(e){}
                 }
                 localStorage.clear();
-                // Arahkan ke file login kamu
-                window.location.href = './index.html'; // Asumsi file login
-            }
+                // Redirect ke account/
+                window.location.href = './account/';
+            });
         };
 
         // Init First Load
         window.onload = () => {
             if(myCard) initDashboard();
-            else alert("Data user tidak ditemukan. Silakan login ulang.");
+            else window.location.href = './account/';
         };
 
     </script>
