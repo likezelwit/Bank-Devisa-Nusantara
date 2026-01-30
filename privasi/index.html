@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kebijakan Privasi - BANK DEVISA NUSANTARA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0f172a;
+            --gold: #b8924e;
+            --bg: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background (Sama dengan Portal Utama) */
+        .animated-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(-45deg, #f8fafc, #e2e8f0, #f1f5f9, #cbd5e1);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Header / Nav Sederhana */
+        .page-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .btn-back:hover {
+            color: var(--gold);
+            transform: translateX(-3px);
+            border-color: var(--gold);
+        }
+
+        /* Content Card */
+        .policy-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.05);
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+        .last-updated {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            color: var(--navy);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 24px;
+            background: var(--gold);
+            border-radius: 3px;
+        }
+
+        h3 {
+            font-size: 1.05rem;
+            color: var(--navy);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: #334155;
+            font-size: 1rem;
+        }
+
+        ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            padding-left: 10px;
+        }
+
+        li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 0.8rem;
+            color: #334155;
+        }
+
+        li::before {
+            content: '•';
+            color: var(--gold);
+            font-weight: 800;
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+            line-height: 1.4rem;
+        }
+
+        strong { color: var(--navy); }
+
+        /* Footer Kecil */
+        .mini-footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            padding-bottom: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .policy-card { padding: 1.5rem; border-radius: 16px; }
+            h1 { font-size: 1.6rem; }
+            h2 { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="animated-bg"></div>
+
+    <div class="container">
+        <!-- Header Navigasi -->
+        <header class="page-header">
+            <a href="../index.html" class="btn-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                Kembali ke Portal
+            </a>
+        </header>
+
+        <!-- Konten Utama -->
+        <article class="policy-card">
+            <h1>Kebijakan Privasi</h1>
+            <div class="last-updated">Terakhir diperbarui: Oktober 2026</div>
+
+            <p>
+                Di <strong>Bank Devisa Nusantara (BDN)</strong>, kami menempatkan privasi dan keamanan data finansial Anda sebagai prioritas utama. Dokumen ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi Anda saat menggunakan layanan digital kami.
+            </p>
+
+            <h2>1. Data yang Kami Kumpulkan</h2>
+            <p>Untuk menyediakan layanan perbankan yang aman dan efisien, kami mungkin mengumpulkan jenis data berikut:</p>
+            <ul>
+                <li><strong>Data Identitas:</strong> Nama lengkap, tanggal lahir, dan nomor identitas resmi (KTP/SIM).</li>
+                <li><strong>Informasi Kontak:</strong> Alamat email, nomor telepon, dan alamat fisik.</li>
+                <li><strong>Data Keuangan:</strong> Informasi saldo rekening, riwayat transaksi, dan preferensi mata uang (IDR/USD).</li>
+                <li><strong>Data Keamanan:</strong> Nomor Kartu, PIN, dan biometrik sidik jari (jika diaktifkan).</li>
+                <li><strong>Data Log:</strong> Alamat IP, tipe perangkat, dan data penggunaan aplikasi untuk keamanan.</li>
+            </ul>
+
+            <h2>2. Cara Kami Menggunakan Data Anda</h2>
+            <p>Kami menggunakan informasi yang kami kumpulkan untuk tujuan-tujuan berikut:</p>
+            <ul>
+                <li>Memproses dan melaksanakan transaksi keuangan Anda.</li>
+                <li>Memverifikasi identitas Anda untuk mencegah pencucian uang dan aktivitas penipuan (AML).</li>
+                <li>Memberikan dukungan pelanggan dan menjawab pertanyaan Anda.</li>
+                <li>Menganalisis tren penggunaan untuk meningkatkan fitur aplikasi dan keamanan.</li>
+                <li>Mengirimkan notifikasi penting mengenai keamanan akun dan promosi layanan.</li>
+            </ul>
+
+            <h2>3. Keamanan Data</h2>
+            <p>Kami menerapkan standar keamanan industri terkini untuk melindungi data Anda:</p>
+            <ul>
+                <li><strong>Enkripsi:</strong> Seluruh komunikasi data dienkripsi menggunakan protokol SSL/TLS 256-bit.</li>
+                <li><strong>Database Aman:</strong> Data disimpan di Firebase Realtime Database dengan aturan keamanan yang ketat.</li>
+                <li><strong>Otentikasi Dua Faktor (2FA):</strong> Kami memverifikasi identitas Anda melalui PIN atau sesi login.</li>
+            </ul>
+            <p>
+                <strong>PENTING:</strong> Jangan pernah memberikan PIN atau kode OTP Anda kepada siapa pun, termasuk staf BDN.
+            </p>
+
+            <h2>4. Cookies dan LocalStorage</h2>
+            <p>
+                Aplikasi web kami menggunakan teknologi <em>LocalStorage</em> untuk menyimpan sesi login Anda agar Anda tidak perlu login ulang setiap kali membuka aplikasi di perangkat yang sama. Data ini disimpan di browser Anda dan dapat dihapus melalui pengaturan browser Anda.
+            </p>
+
+            <h2>5. Hak Anda sebagai Pengguna</h2>
+            <p>Anda memiliki hak terhadap data pribadi Anda, termasuk:</p>
+            <ul>
+                <li><strong>Akses:</strong> Meminta salinan data pribadi yang kami miliki tentang Anda.</li>
+                <li><strong>Koreksi:</strong> Meminta kami mengoreksi data yang tidak akurat.</li>
+                <li><strong>Penghapusan:</strong> Meminta penutupan rekening dan penghapusan data (tunduk pada kebijakan retensi hukum).</li>
+            </ul>
+
+            <h2>6. Perubahan Kebijakan</h2>
+            <p>
+                Kami dapat memperbarui kebijakan privasi ini dari waktu ke waktu untuk mencerminkan perubahan dalam praktik kami atau perubahan peraturan hukum. Perubahan akan diposting di halaman ini.
+            </p>
+
+            <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
+                <h3>Hubungi Kami</h3>
+                <p style="margin-bottom: 0.5rem;">Jika Anda memiliki pertanyaan tentang kebijakan privasi ini, silakan hubungi kami:</p>
+                <p style="margin-bottom: 0;">
+                    <strong>Email:</strong> privacy@bankdevisa.com<br>
+                    <strong>WhatsApp:</strong> +62 812-3456-7890
+                </p>
+            </div>
+        </article>
+
+        <footer class="mini-footer">
+            &copy; 2026 Bank Devisa Nusantara. Seluruh Hak Cipta Dilindungi.<br>
+            Terdaftar dan diawasi oleh OJK.
+        </footer>
+    </div>
+
+</body>
+</html>
