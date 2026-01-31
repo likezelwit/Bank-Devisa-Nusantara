@@ -8,6 +8,9 @@
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
     
+    <!-- FONT AWESOME ICONS (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- CSS Link (Path relatif ke root) -->
     <link rel="stylesheet" href="../style.css">
     
@@ -45,7 +48,7 @@
         }
 
         .card-icon {
-            font-size: 3.5rem;
+            font-size: 2.5rem; /* Ukuran disesuaikan untuk Icon FontAwesome */
             margin-bottom: 1.5rem;
             background: #f0f9ff;
             width: 80px;
@@ -156,7 +159,9 @@
                     
                     <!-- CARD: CREATE CARD -->
                     <div class="game-card">
-                        <div class="card-icon">💳</div>
+                        <div class="card-icon">
+                            <i class="fas fa-credit-card"></i> <!-- Icon Kartu -->
+                        </div>
                         <h3>Create Card</h3>
                         <p>Register now to get a fictional account number and your digital bank identity.</p>
                         <button onclick="window.location.href = 'register.html'" class="btn btn-primary" style="width: 100%;">
@@ -166,7 +171,9 @@
 
                     <!-- CARD: UPGRADE CARD -->
                     <div class="game-card">
-                        <div class="card-icon">🚀</div>
+                        <div class="card-icon">
+                            <i class="fas fa-rocket"></i> <!-- Icon Roket -->
+                        </div>
                         <h3>Upgrade Card</h3>
                         <p>Already have a card? Upgrade your membership tier to unlock premium features and higher limits.</p>
                         <button onclick="window.location.href = 'card-upgrade.html'" class="btn btn-outline" style="width: 100%;">
@@ -179,7 +186,7 @@
 
             <!-- 2. SAFETY WARNING (IMPORTANT) -->
             <section class="safety-warning">
-                <h4>⚠️ Security Warning & Parental Guidance</h4>
+                <h4><i class="fas fa-exclamation-triangle"></i> Security Warning & Parental Guidance</h4>
                 <ul style="margin-left: 20px; line-height: 1.6;">
                     <li><strong>DO NOT</strong> enter real personal data such as ID Numbers (NIK), Family Card numbers, or full home addresses.</li>
                     <li><strong>DO NOT</strong> use your real ATM PIN or Mobile Banking passwords.</li>
@@ -259,7 +266,7 @@
             }
         });
 
-        // 2. USER INTERACTION LOG (Optional)
+        // 2. USER INTERACTION LOG
         document.body.addEventListener('click', function() {
             console.log("User interaction detected");
         });
