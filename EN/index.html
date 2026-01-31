@@ -30,7 +30,7 @@
         "name": "What is the purpose of Bank Devisa?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Bank Devisa aims to provide financial and banking education, as well as give children the opportunity to have their own account under the guidance and approval of parents."
+          "text": "Bank Devisa aims to provide financial and banking education, as well as give children opportunity to have their own account under guidance and approval of parents."
         }
       }, {
         "@type": "Question",
@@ -51,21 +51,21 @@
         "name": "Are users allowed to enter real data?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "BDN (Bank Devisa Nusantara) strictly prohibits entering real data such as name, phone number, or even home address, because it is still a prototype and the data to be filled must be fictional."
+          "text": "BDN (Bank Devisa Nusantara) strictly prohibits entering real data such as name, phone number, or even home address, because it is still a prototype and data to be filled must be fictional."
         }
       }, {
         "@type": "Question",
-        "name": "What if the user enters real data?",
+        "name": "What if user enters real data?",
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "BDN (Bank Devisa Nusantara) still cannot access your data due to security, and if a user reports BDN for stealing personal data, we will provide balanced witnesses."
         }
       }, {
         "@type": "Question",
-        "name": "What are the benefits of BDN?",
+        "name": "What are benefits of BDN?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Training children to understand what money is and how transactions are done by adults, giving children the opportunity to do many things under adult guidance."
+          "text": "Training children to understand what money is and how transactions are done by adults, giving children opportunity to do many things under adult guidance."
         }
       }, {
         "@type": "Question",
@@ -94,6 +94,21 @@
         const db = getDatabase(app);
         window.firebaseDB = db; 
     </script>
+
+    <!-- STYLE TAMBAHAN UNTUK TOMBOL BARU -->
+    <style>
+        .btn-cta-game {
+            background-color: var(--accent, #ffc107); /* Menggunakan warna aksen kuning */
+            color: #000;
+            border: 2px solid var(--accent, #ffc107);
+        }
+        .btn-cta-game:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
+            color: #000;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
 
@@ -101,11 +116,11 @@
     <div id="disclaimer-overlay">
         <div class="disclaimer-box">
             <!-- Close Button (X) -->
-            <button class="btn-close-disclaimer" onclick="window.location.reload()" title="Close / Cancel">✕</button>
+            <button class="btn-close-disclaimer" onclick="window.location.reload()" title="Close / Cancel">X</button>
             
             <!-- Disclaimer Header -->
             <div class="disclaimer-header">
-                <h2>⚠️ DISCLAIMER & USER AGREEMENT</h2>
+                <h2>DISCLAIMER & USER AGREEMENT</h2>
                 <p style="margin:0; font-size:0.8rem; opacity:0.8;">Please read to the end before continuing.</p>
             </div>
             
@@ -124,7 +139,7 @@
 
                 <h3>3. PRIVACY POLICY & PASSWORD SECURITY</h3>
                 <div style="background:#fff7ed; padding:15px; border-left:4px solid #f97316; margin:10px 0; border-radius:0 8px 8px 0;">
-                    <strong>⛔ CRITICAL WARNING: DO NOT USE REAL PASSWORDS!</strong>
+                    <strong>CRITICAL WARNING: DO NOT USE REAL PASSWORDS!</strong>
                 </div>
                 <p>
                     We strongly advise that you <strong>NEVER</strong> use your ATM Password, Mobile Banking PIN, M-PIN, or OTP Code from your real bank when registering, logging in, or setting security within this simulation application. Use a fictional PIN or a random number combination that is easy to remember but <strong>not</strong> your real banking password. We assume no responsibility if you recklessly use real financial credentials within this simulation system.
@@ -167,7 +182,7 @@
 
     <!-- 2. SIMULATION BANNER (APPEARS AFTER AGREEMENT) -->
     <div id="simulasiBanner" class="simulasi-banner">
-        ⚠️ EDUCATION SIMULATION MODE - NOT FOR REAL MONEY TRANSACTIONS
+        EDUCATION SIMULATION MODE - NOT FOR REAL MONEY TRANSACTIONS
     </div>
 
     <!-- MAIN APP WRAPPER (BLURRED WHEN DISCLAIMER ACTIVE) -->
@@ -178,7 +193,7 @@
 
         <!-- 4. AUDIO CONTROLLER -->
         <button id="audioToggle" class="audio-btn" title="Activate Sound Effects">
-            🔇
+            Audio Off
         </button>
 
         <!-- NAVBAR -->
@@ -208,6 +223,10 @@
                     <div class="cta-buttons">
                         <a href="#edukasi" class="btn btn-primary">Start Learning</a>
                         <a href="#tentang" class="btn btn-outline">About Program</a>
+                        <!-- NEW BUTTON: GO TO GAME -->
+                        <button onclick="window.location.href = 'game.html'" class="btn btn-cta-game">
+                            Go to Game
+                        </button>
                     </div>
                 </div>
                 <!-- HERO IMAGE (STATIC AS PER INSTRUCTION) -->
@@ -248,22 +267,26 @@
                 
                 <div class="roles-grid">
                     <div class="role-card">
-                        <div class="role-icon">📒</div>
+                        <!-- Emoji removed -->
+                        <div class="role-icon"></div>
                         <h3>Digital Cash Book</h3>
                         <p>Teachers record class cash transparently and securely without manual books.</p>
                     </div>
                     <div class="role-card">
-                        <div class="role-icon">🏦</div>
+                        <!-- Emoji removed -->
+                        <div class="role-icon"></div>
                         <h3>Banking Simulation Tool</h3>
                         <p>Students learn balance and mutation concepts through "play banking" simulation.</p>
                     </div>
                     <div class="role-card">
-                        <div class="role-icon">👨‍🏫</div>
+                        <!-- Emoji removed -->
+                        <div class="role-icon"></div>
                         <h3>Student Savings Management</h3>
                         <p>Teachers act as treasurers, the system assists in recording.</p>
                     </div>
                     <div class="role-card">
-                        <div class="role-icon">🏆</div>
+                        <!-- Emoji removed -->
+                        <div class="role-icon"></div>
                         <h3>Reward System</h3>
                         <p>Digital balance as points of appreciation for student achievements.</p>
                     </div>
@@ -282,7 +305,7 @@
                     </p>
                     
                     <div class="legal-disclaimer-box">
-                        <h3>⚠️ Important Statement (DISCLAIMER — MUST BE FULL)</h3>
+                        <h3>Important Statement (DISCLAIMER — MUST BE FULL)</h3>
                         <p>
                             Bank Devisa Nusantara is an educational simulation platform and NOT an official financial institution, commercial bank, or public fund collector.
                         </p>
@@ -296,7 +319,7 @@
 
                     <!-- FAQ SECTION (ADDED) -->
                     <div class="faq-section">
-                        <h3>💡 Q&A About BDN</h3>
+                        <h3>Q&A About BDN</h3>
                         
                         <div class="faq-item">
                             <h4 class="faq-question">What is the purpose of Bank Devisa?</h4>
@@ -315,11 +338,11 @@
 
                         <div class="faq-item">
                             <h4 class="faq-question">Are users allowed to enter real data?</h4>
-                            <p class="faq-answer">BDN (Bank Devisa Nusantara) strictly prohibits entering real data such as name, phone number, or even home address, because it is still a prototype and the data to be filled must be fictional.</p>
+                            <p class="faq-answer">BDN (Bank Devisa Nusantara) strictly prohibits entering real data such as name, phone number, or even home address, because it is still a prototype and data to be filled must be fictional.</p>
                         </div>
 
                         <div class="faq-item">
-                            <h4 class="faq-question">What if the user enters real data?</h4>
+                            <h4 class="faq-question">What if user enters real data?</h4>
                             <p class="faq-answer">BDN (Bank Devisa Nusantara) still cannot access your data due to security, and if a user reports BDN for stealing personal data, we will provide balanced witnesses.</p>
                         </div>
 
