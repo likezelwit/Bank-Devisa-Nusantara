@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby Permainan - Bank Devisa Nusantara</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo-wrapper">
+            <img src="../assets/logo.png" alt="Logo" class="logo-img">
+            <span class="logo">BANK<span>DEVISA</span></span>
+        </a>
+        <div class="status-wrapper">
+            <div class="system-status">MODE SIMULASI</div>
+            <a href="index.html" class="btn-account">Keluar</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="content-section" style="margin-top: 2rem; background: linear-gradient(135deg, var(--primary), #003d82); color: white;">
+            <div class="section-header">
+                <h2 style="color: var(--accent);">Halo, Nasabah Cilik! 👋</h2>
+                <p style="color: #e9ecef;">Selamat datang di Pusat Kendali Bankmu.</p>
+            </div>
+
+            <div style="text-align: center; padding: 2rem 0;">
+                <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">Saldo Tabunganmu</p>
+                <h1 style="color: white; font-size: 3rem; margin: 0.5rem 0;" id="display-saldo">Rp 0</h1>
+                <div class="divider" style="background: var(--accent);"></div>
+            </div>
+
+            <div class="cta-buttons" style="justify-content: center;">
+                <button onclick="tambahSaldo()" class="btn btn-cta-game">💰 Menabung (Setor)</button>
+                <button onclick="tarikSaldo()" class="btn btn-outline" style="border-color: white; color: white;">💸 Jajan (Tarik)</button>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-header">
+                <h2>Pilih Aktivitasmu</h2>
+                <p>Mau ngapain kita hari ini?</p>
+            </div>
+
+            <div class="roles-grid">
+                <div class="role-card" onclick="alert('Fitur Cetak Kartu Segera Hadir!')">
+                    <span class="role-icon">💳</span>
+                    <h3>Cetak Kartu BDN</h3>
+                    <p>Desain kartu ATM-mu sendiri dengan nama kerenmu.</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Buat Sekarang</button>
+                </div>
+
+                <div class="role-card" onclick="alert('Menu Transfer sedang dalam pemeliharaan')">
+                    <span class="role-icon">📲</span>
+                    <h3>Transfer Uang</h3>
+                    <p>Kirim saldo ke teman sekolahmu dalam simulasi.</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Kirim Saldo</button>
+                </div>
+
+                <div class="role-card" id="btn-mutasi">
+                    <span class="role-icon">📜</span>
+                    <h3>Catatan Kas</h3>
+                    <p>Lihat riwayat uang masuk dan keluar kelasmu.</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Buku Kas</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- LOGIKA PERMAINAN SEDERHANA ---
+        let saldo = 50000; // Saldo awal simulasi
+
+        // Ambil elemen display
+        const displaySaldo = document.getElementById('display-saldo');
+
+        // Fungsi format rupiah
+        function formatRupiah(angka) {
+            return "Rp " + angka.toLocaleString('id-ID');
+        }
+
+        // Update tampilan pertama kali
+        function updateDisplay() {
+            displaySaldo.innerText = formatRupiah(saldo);
+            
+            // Kasih efek glow pas angka berubah
+            displaySaldo.style.transform = "scale(1.1)";
+            setTimeout(() => {
+                displaySaldo.style.transform = "scale(1)";
+            }, 200);
+        }
+
+        function tambahSaldo() {
+            let jumlah = prompt("Mau nabung berapa hari ini? (Masukkan angka)");
+            if (jumlah && !isNaN(jumlah)) {
+                saldo += parseInt(jumlah);
+                alert("Yey! Kamu berhasil menabung " + formatRupiah(parseInt(jumlah)));
+                updateDisplay();
+            } else {
+                alert("Masukkan angka yang benar ya!");
+            }
+        }
+
+        function tarikSaldo() {
+            let jumlah = prompt("Mau jajan berapa? (Masukkan angka)");
+            if (jumlah && !isNaN(jumlah)) {
+                if (parseInt(jumlah) > saldo) {
+                    alert("Waduh, saldo kamu nggak cukup buat jajan segitu!");
+                } else {
+                    saldo -= parseInt(jumlah);
+                    alert("Berhasil ditarik! Jangan lupa hemat ya.");
+                    updateDisplay();
+                }
+            }
+        }
+
+        // Inisialisasi awal
+        window.onload = updateDisplay;
+    </script>
+</body>
+</html>
