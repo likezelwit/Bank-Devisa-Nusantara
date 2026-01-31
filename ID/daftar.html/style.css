@@ -2,8 +2,9 @@
 .wizard-container {
     max-width: 600px;
     margin: 80px auto;
-    min-height: calc(100vh - 100px);
+    min-height: calc(100vh - 100px); /* Kurangi margin top biar header tidak tertutup */
     text-align: center;
+    justify-content: center;
 }
 
 /* PROGRESS BAR */
@@ -12,10 +13,13 @@
     height: 8px;
     background: #e2e8f0;
     border-radius: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
     overflow: hidden;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+    margin-bottom: 2rem;
 }
+
 .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--primary, #0056b3), #2563eb);
@@ -23,270 +27,694 @@
     transition: width 0.5s ease;
 }
 
+.progress-line {
+    width: 0%;
+    height: 100%;
+    background: var(--blue);
+    transition: width 0.5s ease;
+}
+
+/* CIRCLES */
+.circle {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 50%;
+    z-index: 2; font-size: 0.75rem; font-weight: 800; color: var(--gray); transition: 0.3s; text-align: center; display: flex; align-items: center; justify-content: center; }
+.circle.active { border-color: var(--blue); color: var(--blue); transform: scale(1.1); background: #f8faff; }
+.circle.completed { background: var(--blue); border-color: var(--blue); color: white; }
+.circle.completed::after { content: '✓'; }
+
 /* STEPS & ANIMATIONS */
-.wizard-step {
-    display: none;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s ease;
-}
-.wizard-step.active {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-}
+.step { display: none; }
+.step.active { display: block; animation: mobileFadeUp 0.4s ease-out forwards; }
 
-.step-content {
-    background: var(--white);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    position: relative;
-    overflow: hidden;
-}
+@keyframes mobileFadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-/* TYP & TITLES */
-h1 { color: var(--primary); font-weight: 800; font-size: 1.8rem; margin-bottom: 0.5rem; font-family: 'Nunito', sans-serif; }
-.wave { animation: wave 2.5s infinite; display: inline-block; }
-@keyframes wave { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(20deg); } 75% { transform: rile(-20deg); } }
-h2 { color: var(--primary); font-weight: 700; margin-bottom: 1.5rem; font-family: 'Nunito', sans-serif; }
-p { color: #64748b; font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; }
+/* STEP 2 (Step 1 - Final) */
+.step h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 1.2rem; color: var(--navy); text-align: left; font-family: 'Nunito', sans-serif; }
 
-/* DOB INPUTS */
-.dob-container { margin-top: 2rem; }
-.dob-input-group label { display: block; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; font-size: 0.9rem; }
-.dob-input-group input {
-    width: 100%;
-    height: 55px;
-    text-align: center;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--primary);
-    outline: none;
-    transition: 0.3s;
-}
-.dob-input-group input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
-}
-.separator { font-size: 1.5rem; color: #94a3b8; font-weight: 700; }
+/* INPUTS FORM INPUTS */
+.input-group {
+    text-align: left; margin-bottom: 1rem; font-weight: 800; font-size: 0.85rem; color: var(--gray); margin-bottom: 0.5rem; display: flex; flex-direction: column; } /* Mengatur label di atas input agar rapi */
 
-.safety-note {
-    background: #fef3c7;
-    border: 2px dashed #f97316;
-    padding: 1rem;
-    border-radius: 12px;
-    margin-top: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #9a3412;
-}
-.safety-note i { font-size: 1.5rem; color: #f97316; }
-.safety-note strong { color: #c2410c; }
+.input-group label {
+    display: block; font-size: 0.75rem; font-weight: 700; color: var(--text); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; } /* Label lebih besar & tebal */
 
-/* BUTTONS */
-.btn-start {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(45deg, #0056b3, #004494);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: transform 0.2s;
-    box-shadow: 0 4px 15px rgba(0, 86, 179, 0.2);
-}
-.btn-start:active { transform: scale(0.98); }
 
-/* WIZARD BODY */
-.wizard-body {
-    padding: 0.5rem;
-}
-.wizard-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-    gap: 1rem;
-}
-.btn-wizard {
-    flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
-    transition: 0.3s;
-}
-.next-btn { background: var(--primary); color: white; }
-.next-btn:hover { background: #004494; }
-.prev-btn { background: #e2e8f0; color: var(--text); }
-.prev-btn:hover { background: #cbd5e1; }
-
-/* FORM INPUTS STYLES (Kid Friendly) */
-.form-field-group {
-    margin-bottom: 1.5rem;
-    text-align: left;
-}
-.form-field-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
-    color: var(--text);
-    font-size: 0.9rem;
-}
+/* INPUTS Khusus (Nama, dll) */
 .custom-input, .custom-select {
-    width: 100%;
-    height: 50px;
-    padding: 0 1rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    background: #fdfdfd;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--primary);
+    width: 100%; height: 55px; padding: 0 1rem;
+    border: 2px solid #e2e8f0; /* Border halus */
+    border-radius: 14px; font-size: 16px !important; font-weight: 600;
+    color: #1e293b;
+    background: var(--white);
     outline: none;
     transition: 0.3s;
     font-family: 'Nunito', sans-serif;
 }
+
 .custom-input:focus, .custom-select:focus {
-    border-color: var(--accent);
+    border-color: var(--accent); /* Warna fokus kuning */
     background: white;
-    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+    box-shadow: 0 0 3px rgba(255, 193, 7, 0.15);
 }
 
-/* CREDIT CARD 3D */
-.card-visual-container {
+/* DOB CONTAINER */
+.dob-container { margin-bottom: 2rem; display: flex; justify-content: center; }
+
+.dob-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%; /* Lebar lebih kecil agar serasi pasarnya */
+}
+
+.dob-field label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--gray);
+    margin-bottom: 5px;
+}
+
+.dob-field input {
+    width: 100%;
+    height: 60px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--primary);
+    outline: none;
+    transition: 0.3s;
+}
+
+.dob-field input:focus {
+    border-color: var(--accent);
+    background: white;
+}
+
+/* SEPARATOR TANGGAL LAHIR */
+.dob-separator {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray);
+    margin-top: 18px;
+}
+
+/* SAFETY DISCLAIMER BOX (Updated Design) */
+.safety-disclaimer-box {
+    background: #fff3c7;
+    color: #9a3412;
+    padding: 1.5rem;
+    border-left: 5px solid #fecaca;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+.safety-disclaimer-box h3 {
+    color: #9a3412;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.safety-disclaimer-box p {
+    font-size: 0.8rem;
+    color: #7f1d1d;
+    margin-bottom: 8px;
+}
+.safety-icon { 
+    font-size: 2.5rem; 
+    margin-bottom: 10px; 
+    display: block; 
+    animation: pulse-red 2s infinite; 
+    text-align: center;
+}
+
+@keyframes pulse-red {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* AGE GATE CONTAINER */
+.age-gate-box {
+    padding: 20px 0;
+}
+
+.btn-start {
+    width: 100%; height: 60px;
+    background: linear-gradient(45deg, #0056b3, #004494);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 10px 20px rgba(0, 86, 179, 0.2);
+}
+.btn-start:hover { transform: translateY(-2px); }
+
+/* FINAL STEP STYLES */
+.processing-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    min-height: 200px;
+}
+
+.processing-box {
+    background: #f8f9fa;
+    padding: 1.5rem 2rem;
+    border-radius: 20px;
+    width: 100%;
+    text-align: center;
+    border: 2px dashed #b91c1c;
+}
+
+.spinner-large { 
+    border: 4px solid var(--primary); 
+    border-top-color: var(--accent); /* Aksen top */
+    border-radius: 50%;
+    width: 45px; height: 45px;
+    animation: spin 1s infinite linear;
+    margin: 0 auto 10px;
+}
+
+.timer-display {
+    font-size: 0.85rem;
+    color: var(--gray);
+    font-weight: 700;
+    text-align: center;
+}
+
+/* CARD SCENE */
+.card-scene {
     perspective: 1000px;
-    margin-top: 1rem;
+    margin: 20px auto;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .card-preview {
-    width: 320px;
-    height: 200px;
+    width: 320px; 
+    max-width: 100%;
+    aspect-ratio: 1.586 / 1; 
+    background: transparent; 
     position: relative;
+    transition: all 0.5s ease;
+    /* Border halus di sekelar kartu */
+    border-radius: 20px;
 }
 
+/* CARD 3D INNER REFERENCE (Fix untuk HTML Script) */
 .card-inner-ref {
     position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
+    width: 100%; 
+    height: 100%; 
+    position: relative;
     transition: transform 0.6s;
     transform-style: preserve-3d;
 }
 
 .card-inner-ref.is-flipped {
-    transform: rotateY(180deg);
+    transform: rotateY(180deg) rotateZ(1deg);
 }
 
 .card-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    overflow: hidden;
-    font-family: 'Courier New', monospace;
-}
+    position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 20px; padding: 0; }
 
+/* FRONT FACE (GLASSMORPHISM) */
 .card-front {
     background: linear-gradient(135deg, #1e3a8a 0%, #2c5282 100%);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: flex; flex-direction: column; justify-content: space-between; color: white; text-align: left;
+    position: absolute; width: 100%; height: 100%;
 }
 
 .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
+    display: flex; justify-content: space-between; align-items: center; padding: 1.2rem;
 }
 
-.bank-name { font-weight: 800; font-style: italic; font-size: 1.1rem; letter-spacing: 1px; }
-.chip-card { width: 40px; height: 30px; background: linear-gradient(135deg, #f6d365 0%, #f59e0b 100%); border-radius: 4px; }
+.bank-name { font-size: 4cqw; font-weight: 900; color: var(--gold); letter-spacing: 0.5cqw; font-style: italic; }
+.chip-card { width: 45px; height: 30px; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); border-radius: 6px; margin-top: 10px; }
 
 .card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
+    flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
-.card-number-display {
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-    font-weight: 700;
-}
+.card-number { font-size: 9cqw; letter-spacing: 1cqw; font-weight: 700; margin: 2cqw 0; line-height: 1.1; font-family: monospace; }
 
 .card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    width: 90%;
-    padding: 0 15px 15px;
-    font-size: 0.7rem;
-}
+    display: flex; justify-content: space-between; align-items: flex-end; width: 90%; padding: 0 12px; font-size: 0.7rem; }
 
-.card-tier { font-weight: 700; color: #ffd700; }
+.footer-left { text-align: left; }
+.footer-right { text-align: right; }
 
+.card-tier { font-weight:  700; color: #ffd700; letter-spacing: 0.5cqw; font-size: 0.8rem; text-transform: uppercase; }
+
+/* BACK FACE (MAGNETIC STRIPE) */
 .card-back {
     background: linear-gradient(135deg, #2c5282 0%, #1e3a8a 100%);
     color: white;
+    position: absolute;
+    width: 100%; height: 100%;
     transform: rotateY(180deg);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-top: 2rem;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    padding: 0;
 }
 
 .mag-stripe {
-    width: 100%;
-    height: 40px;
-    background: #000;
-    margin-bottom: 1rem;
+    width: 100%; height: 40px; background: #000; margin-top: 20px;
 }
 
-.cvv-container {
+/* CVV AREA */
+.cvv-area {
+    margin: 20px 1.5rem 10px; height: 35px; background: #f0f9ff; display: flex; justify-content: flex-end; align-items: center; padding-right: 15px; border-radius: 4px; overflow: hidden; }
+.cvv-area span { font-size: 4cqw; color: #000; margin-right: 5px; font-weight: 800; font-family: monospace; }
+.cvv-code { font-weight:  700; color: #000; font-family: monospace; }
+
+.card-terms {
+    padding: 0 1.5rem;
+    font-size:  2.5cqw;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.4;
+    text-align: left;
+    margin: 0;
+}
+
+/* RATIO SELECTOR AREA */
+.ratio-selector-area {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border: 1px solid #e2e8f0;
+}
+
+.ratio-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.btn-ratio {
+    padding: 8px 5px;
+    font-size: 0.75rem;
     background: white;
-    color: #333;
-    padding: 10px 20px;
-    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-weight: 600;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-ratio.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 6px rgba(0, 86, 179, 0.2); }
+
+.ratio-info {
+    font-size: 0.75rem;
+    color: var(--gray);
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: block;
+    text-align: center;
+}
+
+/* TABEL BAHAN (Material Design) */
+.material-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.7rem;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.material-table th {
+    background: var(--navy); color: white; padding: 6px; text-align: left;
+}
+.material-table td {
+    padding: 5px 8px; border-bottom: 1px solid #e2e8f0; color: #6c757d; font-size: 0.8rem; text-align: left;
+}
+.highlight-row {
+    background-color: #f0fdf4; color: var(--green); font-weight: 700; }
+
+/* BUTTON GROUP FINAL */
+.button-group-final {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+/* DOWNLOAD BUTTON (Warna Kuning - Agar User menekan untuk menyimpan) */
+.btn-download { 
+    background: var(--accent); 
+    color: #000; 
+    height: 65px;
+    font-size: 1.1rem;
+    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2); 
+    display: flex; 
+    align-items: center; 
+    gap: 8px;
+}
+
+/* FLIP BUTTON (Warna Abu-abu - Agar User melihat sisi belakang kartu) */
+.btn-flip {
+    width: 100%;
+    height: 55px;
+    background: #e2e8f0;
+    color: var(--navy);
+    border: 2px solid var(--border);
+    border-radius: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; 
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-flip:active {
+    background: var(--navy);
+    color: white;
+    border: 2px solid var(--navy);
+}
+.btn-flip:hover { background: #0d474f; color: white; }
+
+/* LOADING OVERLAY & MODAL */
+.loader-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(244, 247, 247, 0.95);
+    z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.2rem;
-    font-weight: 800;
-    letter-spacing: 2px;
+    flex-direction: column;
+    transition: opacity 0.3s;
 }
 
-.cvv-label { display: block; font-size: 0.6rem; color: #666; margin-bottom: 5px; text-transform: uppercase; font-family: sans-serif; font-weight: 700; }
+.loader-content { text-align: center; }
+.spinner {
+    width: 50px; height: 50px; border: 5px solid var(--navy); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s infinite linear; margin: 0 auto 15px; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.final-reveal { text-align: center; }
-.download-actions { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+.loader-text {
+    color: var(--navy); font-weight: 600; font-size: 0.9rem; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-.btn-download {
-    background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-.btn-flip {
-    background: #e2e8f0; color: var(--text); border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-.btn-flip:hover { background: #cbd5e1; }
+/* MODAL BOX */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
 
-/* RESPONSIVE */
-@media (max-width: 600px) {
-    .card-preview { width: 280px; height: 175px; }
-    .card-footer { font-size: 0.6rem; padding: 0 10px; }
-    .card-number-display { font-size: 1rem; }
+.modal-box {
+    background: white;
+    width: 100%;
+    max-width: 320px;
+    max-height: 90vh;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 2px solid var(--primary);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.btn-close-disclaimer {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: #fee2e2; color: #ef4444;
+    border: none; width: 35px; height: 35px;
+    border-radius: 50%; font-weight: 800; font-size: 1.2rem;
+    cursor: pointer; z-index: 10;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s;
+}
+.btn-close-disclaimer:hover { background: #fecaca; transform: rotate(90deg); }
+
+.disclaimer-header {
+    background: var(--navy);
+    color: white; padding: 20px; text-align: center;
+}
+.disclaimer-header h2 {
+    margin: 0; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;
+}
+
+.disclaimer-content {
+    padding: 25px; overflow-y: auto; color: #334155; font-size: 0.95rem; line-height: 1.7; text-align: justify; font-weight: 500; }
+.disclaimer-content strong { color: #dc2626; }
+
+.disclaimer-footer {
+    padding: 20px; border-top: 1px solid var(--border); background: #f8fafc;
+    display: flex; flex-direction: column; gap: 15px;
+}
+
+.agreement-wrapper { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+.agreement-checkbox { width: 24px; height: 24px; margin-top: 2px; accent-color: var(--primary); cursor: pointer; }
+.agreement-label { font-size: 0.9rem; color: var(--text); cursor: pointer; }
+
+.btn-modal {
+    width: 100%; padding: 16px; background: #cbd5e1; color: #94a3b8;
+    border: none; border-radius: 12px; font-weight: 800; font-size: 1rem;
+    cursor: not-allowed; transition: all 0.3s;
+}
+.btn-modal.active {
+    background: var(--primary); color: white;
+    box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3);
+    cursor: pointer;
+}
+.btn-modal.active:hover { background: #004494; transform: translateY(-2px); }
+
+/* RESPONSIVE MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+    
+    /* 1. ANTI-OVERFLOW GLOBAL */
+    html, body {
+        overflow-x: hidden !important;
+        width:  100% !important;
+        position: relative;
+    }
+
+    * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 2. NAVBAR (Compact & Horizontal) */
+    .navbar {
+        flex-direction: row !important;
+        padding: 0.75rem var(--container-padding);
+        align-items: center;
+    }
+
+    .logo {
+        font-size: 1.1rem;
+    }
+
+    .logo-img {
+        width: 30px !important;
+        height: 30px !important;
+        margin-right: 8px;
+    }
+
+    .system-status {
+        display: none; /* Hide status text to save space */
+    }
+
+    .btn-account {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    /* 3. HERO SECTION (Image Top, Text Bottom) */
+    .hero, .game-hero {
+        padding: 3rem var(--container-padding) 2rem !important;
+        text-align: center;
+        /* Matikan Parallax agar performa lancar */
+        background-attachment: scroll; 
+    }
+
+    .hero-content-wrapper {
+        flex-direction: column !important;
+        gap: 2rem;
+    }
+
+    .hero-text {
+        order: 2; /* Text below image */
+        width: 100%;
+    }
+
+    .hero-image {
+        order: 1; /* Image above text */
+        width: 100%;
+    }
+
+    h1 {
+        font-size: clamp(1.75rem, 8vw, 2.5rem);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .hero p {
+        font-size: 1rem;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 100%;
+    }
+
+    .cta-buttons {
+        justify-content: center;
+        width: 100%;
+        gap: 10px;
+        flex-direction: column; /* Tombol vertikal agar mudah diklik */
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 16px;
+        font-size: 1rem;
+    }
+
+    /* 4. CONTENT SECTIONS */
+    .content-section {
+        padding: 2rem var(--container-padding);
+        border-radius: 15px; 
+        margin: 0 1rem 3rem 1rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .article-content {
+        font-size: 0.95rem; /* Comfortable reading font */
+    }
+
+    /* 5. GRID SYSTEM (Roles & FAQ -> Single Column) */
+    .roles-grid, .roles-wrapper, .faq-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.5rem;
+        width: 100%;
+        border: none;
+    }
+
+    .role-card {
+        width: 100%;
+        border-radius: 12px !important;
+        padding: 1.5rem;
+        border: 1px solid var(--border) !important;
+        background: var(--white);
+    }
+
+    .role-icon {
+        font-size: 2.5rem;
+    }
+
+    .faq-item {
+        padding: 1.25rem;
+        border-radius: 10px;
+        margin-bottom: 0;
+    }
+
+    .faq-question {
+        font-size: 1rem;
+        align-items: flex-start;
+    }
+
+    .faq-answer {
+        font-size: 0.95rem;
+        padding-left: 35px;
+    }
+
+    /* 6. FOOTER (Centered & Vertical) */
+    .footer-main {
+        padding: 3rem var(--container-padding) 2rem;
+        text-align: center;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        gap: 2rem;
+        align-items: center; /* Center all items */
+    }
+
+    .footer-brand {
+        text-align: center;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .footer-brand .logo-img {
+        width: 35px !important; 
+        height: 35px !important;
+        margin: 0 auto 5px auto;
+    }
+    
+    .footer-brand .logo {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .footer-links-group {
+        flex-direction: column;
+        width: 100%;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .footer-col {
+        text-align: center;
+        width: 100%;
+    }
+
+    .footer-col h4 {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e9ecef;
+        display: inline-block;
+    }
+
+    .footer-col a {
+        display: block;
+        margin-bottom: 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+        padding-top: 1.5rem;
+    }
+
+    .ojk-badge {
+        font-size: 0.7rem;
+        padding: 6px 12px;
+        width: fit-content;
+        margin: 0 auto;
+    }
 }
