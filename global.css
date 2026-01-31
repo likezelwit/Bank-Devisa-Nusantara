@@ -1,0 +1,71 @@
+:root {
+    --primary: #0056b3; 
+    --accent: #ffc107; 
+    --bg: #f4f7f6; 
+    --text: #212529; 
+    --success: #28a745; 
+    --white: #ffffff;
+    --border: #dee2e6;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --container-padding: 5%; 
+}
+
+/* 2. RESET DASAR */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    -webkit-tap-highlight-color: transparent; 
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* 3. SCROLLBAR CUSTOM */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+/* 4. NAVBAR STRUKTUR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem var(--container-padding);
+    background: var(--primary); 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    position: sticky; top: 0; z-index: 100;
+}
+
+.logo { 
+    font-weight: 800; 
+    color: var(--white); 
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.logo span { color: var(--accent); }
+
+/* 5. FOOTER STRUKTUR */
+.footer-main { 
+    background: var(--white); 
+    padding: 3rem var(--container-padding) 2rem;
+    border-top: 1px solid var(--border); 
+}
+
+/* 6. RESPONSIVE DASAR (Utility) */
+@media (max-width: 768px) {
+    .navbar { padding: 0.75rem var(--container-padding); }
+    .footer-main { text-align: center; }
+}
