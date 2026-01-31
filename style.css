@@ -9,7 +9,7 @@
     --border: #dee2e6;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --glass: rgba(255, 255, 255, 0.9);
-    /* Ditambahkan variable padding agar konten tidak mepet pinggir layar */
+    /* Container padding standar untuk desktop */
     --container-padding: 5%; 
 }
 
@@ -25,7 +25,7 @@ body {
     background-color: var(--bg);
     color: var(--text);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Anti-Overflow Dasar */
     min-height: 100vh;
     position: relative;
     width: 100%;
@@ -44,7 +44,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%; /* Memastikan full width */
+    width: 100%;
     padding: 1rem var(--container-padding);
     background: var(--primary); 
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -57,6 +57,8 @@ body {
     color: var(--white); 
     letter-spacing: -0.5px; 
     text-decoration: none;
+    display: flex;
+    align-items: center;
 }
 .logo span { color: var(--accent); }
 
@@ -67,6 +69,7 @@ body {
     object-fit: cover; 
     background: white;
     padding: 2px;
+    flex-shrink: 0;
 }
 
 .logo-wrapper { display: flex; align-items: center; text-decoration: none; }
@@ -81,6 +84,7 @@ body {
     border-radius: 20px; 
     font-weight: 700; 
     backdrop-filter: blur(4px);
+    white-space: nowrap;
 }
 
 .btn-account { 
@@ -92,6 +96,7 @@ body {
     font-size: 0.85rem; 
     font-weight: 700; 
     transition: 0.3s;
+    white-space: nowrap;
 }
 .btn-account:hover { background: var(--accent); }
 
@@ -99,17 +104,15 @@ body {
 .hero { 
     padding: 4rem var(--container-padding) 3rem;
     width: 100%;
-    /* Hapus max-width */
     background: linear-gradient(180deg, var(--bg) 0%, #e9ecef 100%);
 }
 
 .hero-content-wrapper {
     width: 100%;
-    /* Hapus max-width dan margin auto, biarkan memenuh layar */
     display: flex;
     align-items: center;
     gap: 3rem;
-    flex-wrap: wrap-reverse; /* Gambar di atas pada mobile */
+    flex-wrap: wrap-reverse; /* Default desktop order */
 }
 
 .hero-text { flex: 1; min-width: 300px; }
@@ -117,7 +120,7 @@ body {
 
 /* Image Styling */
 .img-hero {
-    width: 100%; /* Gambar mengikuti lebar container */
+    width: 100%;
     height: auto;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.1);
@@ -148,7 +151,7 @@ h1 {
 }
 
 .text-gradient { 
-    color: var(--accent); /* Fallback solid */
+    color: var(--accent);
     -webkit-text-fill-color: var(--accent);
 }
 
@@ -156,7 +159,6 @@ h1 {
     font-size: 1.1rem; 
     color: #495057; 
     margin-bottom: 2rem; 
-    /* Tetap batasi lebar teks agar nyaman dibaca di layar lebar */
     max-width: 700px; 
 }
 
@@ -193,24 +195,18 @@ h1 {
 }
 
 /* --- CONTENT SECTIONS (FULL WIDTH) --- */
-/* Container utama diubah menjadi full width */
 .container { 
     width: 100%; 
-    /* Hapus max-width: 1000px; */
-    /* Hapus margin: 0 auto; (biarkan full width) */
-    padding: 0 0 4rem 0; /* Padding bawah saja, padding samping ada di content-section */
+    padding: 0 0 4rem 0;
 }
 
 .content-section {
     background: var(--white);
-    /* Padding kiri kanan menggunakan var(--container-padding) agar rapi di pinggir */
     padding: 3rem var(--container-padding);
-    border-radius: 0; /* Full width tidak perlu border-radius besar */
-    /* Opsional: Beri radius sedikit di dalam jika mau, atau 0 untuk benar-benar kotak */
+    border-radius: 0;
     box-shadow: var(--shadow);
-    margin-bottom: 0; /* Hapus margin bawah karena full width */
+    margin-bottom: 0;
     border-top: 5px solid var(--primary);
-    /* Tambahkan border bawah agar pemisah antar section jelas */
     border-bottom: 1px solid var(--border);
 }
 
@@ -236,7 +232,7 @@ h1 {
 
 /* Article Styles */
 .article-content {
-    max-width: 1200px; /* Batasi lebar teks bacaan agar tidak terlalu lebar */
+    max-width: 1200px;
     margin: 0 auto;
 }
 
@@ -250,15 +246,13 @@ h1 {
 /* Roles Grid (FULL WIDTH) */
 .roles-grid {
     display: grid;
-    /* Ubah minmax agar lebih fleksibel di layar lebar */
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 0; /* Gap 0 atau kecil untuk efek full width */
-    border-bottom: 1px solid var(--border); /* Pemisah visual */
+    gap: 0;
+    border-bottom: 1px solid var(--border);
 }
 
-/* Tambahkan wrapper jika ingin grid di tengah, atau biarkan full stretch */
 .roles-wrapper {
-    max-width: 1600px; /* Maksimal lebar grid item agar tidak terlalu melebar */
+    max-width: 1600px;
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -269,16 +263,15 @@ h1 {
 .role-card {
     background: var(--bg);
     padding: 2rem;
-    /* Hapus radius jika ingin kotak penuh, atau beri radius */
-    border-radius: 0; 
+    border-radius: 0;
     text-align: center;
     transition: 0.3s;
-    border-right: 1px solid var(--border); /* Pemisah vertikal antar card */
+    border-right: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
 }
 
 .role-card:last-child {
-    border-right: none; /* Hapus border kanan card terakhir */
+    border-right: none;
 }
 
 .role-card:hover {
@@ -301,12 +294,6 @@ h1 {
 .role-card p {
     font-size: 0.9rem;
     color: #6c757d;
-}
-
-/* Mobile Reset for Grid Borders */
-@media (max-width: 768px) {
-    .role-card { border-right: none; border-bottom: 1px solid var(--border); border-radius: 10px; margin-bottom: 1rem;}
-    .roles-wrapper { gap: 0; display: block; }
 }
 
 /* About / Disclaimer Styles */
@@ -354,30 +341,36 @@ h1 {
     gap: 2rem; 
     padding-bottom: 2rem; 
     border-bottom: 1px solid var(--border); 
-    /* Hapus max-width agar full width */
     margin: 0; 
     width: 100%;
 }
 
 .footer-brand { 
-    flex: 1 1 300px; 
-    /* Hapus min-width: 100% agar fleksibel */
+    flex: 1 1 300px;
+    display: flex;
+    align-items: center; /* Agar logo dan teks sejajar */
+    gap: 10px;
 }
 .footer-brand p { 
-    margin-top: 1rem; 
+    margin-top: 0.5rem; 
     font-size: 0.9rem; 
     color: #6c757d; 
+}
+
+/* Footer Logo Image Specifics (Mobile Friendly) */
+.footer-brand .logo,
+.footer-brand .logo-img {
+    font-size: 1.4rem; /* Base size */
 }
 
 .footer-links-group { 
     display: flex; 
     gap: 3rem; 
-    justify-content: flex-start; /* Ubah ke flex-start agar sebar merata */
+    justify-content: flex-start;
     flex: 2;
 }
 
 .footer-col { 
-    /* Hapus text-align center agar rata kiri lebih natural untuk full width */
     text-align: left;
 }
 .footer-col h4 { 
@@ -398,12 +391,10 @@ h1 {
 .footer-bottom { 
     padding-top: 1.5rem; 
     display: flex; 
-    justify-content: space-between; /* Ubah ke space-between */
+    justify-content: space-between;
     align-items: center; 
-    /* Hapus flex-direction column */
     gap: 10px; 
     width: 100%;
-    /* Hapus max-width */
     margin: 0; 
 }
 
@@ -454,7 +445,7 @@ h1 {
     transition: transform 0.3s ease-in-out;
 }
 
-/* --- DISCLAIMER MODAL STYLES (Original) --- */
+/* --- DISCLAIMER MODAL STYLES --- */
 #disclaimer-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -532,22 +523,7 @@ h1 {
 #app-wrapper { transition: filter 0.3s; }
 .blurred-app { filter: blur(10px); pointer-events: none; opacity: 0.5; }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .navbar { flex-direction: column; padding: 1rem; gap: 10px; }
-    .status-wrapper { width: 100%; justify-content: space-between; }
-    .content-section { padding: 2rem 5%; border-radius: 20px; margin: 0 1rem; width: auto; } /* Kembali ke box style di mobile */
-    .roles-grid { grid-template-columns: 1fr; border: none; }
-    .roles-wrapper { display: block; }
-    .role-card { border: none; border-radius: 15px; margin-bottom: 1rem; }
-    
-    /* Mobile Footer Adjustments */
-    .footer-links-group { flex-direction: column; gap: 1.5rem; text-align: center; }
-    .footer-col { text-align: center; }
-    .footer-bottom { flex-direction: column; text-align: center; }
-}
-
-/* --- FAQ SECTION STYLES (FULL WIDTH ADJUSTMENTS) --- */
+/* --- FAQ SECTION STYLES --- */
 .faq-section {
     width: 100%;
     margin-top: 0;
@@ -557,7 +533,7 @@ h1 {
 }
 
 .faq-wrapper {
-    max-width: 1400px; /* Batasi lebar konten agar rapi */
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -568,7 +544,6 @@ h1 {
     text-align: center;
 }
 
-/* Ubah grid FAQ agar full width feel */
 .faq-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -622,6 +597,220 @@ h1 {
     margin: 0;
 }
 
+/* ==========================================================================
+   RESPONSIVE MOBILE OPTIMIZATION (Max Width: 768px)
+   ========================================================================== */
+
 @media (max-width: 768px) {
-    .faq-grid { grid-template-columns: 1fr; }
+    
+    /* 1. ANTI-OVERFLOW GLOBAL */
+    html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        position: relative;
+    }
+
+    * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 2. NAVBAR (Compact & Horizontal) */
+    .navbar {
+        flex-direction: row !important;
+        padding: 0.75rem var(--container-padding);
+        align-items: center;
+    }
+
+    .logo {
+        font-size: 1.1rem;
+    }
+
+    /* Foto logo diperkecil */
+    .logo-img {
+        width: 30px !important;
+        height: 30px !important;
+        margin-right: 8px;
+    }
+
+    .system-status {
+        display: none; /* Hide status text to save space */
+    }
+
+    .btn-account {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    /* 3. HERO SECTION (Image Top, Text Bottom) */
+    .hero {
+        padding: 3rem var(--container-padding) 2rem;
+        text-align: center;
+    }
+
+    .hero-content-wrapper {
+        flex-direction: column !important;
+        gap: 2rem;
+    }
+
+    .hero-text {
+        order: 2; /* Text below image */
+        width: 100%;
+    }
+
+    .hero-image {
+        order: 1; /* Image above text */
+        width: 100%;
+    }
+
+    h1 {
+        font-size: clamp(1.75rem, 8vw, 2.5rem);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .hero p {
+        font-size: 1rem;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 100%;
+    }
+
+    .cta-buttons {
+        justify-content: center;
+        width: 100%;
+        gap: 10px;
+        flex-direction: column; /* Tombol vertikal agar mudah diklik */
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 16px;
+        font-size: 1rem;
+    }
+
+    /* 4. CONTENT SECTIONS */
+    .content-section {
+        padding: 2rem var(--container-padding);
+        border-radius: 0;
+    }
+
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .article-content {
+        font-size: 0.95rem; /* Comfortable reading font */
+    }
+
+    /* 5. GRID SYSTEM (Roles & FAQ -> Single Column) */
+    .roles-grid, .roles-wrapper, .faq-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.5rem;
+        width: 100%;
+        border: none;
+    }
+
+    .role-card {
+        width: 100%;
+        border-radius: 12px !important;
+        padding: 1.5rem;
+        border: 1px solid var(--border) !important;
+        background: var(--white);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .role-icon {
+        font-size: 2.5rem;
+    }
+
+    .faq-item {
+        padding: 1.25rem;
+        border-radius: 10px;
+        margin-bottom: 0;
+    }
+
+    .faq-question {
+        font-size: 1rem;
+        align-items: flex-start;
+    }
+
+    .faq-answer {
+        font-size: 0.95rem;
+        padding-left: 35px;
+    }
+
+    /* 6. FOOTER (Centered & Vertical) */
+    .footer-main {
+        padding: 3rem var(--container-padding) 2rem;
+        text-align: center;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        gap: 2rem;
+        align-items: center; /* Center all items */
+    }
+
+    .footer-brand {
+        text-align: center;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    /* Footer Logo Optimization */
+    .footer-brand .logo-img {
+        width: 35px !important; /* Ukuran kecil tapi terlihat */
+        height: 35px !important;
+        margin: 0 auto 5px auto;
+    }
+    
+    .footer-brand .logo {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .footer-links-group {
+        flex-direction: column;
+        width: 100%;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .footer-col {
+        text-align: center;
+        width: 100%;
+    }
+
+    .footer-col h4 {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e9ecef;
+        display: inline-block;
+    }
+
+    .footer-col a {
+        display: block;
+        margin-bottom: 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+        padding-top: 1.5rem;
+    }
+
+    .ojk-badge {
+        font-size: 0.7rem;
+        padding: 6px 12px;
+        width: fit-content;
+        margin: 0 auto;
+    }
 }
