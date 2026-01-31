@@ -115,7 +115,7 @@ body {
     border-radius: 6px; 
     font-size: 0.85rem; 
     font-weight: 700; 
-    transition: transform 0.2s ease, background 0.2s; 
+    transition: transform 0.2s ease, background 0.2s; /* Optimasi performa */
     white-space: nowrap;
 }
 .btn-account:hover { 
@@ -123,24 +123,29 @@ body {
     transform: translateY(-2px); 
 }
 
-/* --- HERO SECTION (FULL WIDTH) --- */
+/* --- HERO SECTION (GLOBAL / UMUM - TANPA GAMBAR) --- */
 .hero { 
     padding: 4rem var(--container-padding) 3rem;
     width: 100%;
-    /* PERBAIKAN PATH: Menghapus ../ agar gambar ditemukan di root folder */
-    background-image: linear-gradient(rgba(244, 247, 246, 0.4), rgba(233, 236, 239, 0.5)), url('../background-lobby.webp');
-    background-size: cover, cover;
-    background-position: center, center;
-    background-repeat: no-repeat, no-repeat;
-    background-attachment: fixed; /* Efek Parallax */
+    /* PERUBAHAN: Tidak ada gambar disini agar tidak bocor ke halaman lain (index.html) */
+    /* Hanya menggunakan background gradient lembut */
+    background: var(--bg); 
+    background-image: linear-gradient(135deg, var(--bg) 0%, #e9ecef 100%);
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-/* HERO KHUSUS UNTUK HALAMAN GAME (Agar background muncul & teks center) */
+/* --- HERO SECTION KHUSUS HALAMAN GAME (PERMAINAN / GAME) --- */
 .game-hero {
     text-align: center;
-    /* Padding lebih besar agar gambar background lobby terlihat jelas */
     padding: 6rem var(--container-padding) 4rem !important; 
+    
+    /* PERUBAHAN: GAMBAR HANYA ADA DISINI */
+    background-image: linear-gradient(rgba(244, 247, 246, 0.4), rgba(233, 236, 239, 0.5)), url('background-lobby.webp');
+    background-size: cover;
     background-position: center top; /* Fokus gambar di tengah atas */
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Efek Parallax */
 }
 
 .game-hero .hero-text {
@@ -157,7 +162,7 @@ body {
 }
 
 .hero-text { flex: 1; min-width: 300px; }
-.hero-image { flex:1; min-width: 300px; text-align: center; }
+.hero-image { flex: 1; min-width: 300px; text-align: center; }
 
 /* Image Styling */
 .img-hero {
@@ -307,7 +312,7 @@ h1 {
 /* Roles Grid (FULL WIDTH) */
 .roles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* PERBAIKAN: Typo )) dihapus */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     border-bottom: 1px solid var(--border);
 }
@@ -316,7 +321,7 @@ h1 {
     max-width: 1600px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* PERBAIKAN: Typo )) dihapus */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     width: 100%;
 }
@@ -444,7 +449,7 @@ h1 {
     color: #6c757d; 
     font-size: 0.9rem; 
     margin-bottom: 0.5rem; 
-    transition: color 0.2s, transform 0.2s; 
+    transition: color 0.2s, transform 0.2s; /* Transisi ringan */
 }
 .footer-col a:hover { 
     color: var(--primary); 
@@ -614,7 +619,7 @@ h1 {
 
 .faq-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* PERBAIKAN: Typo )) dihapus */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 20px;
     width: 100%;
 }
@@ -626,13 +631,13 @@ h1 {
     margin-bottom: 0;
     border-left: 5px solid var(--accent);
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transisi ringan */
 }
 
 .faq-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 15px rgba(0,0,0,0.08);
-    border-left-width: 8px; 
+    border-left-width: 8px; /* Efek visual */
 }
 
 .faq-question {
@@ -716,7 +721,8 @@ h1 {
     .hero, .game-hero {
         padding: 3rem var(--container-padding) 2rem !important;
         text-align: center;
-        background-attachment: scroll; /* Disable parallax on mobile for performance */
+        /* Disable parallax on mobile for performance */
+        background-attachment: scroll; 
     }
 
     .hero-content-wrapper {
@@ -730,7 +736,7 @@ h1 {
     }
 
     .hero-image {
-        order:1; /* Image above text */
+        order: 1; /* Image above text */
         width: 100%;
     }
 
