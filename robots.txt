@@ -1,13 +1,15 @@
 User-agent: *
-# Beri akses ke halaman utama bahasa
+
+# Area yang boleh di-index
 Allow: /ID/
 Allow: /EN/
-Allow: /edukasi/
-Allow: /produk/
+Allow: /card-issue/
+Allow: /privasi/
 
-# Tetap blokir halaman yang emang rahasia/private
+# Area private/sistem (Jangan muncul di Google)
 Disallow: /account/
 Disallow: /topup/
+Disallow: /dashboard/
 
-# Sitemap harus di baris paling bawah
+# Lokasi peta situs
 Sitemap: https://bankdevisa.vercel.app/sitemap.xml
