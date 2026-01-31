@@ -7,22 +7,14 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Daftar Akun Simulasi | BDN</title>
     
-    <!-- Fonts 
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- CSS: Link ke Global CSS yang baru -->
     <link rel="stylesheet" href="../../global.css">
-    
-    <!-- CSS: Link ke Style Khusus Halaman Ini -->
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Library Eksternal -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="style.css"> <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
         <a href="../../" class="btn-back"><i class="fas fa-arrow-left"></i> Batal</a>
@@ -30,12 +22,10 @@
 
     <main class="wizard-container">
         
-        <!-- PROGRESS BAR -->
         <div class="progress-bar-top">
             <div class="progress-fill" id="progressFill"></div>
         </div>
 
-        <!-- STEP 0: GATE USIA (AGE GATE) -->
         <div id="step-0" class="wizard-step active">
             <div class="step-content">
                 <h1>Halo! <span class="wave">👋</span></h1>
@@ -45,11 +35,11 @@
                     <div class="dob-input-group">
                         <label>Tanggal Lahir</label>
                         <div style="display: flex; gap: 10px;">
-                            <input type="number" id="dobDD" placeholder="DD" maxlength="2">
+                            <input type="number" id="dobDD" placeholder="DD" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2)">
                             <span class="separator">/</span>
-                            <input type="number" id="dobMM" placeholder="MM" maxlength="2">
+                            <input type="number" id="dobMM" placeholder="MM" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2)">
                             <span class="separator">/</span>
-                            <input type="number" id="dobYYYY" placeholder="YYYY" maxlength="4">
+                            <input type="number" id="dobYYYY" placeholder="YYYY" oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4)">
                         </div>
                     </div>
                     
@@ -63,7 +53,6 @@
             </div>
         </div>
 
-        <!-- DINAMIC WIZARD CONTENT (Step 1 - Final) -->
         <div id="wizardContent" style="display:none;">
             <div class="wizard-body">
                 <h2 id="stepTitle">Langkah 1</h2>
@@ -76,14 +65,13 @@
             </div>
         </div>
 
-        <!-- STEP FINAL: REVEAL CARD -->
         <div id="finalStep" class="wizard-step" style="display:none;">
             <div class="step-content final-reveal">
                 <h2>Kartu Kamu Siap! 🎉</h2>
-                <p>Simpan gambar kartunya untuk kenang-kenang ya!</p>
+                <p>Simpan gambar kartunya untuk kenang-kenangan ya!</p>
                 
                 <div class="card-visual-container">
-                    <div class="card-preview">
+                    <div class="card-preview" id="cardPreview">
                         <div class="card-inner-ref">
                             <div class="card-face card-front">
                                 <div class="card-header">
@@ -91,15 +79,15 @@
                                     <div class="chip-card"></div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="card-number-display">0000 0000 0000 0000</div>
+                                    <div class="card-number-display" id="cardNumberDisplay">0000 0000 0000 0000</div>
                                 </div>
                                 <div class="card-footer">
                                     <div class="footer-left">
                                         <small>PEMILIK</small>
-                                        <div class="card-name-display">NAMA KAMU</div>
+                                        <div class="card-name-display" id="cardNameDisplay">NAMA KAMU</div>
                                     </div>
                                     <div class="footer-right">
-                                        <div class="card-tier">PLATINUM</div>
+                                        <div class="card-tier" id="cardTierDisplay">PLATINUM</div>
                                     </div>
                                 </div>
                             </div>
@@ -107,15 +95,15 @@
                                 <div class="mag-stripe"></div>
                                 <div class="cvv-container">
                                     <span class="cvv-label">Kode Akses</span>
-                                    <div class="cvv-code-display">***</div>
+                                    <div class="cvv-code-display" id="cardCvvDisplay">***</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="download-actions">
-                        <button class="btn-download" id="btnDownload">
-                            <i class="fas fa-download"></i> Simpan Gambar Kartu
+                        <button class="btn-download" id="btnDownload" onclick="window.downloadCard()">
+                            <i class="fas fa-download"></i> Simpan Gambar
                         </button>
                         <button class="btn-flip" id="btnFlip" onclick="window.toggleFlip()">
                             <i class="fas fa-sync-alt"></i> Putar Kartu
@@ -127,7 +115,6 @@
 
     </main>
 
-    <!-- JS LOGIC -->
     <script type="module" src="script.js"></script>
 </body>
 </html>
