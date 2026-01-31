@@ -114,6 +114,26 @@
             font-weight: bold;
             flex-shrink: 0;
         }
+
+        /* OPTIMASI HERO UNTUK GAME PAGE */
+        /* Override style.css agar background image muncul & teks tetap di tengah */
+        .game-hero {
+            text-align: center;
+            /* Memberi ruang cukup agar background lobby terlihat jelas */
+            padding: 6rem var(--container-padding) 4rem !important; 
+            background-position: center top; /* Fokus gambar di tengah atas */
+        }
+
+        .game-hero .hero-text {
+            max-width: 800px;
+            margin: 0 auto; /* Centering teks */
+        }
+
+        @media (max-width: 768px) {
+            .game-hero {
+                padding: 4rem var(--container-padding) 2rem !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -143,11 +163,12 @@
         <!-- MAIN CONTENT -->
         <main class="container">
             
-            <header class="hero" style="text-align: center; padding: 40px 0;">
-                <div class="hero-text" style="max-width: 800px; margin: 0 auto;">
+            <!-- HERO SECTION (Dioptimasi) -->
+            <header class="hero game-hero">
+                <div class="hero-text">
                     <h1 id="greetingText">Selamat Datang!</h1>
                     <p class="text-gradient" style="font-size: 1.2rem; font-weight: 700;">Pusat Kontrol Simulasi Kamu</p>
-                    <p style="margin-top: 1rem;">
+                    <p style="margin-top: 1rem; color: #495057;">
                         Di sini kamu bisa membuat kartu identitas digital fiktif dan meningkatkan level permainanmu. Ingat, semua ini hanya untuk belajar!
                     </p>
                 </div>
