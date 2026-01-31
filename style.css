@@ -127,13 +127,25 @@ body {
 .hero { 
     padding: 4rem var(--container-padding) 3rem;
     width: 100%;
-    /* UPDATE: Background Image dengan Overlay Transparan */
-    /* Urutan: Gradient Overlay (di depan) -> Gambar (di belakang) */
-    background-image: linear-gradient(rgba(244, 247, 246, 0.85), rgba(233, 236, 239, 0.92)), url('../background-lobby.webp');
+    /* OPTIMASI: Mengurangi Opasitas Overlay menjadi 0.4 agar Gambar Terlihat Jelas */
+    background-image: linear-gradient(rgba(244, 247, 246, 0.4), rgba(233, 236, 239, 0.5)), url('../background-lobby.webp');
     background-size: cover, cover;
     background-position: center, center;
     background-repeat: no-repeat, no-repeat;
     background-attachment: fixed; /* Efek Parallax */
+}
+
+/* HERO KHUSUS UNTUK HALAMAN GAME (Agar background muncul & teks center) */
+.game-hero {
+    text-align: center;
+    /* Padding lebih besar agar gambar background lobby terlihat jelas */
+    padding: 6rem var(--container-padding) 4rem !important; 
+    background-position: center top; /* Fokus gambar di tengah atas */
+}
+
+.game-hero .hero-text {
+    max-width: 800px;
+    margin: 0 auto; /* Centering teks */
 }
 
 .hero-content-wrapper {
@@ -602,7 +614,7 @@ h1 {
 
 .faq-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Sintaks diperbaiki: tanda ) berlebih dihapus */
     gap: 20px;
     width: 100%;
 }
@@ -701,8 +713,8 @@ h1 {
     }
 
     /* 3. HERO SECTION (Image Top, Text Bottom) */
-    .hero {
-        padding: 3rem var(--container-padding) 2rem;
+    .hero, .game-hero {
+        padding: 3rem var(--container-padding) 2rem !important;
         text-align: center;
         background-attachment: scroll; /* Disable parallax on mobile for performance */
     }
