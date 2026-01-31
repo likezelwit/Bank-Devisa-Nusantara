@@ -128,7 +128,7 @@ body {
     padding: 4rem var(--container-padding) 3rem;
     width: 100%;
     /* PERBAIKAN PATH: Menghapus ../ agar gambar ditemukan di root folder */
-    background-image: linear-gradient(rgba(244, 247, 246, 0.4), rgba(233, 236, 239, 0.5)), url('background-lobby.webp');
+    background-image: linear-gradient(rgba(244, 247, 246, 0.4), rgba(233, 236, 239, 0.5)), url('../background-lobby.webp');
     background-size: cover, cover;
     background-position: center, center;
     background-repeat: no-repeat, no-repeat;
