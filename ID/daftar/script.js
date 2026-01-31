@@ -1,19 +1,23 @@
 // --- 1. SETUP SUPABASE ---
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-// GANTI DENGAN KREDENSIAL SUPABASE ANDA
+// PASTIKAN KREDENSIAL INI BENAR
 const SUPABASE_URL = 'https://ndopnxzbaygohzshqphi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kb3BueHpiYXlnb2h6c2hxcGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzM4ODQsImV4cCI6MjA3OTMwOTg4NH0.nZC5kOVJeMAtfXlwchokXK4FLtPkPoUrxPQUzrz2C8I';
 
 const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // --- 2. FUNGSI UI (TOAST) ---
-// Mengganti alert() yang jelek
+// Mengganti alert() standar
 function showToast(message, isError = false) {
+    // Cek apakah elemen toast ada
     const toast = document.getElementById('toast');
+    if(!toast) return;
+
     const msg = document.getElementById('toastMsg');
     
-    msg.innerText = message;
+    // Set pesan
+    if(msg) msg.innerText = message;
     
     // Styling dynamic untuk error/sukses
     if(isError) {
@@ -25,7 +29,7 @@ function showToast(message, isError = false) {
     }
 
     toast.classList.remove('hidden');
-    // Trigger reflow untuk animasi
+    // Trigger reflow agar animasi jalan
     void toast.offsetWidth; 
     toast.classList.add('show');
 
@@ -33,8 +37,8 @@ function showToast(message, isError = false) {
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => {
-            toast.classList.add('hidden');
-        }, 400); // Tunggu animasi selesai
+            if(toast) toast.classList.add('hidden');
+        }, 400);
     }, 3000);
 }
 
@@ -43,9 +47,10 @@ window.checkAge = () => {
     const dd = document.getElementById('dobDD').value;
     const mm = document.getElementById('dobMM').value;
     const yyyy = document.getElementById('dobYYYY').value;
-    const btn = document.querySelector('.btn-primary');
+    
+    // Cek element ada
+    if(!dd || !mm || !yyyy) return showToast("Input tanggal tidak ditemukan!", true);
 
-    // Validasi sederhana
     if(dd.length < 2 || mm.length < 2 || yyyy.length < 4) {
         showToast("Ups, tanggal lahirnya belum lengkap nih!", true);
         return;
@@ -66,7 +71,7 @@ window.checkAge = () => {
         age--;
     }
 
-    // Validasi Umur (Misal min 7 tahun max 100 tahun)
+    // Validasi Umur
     if(age < 7) {
         showToast("Waduh, kamu masih terlalu kecil nih. Min 7 tahun ya!", true);
         return;
@@ -77,20 +82,29 @@ window.checkAge = () => {
     }
 
     // Jika Lolos -> Pindah Step
-    document.getElementById('step-0').style.display = 'none';
-    document.getElementById('step-1').classList.add('active');
+    const step0 = document.getElementById('step-0');
+    const step1 = document.getElementById('step-1');
+
+    if(step0) step0.style.display = 'none';
+    if(step1) {
+        step1.style.display = 'block';
+        step1.classList.add('active');
+    }
 };
 
 // --- 4. LOGIKA SUBMIT KE SUPABASE ---
 window.submitToSupabase = async () => {
+    // Menggunakan Safety Checks (Optional Chaining)
     const btn = document.getElementById('btnSubmit');
-    const spanText = btn.querySelector('span');
-    const icon = btn.querySelector('.fa-arrow-right');
-    const loader = btn.querySelector('.loading-icon');
     const namaInput = document.getElementById('fullName');
     
+    if(!btn || !namaInput) {
+        console.error("Elemen button atau input tidak ditemukan!");
+        return;
+    }
+    
     const nama = namaInput.value.trim();
-
+    
     // Validasi Nama
     if(!nama) {
         showToast("Eits, namanya belum diisi nih!", true);
@@ -102,13 +116,18 @@ window.submitToSupabase = async () => {
         return;
     }
 
+    // Cari elemen child button (span dan icon)
+    const spanText = btn.querySelector('span');
+    const icon = btn.querySelector('.fa-arrow-right');
+    const loader = btn.querySelector('.loading-icon');
+
     // Ubah state tombol loading
     btn.disabled = true;
-    spanText.innerText = "Sedang Mencetak...";
-    icon.classList.add('hidden');
-    loader.classList.remove('hidden');
+    if(spanText) spanText.innerText = "Sedang Mencetak...";
+    if(icon) icon.classList.add('hidden');
+    if(loader) loader.classList.remove('hidden');
 
-    // Generate Nomor Kartu Random (4512 Prefix + 3 grup acak)
+    // Generate Nomor Kartu Random
     const prefix = "4512";
     const mid = Math.floor(1000 + Math.random() * 9000);
     const mid2 = Math.floor(1000 + Math.random() * 9000);
@@ -137,15 +156,25 @@ window.submitToSupabase = async () => {
             });
         }
 
-        // Update UI Kartu
-        document.getElementById('cardNameDisplay').innerText = nama.toUpperCase();
-        document.getElementById('cardNumberDisplay').innerText = noKartu;
+        // Update UI Kartu (Dengan Safety Check)
+        const cardNameDisplay = document.getElementById('cardNameDisplay');
+        const cardNumberDisplay = document.getElementById('cardNumberDisplay');
+        
+        if(cardNameDisplay) cardNameDisplay.innerText = nama.toUpperCase();
+        if(cardNumberDisplay) cardNumberDisplay.innerText = noKartu;
 
-        // Transisi Halaman
-        document.getElementById('step-1').classList.remove('active');
+        // Transisi Halaman (Dengan Safety Check)
+        const step1 = document.getElementById('step-1');
+        const finalStep = document.getElementById('final-step');
+
+        if(step1) step1.classList.remove('active');
+        
         setTimeout(() => {
-            document.getElementById('step-1').style.display = 'none';
-            document.getElementById('final-step').classList.add('active');
+            if(step1) step1.style.display = 'none';
+            if(finalStep) {
+                finalStep.style.display = 'block';
+                finalStep.classList.add('active');
+            }
         }, 300);
 
     } catch (err) {
@@ -155,9 +184,9 @@ window.submitToSupabase = async () => {
         
         // Reset Tombol
         btn.disabled = false;
-        spanText.innerText = "Cetak Kartu Ajaibku 🚀";
-        icon.classList.remove('hidden');
-        loader.classList.add('hidden');
+        if(spanText) spanText.innerText = "Cetak Kartu Ajaibku 🚀";
+        if(icon) icon.classList.remove('hidden');
+        if(loader) loader.classList.add('hidden');
     }
 };
 
@@ -165,12 +194,13 @@ window.submitToSupabase = async () => {
 window.downloadCard = () => {
     const cardElement = document.querySelector("#cardPreview");
     const btn = document.querySelector('.btn-download');
-    const originalText = btn.innerHTML;
+    const originalText = btn ? btn.innerHTML : '';
 
     if(!cardElement) {
         showToast("Kartunya nggak ketemu!", true);
         return;
     }
+    if(!btn) return;
 
     // Loading state di tombol download
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
