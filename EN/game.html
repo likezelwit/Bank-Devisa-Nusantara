@@ -114,6 +114,26 @@
             font-weight: bold;
             flex-shrink: 0;
         }
+
+        /* OPTIMASI HERO UNTUK GAME PAGE */
+        /* Override style.css agar background image muncul & teks tetap di tengah */
+        .game-hero {
+            text-align: center;
+            /* Memberi ruang cukup agar background lobby terlihat jelas */
+            padding: 6rem var(--container-padding) 4rem !important; 
+            background-position: center top; /* Fokus gambar di tengah atas */
+        }
+
+        .game-hero .hero-text {
+            max-width: 800px;
+            margin: 0 auto; /* Centering teks */
+        }
+
+        @media (max-width: 768px) {
+            .game-hero {
+                padding: 4rem var(--container-padding) 2rem !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -143,11 +163,12 @@
         <!-- MAIN CONTENT -->
         <main class="container">
             
-            <header class="hero" style="text-align: center; padding: 40px 0;">
-                <div class="hero-text" style="max-width: 800px; margin: 0 auto;">
+            <!-- HERO SECTION (Optimized) -->
+            <header class="hero game-hero">
+                <div class="hero-text">
                     <h1 id="greetingText">Welcome!</h1>
                     <p class="text-gradient" style="font-size: 1.2rem; font-weight: 700;">Your Simulation Control Center</p>
-                    <p style="margin-top: 1rem;">
+                    <p style="margin-top: 1rem; color: #495057;">
                         Create your digital identity card and upgrade your game level here. Remember, this is strictly for educational purposes!
                     </p>
                 </div>
@@ -208,14 +229,14 @@
                             <div class="step-number">1</div>
                             <div>
                                 <h4>Fill Personal Data</h4>
-                                <p>Complete the registration form with any fictional data you like. Make sure the email used is accessible (for verification if applicable).</p>
+                                <p>Complete registration form with any fictional data you like. Make sure the email used is accessible (for verification if applicable).</p>
                             </div>
                         </div>
                         <div class="step-item">
                             <div class="step-number">2</div>
                             <div>
                                 <h4>Get Initial Balance</h4>
-                                <p>Once your card is created, the system will grant you an initial simulation balance. Use this to practice transferring and saving.</p>
+                                <p>Once your card is created, system will grant you an initial simulation balance. Use this to practice transferring and saving.</p>
                             </div>
                         </div>
                         <div class="step-item">
