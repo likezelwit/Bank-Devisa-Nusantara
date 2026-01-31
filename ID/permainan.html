@@ -8,13 +8,16 @@
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
     
+    <!-- FONT AWESOME ICONS (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- CSS Link (Path relatif ke root) -->
     <link rel="stylesheet" href="../style.css">
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- STYLE KHUSUS HALAMAN GAME (Supaya tampilan menu kartu rapi) -->
+    <!-- STYLE KHUSUS HALAMAN GAME -->
     <style>
         /* Grid Layout untuk Menu Utama */
         .game-menu-grid {
@@ -45,7 +48,7 @@
         }
 
         .card-icon {
-            font-size: 3.5rem;
+            font-size: 2.5rem; /* Ukuran disesuaikan untuk Icon FontAwesome */
             margin-bottom: 1.5rem;
             background: #f0f9ff;
             width: 80px;
@@ -156,7 +159,9 @@
                     
                     <!-- CARD: BUAT KARTU -->
                     <div class="game-card">
-                        <div class="card-icon">💳</div>
+                        <div class="card-icon">
+                            <i class="fas fa-credit-card"></i> <!-- Icon Kartu -->
+                        </div>
                         <h3>Buat Kartu Baru</h3>
                         <p>Daftar sekarang untuk mendapatkan nomor rekening fiktif dan identitas nasabah bank simulasi.</p>
                         <button onclick="window.location.href = 'daftar.html'" class="btn btn-primary" style="width: 100%;">
@@ -166,7 +171,9 @@
 
                     <!-- CARD: TINGKATKAN KARTU -->
                     <div class="game-card">
-                        <div class="card-icon">🚀</div>
+                        <div class="card-icon">
+                            <i class="fas fa-rocket"></i> <!-- Icon Roket -->
+                        </div>
                         <h3>Tingkatkan Kartu</h3>
                         <p>Sudah punya kartu? Upgrade level keanggotaanmu untuk membuka fitur premium dan limit lebih tinggi.</p>
                         <button onclick="window.location.href = 'peningkatan-kartu.html'" class="btn btn-outline" style="width: 100%;">
@@ -179,7 +186,7 @@
 
             <!-- 2. PERINGATAN KEAMANAN (PENTING) -->
             <section class="safety-warning">
-                <h4>⚠️ Peringatan Keamanan & Bimbingan Orang Tua</h4>
+                <h4><i class="fas fa-exclamation-triangle"></i> Peringatan Keamanan & Bimbingan Orang Tua</h4>
                 <ul style="margin-left: 20px; line-height: 1.6;">
                     <li><strong>JANGAN</strong> memasukkan data asli seperti NIK, Nomor Kartu Keluarga, atau alamat rumah yang lengkap.</li>
                     <li><strong>JANGAN</strong> menggunakan PIN ATM atau Password Mobile Banking asli kamu.</li>
@@ -261,10 +268,8 @@
             }
         });
 
-        // 2. SEDIKIT INTERAKSI UNTUK AUDIO (Jika ada di style.css)
-        // Kita hanya menyiapkan tombol jika user menekan sesuatu
+        // 2. SEDIKIT INTERAKSI UNTUK AUDIO
         document.body.addEventListener('click', function() {
-            // Logika audio bisa ditambahkan di sini jika file ada
             console.log("User interaction detected");
         });
     </script>
