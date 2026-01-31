@@ -94,6 +94,21 @@
         const db = getDatabase(app);
         window.firebaseDB = db; 
     </script>
+    
+    <!-- STYLE TAMBAHAN UNTUK TOMBOL BARU -->
+    <style>
+        .btn-cta-game {
+            background-color: var(--accent, #ffc107); /* Menggunakan warna aksen kuning */
+            color: #000;
+            border: 2px solid var(--accent, #ffc107);
+        }
+        .btn-cta-game:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
+            color: #000;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
 
@@ -101,11 +116,11 @@
     <div id="disclaimer-overlay">
         <div class="disclaimer-box">
             <!-- Tombol Close (X) -->
-            <button class="btn-close-disclaimer" onclick="window.location.reload()" title="Tutup / Batal">✕</button>
+            <button class="btn-close-disclaimer" onclick="window.location.reload()" title="Tutup / Batal">X</button>
             
             <!-- Header Disclaimer -->
             <div class="disclaimer-header">
-                <h2>⚠️ PERNYATAAN DISKLAIMER & PERJANJIAN PENGGUNA</h2>
+                <h2>PERNYATAAN DISKLAIMER & PERJANJIAN PENGGUNA</h2>
                 <p style="margin:0; font-size:0.8rem; opacity:0.8;">Harap baca hingga selesai sebelum melanjutkan.</p>
             </div>
             
@@ -124,7 +139,7 @@
 
                 <h3>3. KEBIJAKAN PRIVASI & KEAMANAN PASSWORD</h3>
                 <div style="background:#fff7ed; padding:15px; border-left:4px solid #f97316; margin:10px 0; border-radius:0 8px 8px 0;">
-                    <strong>⛔ PERINGATAN KRUSIAL: JANGAN GUNAKAN PASSWORD ASLI!</strong>
+                    <strong>PERINGATAN KRUSIAL: JANGAN GUNAKAN PASSWORD ASLI!</strong>
                 </div>
                 <p>
                     Kami sangat menyarankan agar Anda <strong>JANGAN PERNAH</strong> menggunakan Password ATM, PIN Mobile Banking, M-PIN, atau Kode OTP dari bank asli Anda saat mendaftar, login, atau mengatur keamanan di dalam aplikasi simulasi ini. Gunakan PIN fiktif atau kombinasi angka acak yang mudah diingat tetapi <strong>bukan</strong> password perbankan nyata Anda. Kami tidak mengambil tanggung jawab jika Anda secara ceroboh menggunakan kredensial keuangan nyata Anda di dalam sistem simulasi ini.
@@ -167,7 +182,7 @@
 
     <!-- 2. BANNER SIMULASI (MUNCUL SETELAH AGREEMENT) -->
     <div id="simulasiBanner" class="simulasi-banner">
-        ⚠️ MODE SIMULASI EDUKASI - TIDAK UNTUK TRANSAKSI UANG ASLI
+        MODE SIMULASI EDUKASI - TIDAK UNTUK TRANSAKSI UANG ASLI
     </div>
 
     <!-- WRAPPER APLIKASI UTAMA (BLUR SAAT DISCLAIMER AKTIF) -->
@@ -178,7 +193,7 @@
 
         <!-- 4. AUDIO CONTROLLER -->
         <button id="audioToggle" class="audio-btn" title="Aktifkan Suara Efek">
-            🔇
+            Audio Off
         </button>
 
         <!-- NAVBAR -->
@@ -208,6 +223,10 @@
                     <div class="cta-buttons">
                         <a href="#edukasi" class="btn btn-primary">Mulai Belajar</a>
                         <a href="#tentang" class="btn btn-outline">Tentang Program</a>
+                        <!-- TOMBOL BARU: PERGI KE PERMAINAN -->
+                        <button onclick="window.location.href = 'permainan.html'" class="btn btn-cta-game">
+                            Pergi ke Permainan
+                        </button>
                     </div>
                 </div>
                 <!-- GAMBAR HERO (STATIC SESUAI INSTRUKSI) -->
@@ -248,22 +267,26 @@
                 
                 <div class="roles-grid">
                     <div class="role-card">
-                        <div class="role-icon">📒</div>
+                        <!-- Emoji dihapus -->
+                        <div class="role-icon"></div>
                         <h3>Buku Kas Digital</h3>
                         <p>Guru mencatat kas kelas secara transparan dan aman tanpa buku manual.</p>
                     </div>
                     <div class="role-card">
-                        <div class="role-icon">🏦</div>
+                        <!-- Emoji dihapus -->
+                        <div class="role-icon"></div>
                         <h3>Alat Simulasi Perbankan</h3>
-                        <p>Siswa belajar konsep saldo dan mutasi melalui simulasi “bank-bankan”.</p>
+                        <p>Siswa belajar konsep saldo dan mutasi melalui simulasi "bank-bankan".</p>
                     </div>
                     <div class="role-card">
-                        <div class="role-icon">👨‍🏫</div>
+                        <!-- Emoji dihapus -->
+                        <div class="role-icon"></div>
                         <h3>Manajemen Tabungan Siswa</h3>
                         <p>Guru bertindak sebagai bendahara, sistem membantu pencatatan.</p>
                     </div>
                     <div class="role-card">
-                        <div class="role-icon">🏆</div>
+                        <!-- Emoji dihapus -->
+                        <div class="role-icon"></div>
                         <h3>Reward System</h3>
                         <p>Saldo digital sebagai poin apresiasi prestasi siswa.</p>
                     </div>
@@ -282,7 +305,7 @@
                     </p>
                     
                     <div class="legal-disclaimer-box">
-                        <h3>⚠️ Pernyataan Penting (DISCLAIMER — WAJIB UTUH)</h3>
+                        <h3>Pernyataan Penting (DISCLAIMER — WAJIB UTUH)</h3>
                         <p>
                             Bank Devisa Nusantara adalah platform simulasi pendidikan dan BUKAN lembaga keuangan resmi, bank umum, atau penghimpun dana masyarakat.
                         </p>
@@ -296,7 +319,7 @@
 
                     <!-- BAGIAN FAQ BARU (DARI INPUT USER) -->
                     <div class="faq-section">
-                        <h3>💡 Tanya Jawab Seputar BDN</h3>
+                        <h3>Tanya Jawab Seputar BDN</h3>
                         
                         <div class="faq-item">
                             <h4 class="faq-question">Bank Devisa Bertujuan Untuk Apa?</h4>
