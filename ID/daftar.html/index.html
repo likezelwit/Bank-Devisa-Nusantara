@@ -4,201 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0f172a">
-    <!-- SEO Safety: Mencegah Bot Google mengindeks sebagai situs perbankan asli -->
     <meta name="robots" content="noindex, nofollow">
-    <meta name="description" content="Simulasi Registrasi Nasabah Edukasi. Jangan masukkan data asli.">
-    <title>Simulasi Registrasi Nasabah | BDN</title>
+    <title>Daftar Akun Simulasi | BDN</title>
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- CSS External -->
+    <!-- CSS: Link ke Global CSS yang baru -->
+    <link rel="stylesheet" href="../../global.css">
+    
+    <!-- CSS: Link ke Style Khusus Halaman Ini -->
     <link rel="stylesheet" href="style.css">
     
     <!-- Library Eksternal -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-    
-    <!-- OVERLAY LOADING GLOBAL -->
-    <div id="globalLoader" class="loader-overlay hidden">
-        <div class="loader-content">
-            <div class="spinner"></div>
-            <div class="loader-text" id="loaderText">Memproses...</div>
-        </div>
-    </div>
 
-    <!-- MODAL CUSTOM -->
-    <div id="customModal" class="modal-overlay hidden">
-        <div class="modal-box">
-            <div class="modal-icon" id="modalIcon">⚠️</div>
-            <h3 id="modalTitle">Peringatan</h3>
-            <p id="modalMessage">Pesan error di sini</p>
-            <button class="btn-modal" onclick="window.closeModal()">MENGERTI</button>
-        </div>
-    </div>
-
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
-        <a href="../" class="btn-back">BATAL</a>
+        <a href="../../" class="btn-back"><i class="fas fa-arrow-left"></i> Batal</a>
     </nav>
 
-    <main class="container">
-        <div class="form-wrapper">
-            <!-- AGE GATE / STEP 0 -->
-            <div id="ageGate" class="step active">
-                <h2>Selamat Datang</h2>
+    <main class="wizard-container">
+        
+        <!-- PROGRESS BAR -->
+        <div class="progress-bar-top">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- STEP 0: GATE USIA (AGE GATE) -->
+        <div id="step-0" class="wizard-step active">
+            <div class="step-content">
+                <h1>Halo! <span class="wave">👋</span></h1>
+                <p>Berapa umur kamu? Kita perlu tahu biar bisa bikin kartu yang pas!</p>
                 
-                <!-- SAFETY DISCLAIMER (BARU) -->
-                <div class="safety-disclaimer-box">
-                    <div class="safety-icon">🛡️</div>
-                    <h3>PERINGATAN KEAMANAN</h3>
-                    <p>Aplikasi ini hanyalah <strong>SIMULASI</strong> untuk tujuan edukasi dan hiburan.</p>
-                    <ul>
-                        <li>❌ <strong>JANGAN</strong> masukkan NIK Asli.</li>
-                        <li>❌ <strong>JANGAN</strong> masukkan No. HP / Email Asli.</li>
-                        <li>✅ Gunakan data <strong>FIKTIF / PURA-PURA</strong> saja.</li>
-                    </ul>
-                    <p style="font-size: 0.75rem; color: #b91c1c;">*Sistem akan mencatat ini sebagai data simulasi.</p>
-                </div>
-
-                <div class="age-gate-box">
-                    <p style="margin-bottom:15px; color:var(--gray)">Silahkan masukkan Tanggal Lahir (Boleh Asli/Fiktif) untuk memulai.</p>
-                    
-                    <!-- INPUT TANGGAL LAHIR TERPISAH -->
-                    <div class="dob-container">
-                        <div class="dob-field">
-                            <label>HARI</label>
-                            <input type="number" id="dobDD" placeholder="DD" maxlength="2" oninput="limitInput(this, 2)">
-                        </div>
-                        <span class="dob-separator">/</span>
-                        <div class="dob-field">
-                            <label>BULAN</label>
-                            <input type="number" id="dobMM" placeholder="MM" maxlength="2" oninput="limitInput(this, 2)">
-                        </div>
-                        <span class="dob-separator">/</span>
-                        <div class="dob-field">
-                            <label>TAHUN</label>
-                            <input type="number" id="dobYYYY" placeholder="YYYY" maxlength="4" oninput="limitInput(this, 4)">
+                <div class="dob-container">
+                    <div class="dob-input-group">
+                        <label>Tanggal Lahir</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="dobDD" placeholder="DD" maxlength="2">
+                            <span class="separator">/</span>
+                            <input type="number" id="dobMM" placeholder="MM" maxlength="2">
+                            <span class="separator">/</span>
+                            <input type="number" id="dobYYYY" placeholder="YYYY" maxlength="4">
                         </div>
                     </div>
-
-                    <button class="btn-primary" onclick="checkAge()">MULAI SIMULASI</button>
-                </div>
-            </div>
-
-            <!-- PROGRESS BAR -->
-            <div id="progressContainer" class="progress-container" style="display:none;">
-                <div class="progress-bar-bg"><div class="progress-line" id="progressLine"></div></div>
-                <div id="circleWrapper" style="display:flex; justify-content:space-between; width:100%; position:relative; z-index:2;"></div>
-            </div>
-
-            <!-- DYNAMIC FORM CONTENT -->
-            <div id="formContent" class="form-content">
-                <!-- Steps will be injected here via JS -->
-            </div>
-            
-            <!-- FINAL REVEAL TEMPLATE -->
-            <div id="finalStepTemplate" class="step" style="display:none;">
-                <div class="processing-area">
-                    <div class="loading-box">
-                        <div class="spinner-large"></div>
-                        <div class="queue-status">Proses Enkripsi & Unique ID...</div>
-                        <div class="timer-display">Estimasi: --</div>
+                    
+                    <div class="safety-note">
+                        <i class="fas fa-shield-alt"></i>
+                        <p>Data di sini <strong>RAHASIA</strong>. Jangan pakai data asli ya!</p>
                     </div>
                 </div>
 
-                <div class="final-reveal" style="display:none;">
-                    <div class="reveal-text rev-1">SERVER VALIDATED [OK]</div>
-                    <div class="reveal-text rev-2" style="color:#b8924e">SMART CHIP ACTIVATED [OK]</div>
-                    <div class="reveal-text rev-3" style="color:#22c55e">STATUS : PLATINUM ACTIVE</div>
-                    
-                    <!-- AREA KARTU -->
-                    <div class="card-scene" id="cardScene">
-                        <div class="card-inner card-inner-ref">
-                            <div class="capture-area card-face card-front">
+                <button class="btn-start" onclick="window.checkAge()">Yuk Mulai! 🚀</button>
+            </div>
+        </div>
+
+        <!-- DINAMIC WIZARD CONTENT (Step 1 - Final) -->
+        <div id="wizardContent" style="display:none;">
+            <div class="wizard-body">
+                <h2 id="stepTitle">Langkah 1</h2>
+                <div id="stepFields"></div>
+                
+                <div class="wizard-actions">
+                    <button id="btnPrev" class="btn-wizard prev-btn" onclick="window.prevStep()">Kembali</button>
+                    <button id="btnNext" class="btn-wizard next-btn" onclick="window.nextStep()">Lanjut</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP FINAL: REVEAL CARD -->
+        <div id="finalStep" class="wizard-step" style="display:none;">
+            <div class="step-content final-reveal">
+                <h2>Kartu Kamu Siap! 🎉</h2>
+                <p>Simpan gambar kartunya untuk kenang-kenang ya!</p>
+                
+                <div class="card-visual-container">
+                    <div class="card-preview">
+                        <div class="card-inner-ref">
+                            <div class="card-face card-front">
                                 <div class="card-header">
-                                    <span class="bank-name">BANK DEVISA NUSANTARA</span>
+                                    <span class="bank-name">BANK DEVISA</span>
                                     <div class="chip-card"></div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="card-number display-no">0000 0000 0000 0000</div>
+                                    <div class="card-number-display">0000 0000 0000 0000</div>
                                 </div>
                                 <div class="card-footer">
                                     <div class="footer-left">
-                                        <small>CARD HOLDER</small>
-                                        <div class="name-display display-name">NAME</div>
+                                        <small>PEMILIK</small>
+                                        <div class="card-name-display">NAMA KAMU</div>
                                     </div>
                                     <div class="footer-right">
-                                        <div class="card-series">PLATINUM</div>
+                                        <div class="card-tier">PLATINUM</div>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="card-face card-back">
                                 <div class="mag-stripe"></div>
-                                <div class="cvv-area">
-                                    <!-- TEKS DIGANTI: CVV -> Kode Keamanan -->
-                                    <span style="font-size: 8px; color:#000; margin-right: 5px;">Kode Keamanan</span>
-                                    <span class="cvv-code cvv-display">***</span>
-                                </div>
-                                <div class="card-terms">
-                                    Kartu ini adalah milik Bank Devisa Nusantara. Segala bentuk penyalahgunaan akan diproses sesuai hukum negara.
+                                <div class="cvv-container">
+                                    <span class="cvv-label">Kode Akses</span>
+                                    <div class="cvv-code-display">***</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- FITUR BARU: PILIH RASIO -->
-                    <div class="ratio-selector-area">
-                        <p style="font-size: 0.8rem; color: var(--gray); margin-bottom: 10px; text-align: center; font-weight: 700;">PILIH FORMAT KARTU FISIK</p>
-                        <div class="ratio-buttons">
-                            <button class="btn-ratio active" onclick="changeCardRatio('ID-1', 1.586, '85.60 × 53.98 mm')">ID-1 (Standar)</button>
-                            <button class="btn-ratio" onclick="changeCardRatio('CR-79', 1.645, '83.9 × 51 mm')">CR-79</button>
-                            <button class="btn-ratio" onclick="changeCardRatio('CR-90', 1.533, '92 × 60 mm')">CR-90</button>
-                            <button class="btn-ratio" onclick="changeCardRatio('CR-100', 1.47, '98.5 × 67 mm')">CR-100</button>
-                        </div>
-                        <div id="ratioInfo" class="ratio-info">
-                            Dimensi Fisik: 85.60 × 53.98 mm
-                        </div>
-                        
-                        <!-- TABEL BAHAN -->
-                        <div class="material-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th colspan="2">SPESIFIKASI BAHAN</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Karton tipis</td>
-                                        <td>0.3 – 0.5 mm</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Karton tebal / duplex</td>
-                                        <td>0.6 – 1 mm</td>
-                                    </tr>
-                                    <tr class="highlight-row">
-                                        <td>Kardus keras (mirip kartu)</td>
-                                        <td>0.7 – 0.9 mm ✅</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <p style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 5px;">(Tidak berpengaruh jika rasio di ganti-ganti)</p>
-                        </div>
-                    </div>
-
-                    <div class="button-group-final">
-                        <button class="btn-primary btn-save btn-download">📸 SIMPAN GAMBAR KARTU</button>
-                        <button class="btn-flip btn-flip-action">🔄 PUTAR KARTU</button>
+                    
+                    <div class="download-actions">
+                        <button class="btn-download" id="btnDownload">
+                            <i class="fas fa-download"></i> Simpan Gambar Kartu
+                        </button>
+                        <button class="btn-flip" id="btnFlip" onclick="window.toggleFlip()">
+                            <i class="fas fa-sync-alt"></i> Putar Kartu
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+
     </main>
 
-    <!-- JS External (Module) -->
+    <!-- JS LOGIC -->
     <script type="module" src="script.js"></script>
 </body>
 </html>
