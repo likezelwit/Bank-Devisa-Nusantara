@@ -1,124 +1,272 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lobby Permainan - Bank Devisa Nusantara</title>
+    <title>Bank Devisa Nusantara | Pusat Permainan</title>
+    
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
+    
+    <!-- CSS Link (Path relatif ke root) -->
     <link rel="stylesheet" href="../style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- STYLE KHUSUS HALAMAN GAME (Supaya tampilan menu kartu rapi) -->
+    <style>
+        /* Grid Layout untuk Menu Utama */
+        .game-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .game-card {
+            background: var(--card-bg, #ffffff);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border-color: var(--accent, #ffc107);
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: #f0f9ff;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--primary, #2563eb);
+        }
+
+        .game-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .game-card p {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* Styling Peringatan Keamanan */
+        .safety-warning {
+            background-color: #fef2f2;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            color: #991b1b;
+        }
+
+        .safety-warning h4 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Tutorial Steps */
+        .tutorial-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .step-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            background: var(--primary, #2563eb);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+    </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <a href="index.html" class="logo-wrapper">
-            <img src="../assets/logo.png" alt="Logo" class="logo-img">
-            <span class="logo">BANK<span>DEVISA</span></span>
-        </a>
-        <div class="status-wrapper">
-            <div class="system-status">MODE SIMULASI</div>
-            <a href="index.html" class="btn-account">Keluar</a>
-        </div>
-    </nav>
+    <!-- BANNER SIMULASI -->
+    <div id="simulasiBanner" class="simulasi-banner">
+        MODE SIMULASI EDUKASI - TIDAK UNTUK TRANSAKSI UANG ASLI
+    </div>
 
-    <main class="container">
-        <section class="content-section" style="margin-top: 2rem; background: linear-gradient(135deg, var(--primary), #003d82); color: white;">
-            <div class="section-header">
-                <h2 style="color: var(--accent);">Halo, Nasabah Cilik! 👋</h2>
-                <p style="color: #e9ecef;">Selamat datang di Pusat Kendali Bankmu.</p>
+    <!-- WRAPPER -->
+    <div id="app-wrapper">
+        
+        <!-- BACKGROUND (Plain) -->
+        <div class="static-bg"></div>
+
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <a href="index.html" class="logo-wrapper">
+                <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" alt="BDN Logo" class="logo-img">
+                <div class="logo">BDN<span>.</span></div>
+            </a>
+            <div class="nav-right">
+                <a href="index.html" class="btn-account">Kembali ke Beranda</a>
             </div>
+        </nav>
 
-            <div style="text-align: center; padding: 2rem 0;">
-                <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">Saldo Tabunganmu</p>
-                <h1 style="color: white; font-size: 3rem; margin: 0.5rem 0;" id="display-saldo">Rp 0</h1>
-                <div class="divider" style="background: var(--accent);"></div>
-            </div>
-
-            <div class="cta-buttons" style="justify-content: center;">
-                <button onclick="tambahSaldo()" class="btn btn-cta-game">💰 Menabung (Setor)</button>
-                <button onclick="tarikSaldo()" class="btn btn-outline" style="border-color: white; color: white;">💸 Jajan (Tarik)</button>
-            </div>
-        </section>
-
-        <section class="content-section">
-            <div class="section-header">
-                <h2>Pilih Aktivitasmu</h2>
-                <p>Mau ngapain kita hari ini?</p>
-            </div>
-
-            <div class="roles-grid">
-                <div class="role-card" onclick="alert('Fitur Cetak Kartu Segera Hadir!')">
-                    <span class="role-icon">💳</span>
-                    <h3>Cetak Kartu BDN</h3>
-                    <p>Desain kartu ATM-mu sendiri dengan nama kerenmu.</p>
-                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Buat Sekarang</button>
-                </div>
-
-                <div class="role-card" onclick="alert('Menu Transfer sedang dalam pemeliharaan')">
-                    <span class="role-icon">📲</span>
-                    <h3>Transfer Uang</h3>
-                    <p>Kirim saldo ke teman sekolahmu dalam simulasi.</p>
-                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Kirim Saldo</button>
-                </div>
-
-                <div class="role-card" id="btn-mutasi">
-                    <span class="role-icon">📜</span>
-                    <h3>Catatan Kas</h3>
-                    <p>Lihat riwayat uang masuk dan keluar kelasmu.</p>
-                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Buku Kas</button>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        // --- LOGIKA PERMAINAN SEDERHANA ---
-        let saldo = 50000; // Saldo awal simulasi
-
-        // Ambil elemen display
-        const displaySaldo = document.getElementById('display-saldo');
-
-        // Fungsi format rupiah
-        function formatRupiah(angka) {
-            return "Rp " + angka.toLocaleString('id-ID');
-        }
-
-        // Update tampilan pertama kali
-        function updateDisplay() {
-            displaySaldo.innerText = formatRupiah(saldo);
+        <!-- MAIN CONTENT -->
+        <main class="container">
             
-            // Kasih efek glow pas angka berubah
-            displaySaldo.style.transform = "scale(1.1)";
-            setTimeout(() => {
-                displaySaldo.style.transform = "scale(1)";
-            }, 200);
-        }
+            <header class="hero" style="text-align: center; padding: 40px 0;">
+                <div class="hero-text" style="max-width: 800px; margin: 0 auto;">
+                    <h1 id="greetingText">Selamat Datang!</h1>
+                    <p class="text-gradient" style="font-size: 1.2rem; font-weight: 700;">Pusat Kontrol Simulasi Kamu</p>
+                    <p style="margin-top: 1rem;">
+                        Di sini kamu bisa membuat kartu identitas digital fiktif dan meningkatkan level permainanmu. Ingat, semua ini hanya untuk belajar!
+                    </p>
+                </div>
+            </header>
 
-        function tambahSaldo() {
-            let jumlah = prompt("Mau nabung berapa hari ini? (Masukkan angka)");
-            if (jumlah && !isNaN(jumlah)) {
-                saldo += parseInt(jumlah);
-                alert("Yey! Kamu berhasil menabung " + formatRupiah(parseInt(jumlah)));
-                updateDisplay();
+            <!-- 1. MENU UTAMA (Highlighted) -->
+            <section class="game-section">
+                <div class="game-menu-grid">
+                    
+                    <!-- CARD: BUAT KARTU -->
+                    <div class="game-card">
+                        <div class="card-icon">💳</div>
+                        <h3>Buat Kartu Baru</h3>
+                        <p>Daftar sekarang untuk mendapatkan nomor rekening fiktif dan identitas nasabah bank simulasi.</p>
+                        <button onclick="window.location.href = 'daftar.html'" class="btn btn-primary" style="width: 100%;">
+                            Mulai Pendaftaran
+                        </button>
+                    </div>
+
+                    <!-- CARD: TINGKATKAN KARTU -->
+                    <div class="game-card">
+                        <div class="card-icon">🚀</div>
+                        <h3>Tingkatkan Kartu</h3>
+                        <p>Sudah punya kartu? Upgrade level keanggotaanmu untuk membuka fitur premium dan limit lebih tinggi.</p>
+                        <button onclick="window.location.href = 'peningkatan-kartu.html'" class="btn btn-outline" style="width: 100%;">
+                            Upgrade Sekarang
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 2. PERINGATAN KEAMANAN (PENTING) -->
+            <section class="safety-warning">
+                <h4>⚠️ Peringatan Keamanan & Bimbingan Orang Tua</h4>
+                <ul style="margin-left: 20px; line-height: 1.6;">
+                    <li><strong>JANGAN</strong> memasukkan data asli seperti NIK, Nomor Kartu Keluarga, atau alamat rumah yang lengkap.</li>
+                    <li><strong>JANGAN</strong> menggunakan PIN ATM atau Password Mobile Banking asli kamu.</li>
+                    <li>Gunakan nama panggilan atau nama samara yang keren.</li>
+                    <li>Selalu minta izin dan bimbingan orang tua/guru saat bermain.</li>
+                </ul>
+            </section>
+
+            <!-- 3. TUTORIAL -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>Panduan Bermain</h2>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="article-content" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                    <div class="tutorial-steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div>
+                                <h4>Isi Data Diri</h4>
+                                <p>Lengkapi formulir pendaftaran dengan data fiktif yang kamu inginkan. Pastikan email yang digunakan bisa diakses untuk verifikasi (jika ada).</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div>
+                                <h4>Dapatkan Saldo Awal</h4>
+                                <p>Setelah kartu jadi, sistem akan memberikan saldo awal simulasi. Gunakan saldo ini untuk belajar transfer dan menabung.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div>
+                                <h4>Kumpulkan Poin</h4>
+                                <p>Selesaikan misi atau lakukan simulasi rutin untuk meningkatkan level kartumu dari Silver ke Gold atau Platinum.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="footer-main">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <p>Bank Devisa Nusantara - Edukasi Simulasi Keuangan.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2026 Project Edukasi Sekolah.</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- SCRIPT (Internal) -->
+    <script>
+        // 1. LOGIKA SAPAAN DINAMIS
+        document.addEventListener('DOMContentLoaded', () => {
+            const greetingElement = document.getElementById('greetingText');
+            const hour = new Date().getHours();
+            let greeting = "Halo";
+            
+            if (hour >= 4 && hour < 10) {
+                greeting = "Selamat Pagi, Calon Nasabah!";
+            } else if (hour >= 10 && hour < 15) {
+                greeting = "Selamat Siang, Calon Nasabah!";
+            } else if (hour >= 15 && hour < 18) {
+                greeting = "Selamat Sore, Calon Nasabah!";
             } else {
-                alert("Masukkan angka yang benar ya!");
+                greeting = "Selamat Malam, Calon Nasabah!";
             }
-        }
-
-        function tarikSaldo() {
-            let jumlah = prompt("Mau jajan berapa? (Masukkan angka)");
-            if (jumlah && !isNaN(jumlah)) {
-                if (parseInt(jumlah) > saldo) {
-                    alert("Waduh, saldo kamu nggak cukup buat jajan segitu!");
-                } else {
-                    saldo -= parseInt(jumlah);
-                    alert("Berhasil ditarik! Jangan lupa hemat ya.");
-                    updateDisplay();
-                }
+            
+            if(greetingElement) {
+                greetingElement.textContent = greeting;
             }
-        }
+        });
 
-        // Inisialisasi awal
-        window.onload = updateDisplay;
+        // 2. SEDIKIT INTERAKSI UNTUK AUDIO (Jika ada di style.css)
+        // Kita hanya menyiapkan tombol jika user menekan sesuatu
+        document.body.addEventListener('click', function() {
+            // Logika audio bisa ditambahkan di sini jika file ada
+            console.log("User interaction detected");
+        });
     </script>
 </body>
 </html>
