@@ -14,6 +14,9 @@
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
     <link rel="apple-touch-icon" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
     
+    <!-- FONT AWESOME ICONS (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- CSS Link -->
     <link rel="stylesheet" href="../style.css">
     
@@ -95,7 +98,7 @@
         window.firebaseDB = db; 
     </script>
 
-    <!-- STYLE TAMBAHAN UNTUK TOMBOL BARU -->
+    <!-- STYLE TAMBAHAN UNTUK TOMBOL BARU & ICONS -->
     <style>
         .btn-cta-game {
             background-color: var(--accent, #ffc107); /* Menggunakan warna aksen kuning */
@@ -107,6 +110,12 @@
             border-color: #e0a800;
             color: #000;
             transform: translateY(-2px);
+        }
+
+        /* Styling untuk Role Icons */
+        .role-icon i {
+            font-size: 2.5rem;
+            color: var(--primary, #2563eb);
         }
     </style>
 </head>
@@ -267,26 +276,26 @@
                 
                 <div class="roles-grid">
                     <div class="role-card">
-                        <!-- Emoji removed -->
-                        <div class="role-icon"></div>
+                        <!-- Icon Digital Cash Book -->
+                        <div class="role-icon"><i class="fas fa-book-open"></i></div>
                         <h3>Digital Cash Book</h3>
                         <p>Teachers record class cash transparently and securely without manual books.</p>
                     </div>
                     <div class="role-card">
-                        <!-- Emoji removed -->
-                        <div class="role-icon"></div>
+                        <!-- Icon Bank Simulation -->
+                        <div class="role-icon"><i class="fas fa-university"></i></div>
                         <h3>Banking Simulation Tool</h3>
                         <p>Students learn balance and mutation concepts through "play banking" simulation.</p>
                     </div>
                     <div class="role-card">
-                        <!-- Emoji removed -->
-                        <div class="role-icon"></div>
+                        <!-- Icon Savings Management -->
+                        <div class="role-icon"><i class="fas fa-piggy-bank"></i></div>
                         <h3>Student Savings Management</h3>
                         <p>Teachers act as treasurers, the system assists in recording.</p>
                     </div>
                     <div class="role-card">
-                        <!-- Emoji removed -->
-                        <div class="role-icon"></div>
+                        <!-- Icon Reward System -->
+                        <div class="role-icon"><i class="fas fa-trophy"></i></div>
                         <h3>Reward System</h3>
                         <p>Digital balance as points of appreciation for student achievements.</p>
                     </div>
