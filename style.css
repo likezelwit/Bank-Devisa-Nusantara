@@ -127,7 +127,13 @@ body {
 .hero { 
     padding: 4rem var(--container-padding) 3rem;
     width: 100%;
-    background: linear-gradient(180deg, var(--bg) 0%, #e9ecef 100%);
+    /* UPDATE: Background Image dengan Overlay Transparan */
+    /* Urutan: Gradient Overlay (di depan) -> Gambar (di belakang) */
+    background-image: linear-gradient(rgba(244, 247, 246, 0.85), rgba(233, 236, 239, 0.92)), url('../background-lobby.webp');
+    background-size: cover, cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    background-attachment: fixed; /* Efek Parallax */
 }
 
 .hero-content-wrapper {
@@ -698,6 +704,7 @@ h1 {
     .hero {
         padding: 3rem var(--container-padding) 2rem;
         text-align: center;
+        background-attachment: scroll; /* Disable parallax on mobile for performance */
     }
 
     .hero-content-wrapper {
