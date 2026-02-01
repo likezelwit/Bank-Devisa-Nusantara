@@ -42,7 +42,6 @@ function renderCards() {
     container.innerHTML = '';
 
     // Dalam aplikasi nyata, 'userCurrentPrefix' diambil dari sesi pengguna
-    // Di sini kita set default untuk contoh
     const userCurrentPrefix = '0810'; 
 
     cardTiers.forEach(tier => {
@@ -70,7 +69,6 @@ function renderCards() {
 // --- PEMILIHAN TINGKAT UPGRADE ---
 window.selectUpgrade = (prefix) => {
     const selectedCard = cardTiers.find(c => c.prefix === prefix);
-    // Simpan data yang dipilih ke penyimpanan lokal browser
     localStorage.setItem('selectedUpgrade', JSON.stringify(selectedCard));
     window.location.href = 'check-out/';
 }
@@ -89,20 +87,17 @@ window.handleCheckoutSubmit = async (e) => {
     }
 
     // 1. VERIFIKASI REAL KE SUPABASE (Nomor & CVV)
-    // Mencari data berdasarkan nomor kartu
     const { data: cardData, error } = await _supabase
         .from('pendaftaran_simulasi')
         .select('*')
         .eq('nomor_kartu', cardNo)
-        .single(); // Mengambil satu baris data
+        .single(); 
 
     if (error || !cardData) {
         alert("Nomor kartu tidak ditemukan dalam sistem kami.");
         return;
     }
 
-    // Memeriksa CVV yang tersimpan dalam kolom JSONB (detail_data.card_meta.cvv)
-    // Pastikan struktur data sesuai dengan saat penyimpanan
     const savedCvv = cardData.detail_data?.card_meta?.cvv;
     
     if (String(savedCvv) !== String(cvv)) {
@@ -110,16 +105,13 @@ window.handleCheckoutSubmit = async (e) => {
         return;
     }
 
-    // Memeriksa Nama Pemegang Kartu (Opsional, untuk keamanan ganda)
     if (cardData.nama_lengkap.toLowerCase() !== name.toLowerCase()) {
         alert("Nama pemegang kartu tidak sesuai dengan nomor kartu yang dimasukkan.");
         return;
     }
 
-    // Jika Lolos Verifikasi 1: Simpan nomor kartu yang valid untuk langkah PIN
     localStorage.setItem('verifiedCardNo', cardNo);
 
-    // Tampilkan input PIN
     document.getElementById('step-details').style.display = 'none';
     document.getElementById('step-pin').style.display = 'block';
 }
@@ -134,8 +126,6 @@ window.handlePinSubmit = async (e) => {
         return;
     }
 
-    // Ambil kembali data kartu dari database untuk verifikasi PIN
-    // Kita tidak menyimpan PIN di localStorage demi keamanan
     const verifiedCardNo = localStorage.getItem('verifiedCardNo');
     
     if (!verifiedCardNo) {
@@ -150,7 +140,6 @@ window.handlePinSubmit = async (e) => {
         .eq('nomor_kartu', verifiedCardNo)
         .single();
 
-    // Memeriksa PIN yang tersimpan di detail_data.pin
     const savedPin = cardData.detail_data?.pin;
 
     if (String(savedPin) !== String(pinInput)) {
@@ -158,7 +147,6 @@ window.handlePinSubmit = async (e) => {
         return;
     }
 
-    // 3. Jika Lolos Verifikasi 2: Lanjut ke Konfirmasi
     window.location.href = '../konfirmasi/';
 }
 
@@ -185,12 +173,11 @@ function renderConfirmation() {
     `;
 }
 
-// --- PROSES PEMESANAN ---
 window.processUpgrade = () => {
     window.location.href = '../sukses/';
 }
 
-// --- LOGIKA SUKSES & UPDATE DATABASE (Untuk sukses/index.html) ---
+// --- LOGIKA SUKSES & UPDATE DATABASE (Dengan Pengecekan Saldo) ---
 async function runRealtimeUpdate() {
     const upgradeData = JSON.parse(localStorage.getItem('selectedUpgrade'));
     const verifiedCardNo = localStorage.getItem('verifiedCardNo');
@@ -199,12 +186,58 @@ async function runRealtimeUpdate() {
     const oldNumDisplay = document.getElementById('oldNumDisplay');
     const newNumDisplay = document.getElementById('newNumDisplay');
 
-    // 1. Tampilkan Nomor Lama
-    oldNumDisplay.innerText = verifiedCardNo;
+    // 1. Langkah Pertama: Memverifikasi Saldo Rekening
+    statusText.innerText = "Memverifikasi Saldo Rekening...";
+    await new Promise(r => setTimeout(r, 1000)); // Delay visual
 
-    // Simulasi Status Sistem
+    // AMBIL DATA TERBARU DARI DATABASE UNTUK CEK SALDO
+    const { data: currentCardData, error: fetchError } = await _supabase
+        .from('pendaftaran_simulasi')
+        .select('*')
+        .eq('nomor_kartu', verifiedCardNo)
+        .single();
+
+    if (fetchError || !currentCardData) {
+        console.error("Gagal mengambil data nasabah:", fetchError);
+        statusText.innerText = "Gagal memuat data nasabah.";
+        return;
+    }
+
+    // PARSING SALDO SAAT INI
+    // Mengubah string mata uang (contoh: "Rp 2.500.000") menjadi angka (2500000)
+    const balanceString = currentCardData.detail_data?.account_info?.balance || "0";
+    const currentBalance = parseInt(balanceString.replace(/[^0-9]/g, '')) || 0;
+    
+    // HARGA UPGRADE (Dalam bentuk angka murni)
+    const upgradePrice = upgradeData.price;
+
+    // CEK APAKAH SALDO MENCUKUPI
+    if (currentBalance < upgradePrice) {
+        // HENTIKAN PROSES JIKA SALDO TIDAK CUKUP
+        statusText.innerText = "Saldo Tidak Mencukupi";
+        statusText.style.color = "var(--danger)"; // Ubah warna teks menjadi merah
+        
+        document.getElementById('loadingIcon').style.display = 'none';
+        
+        // Tampilkan pesan detail menggunakan alert browser
+        alert(
+            `TRANSAKSI DITOLAK.\n\n` +
+            `Saldo Anda: ${formatCurrency(currentBalance)}\n` +
+            `Harga Upgrade: ${formatCurrency(upgradePrice)}\n\n` +
+            `Mohon lakukan pengisian ulang saldo terlebih dahulu.`
+        );
+
+        // Tampilkan tombol kembali
+        document.getElementById('btnHome').innerText = "Kembali ke Konfirmasi";
+        document.getElementById('btnHome').onclick = () => window.location.href = '../konfirmasi/';
+        document.getElementById('btnHome').style.display = 'inline-block';
+        
+        return; // Berhenti di sini
+    }
+
+    // JIKA SALDO CUKUP, LANJUTKAN SIMULASI
     const steps = [
-        "Memverifikasi Saldo Rekening...",
+        "Saldo Terkonfirmasi Cukup",
         "Menghubungkan ke Gerbang Pembayaran Aman...",
         "Memperbarui Basis Data Utama...",
         "Membuat Nomor Kartu Baru..."
@@ -216,38 +249,40 @@ async function runRealtimeUpdate() {
     }
 
     // 2. LOGIKA GENERASI NOMOR KARTU BARU
-    const oldNumber = verifiedCardNo.replace(/\s/g, ''); // Hapus spasi
-    const last12 = oldNumber.substring(4); // Ambil 12 digit terakhir
-    const newPrefix = upgradeData.prefix; // Prefix baru
+    const oldNumber = verifiedCardNo.replace(/\s/g, ''); 
+    const last12 = oldNumber.substring(4); 
+    const newPrefix = upgradeData.prefix; 
     
-    // Gabungkan Prefix Baru + 12 Digit Lama
     const rawNewNum = newPrefix + last12;
-    
-    // Format tampilan (Spasi setiap 4 digit)
     const formattedNewNum = `${rawNewNum.substring(0,4)} ${rawNewNum.substring(4,8)} ${rawNewNum.substring(8,12)} ${rawNewNum.substring(12,16)}`;
 
     // 3. EKSEKUSI UPDATE DATABASE SUPABASE
     try {
-        const { error } = await _supabase
+        // Update Nomor Kartu
+        const { error: updateError } = await _supabase
             .from('pendaftaran_simulasi')
             .update({ nomor_kartu: formattedNewNum })
-            .eq('nomor_kartu', verifiedCardNo); // Kondisi: Update jika nomor kartunya sama dengan yang verifikasi
+            .eq('nomor_kartu', verifiedCardNo);
 
-        if (error) {
-            throw error;
+        if (updateError) {
+            throw updateError;
         }
+
+        // (Opsional) Logika Pengurangan Saldo Bisa Ditambahkan Disini Jika Ingin Simulasi Lebih Real
+        // await _supabase.from('pendaftaran_simulasi').update({ ...detail_data }).eq(...)
 
         // 4. UPDATE ANTARMUKA PENGGUNA
         statusText.innerText = "Peningkatan Berhasil!";
+        statusText.style.color = "var(--primary)"; // Kembalikan warna ke normal
         document.getElementById('loadingIcon').style.display = 'none';
         document.getElementById('successIcon').style.display = 'block';
         
-        // Efek Visual Coret Nomor Lama
         oldNumDisplay.style.textDecoration = "line-through";
         oldNumDisplay.style.color = "#94a3b8";
         newNumDisplay.innerText = formattedNewNum;
 
-        // Tampilkan Tombol Kembali
+        document.getElementById('btnHome').innerText = "Kembali ke Beranda";
+        document.getElementById('btnHome').onclick = () => window.location.href = '../../';
         document.getElementById('btnHome').style.display = 'inline-block';
         
         console.log("Database berhasil diperbarui.");
