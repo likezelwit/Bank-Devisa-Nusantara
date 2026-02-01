@@ -1,0 +1,808 @@
+// --- FIREBASE IMPORT ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
+    authDomain: "wifist-d3588.firebaseapp.com",
+    databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/", 
+    projectId: "wifist-d3588"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// --- KONFIGURASI TAHAPAN ---
+const MODES = {
+    child: {
+        name: "Anak (7-10 Tahun)",
+        steps: [
+            { id: 1, title: "01. Identitas Anak", fields: [
+                { id: "inputNama", label: "Nama Lengkap (Simulasi)", type: "text", placeholder: "NAMA LENGKAP", validate: "min3" },
+                { id: "inputDOB_Display", label: "Tanggal Lahir", type: "text", readonly: true }
+            ]},
+            { id: 2, title: "02. Cita-Cita", fields: [
+                { id: "jobType", label: "Cita-cita", type: "select", options: ["-- Pilih --", "Pelajar", "Dokter", "Pilot", "Ilmuwan", "Polisi", "Lainnya"] }
+            ]},
+            { id: 3, title: "03. Data Wali", fields: [
+                { id: "waliName", label: "Nama Orang Tua/Wali", type: "text", placeholder: "Nama Wali", validate: "min3" },
+                { id: "inputWA", label: "WhatsApp Wali (Boleh Fiktif)", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" }
+            ]},
+            // DIUBAH: "PIN" -> "Kode Rahasia"
+            { id: 4, title: "04. Keamanan", fields: [
+                { id: "inputPW", label: "6 Digit Kode Rahasia", type: "password", maxlength: 6, validate: "len6" }
+            ]},
+            { id: 5, title: "05. Janji Nasabah", fields: [
+                { id: "checkAgree", label: "Saya Janji Rajin Menabung", type: "checkbox", validate: "checked" }
+            ]},
+            { id: 6, title: "06. Lokasi", fields: [
+                { id: "countrySelect", label: "Negara Domisili", type: "select", options: ["-- Pilih --", "Indonesia (IDR)", "Amerika Serikat (USD)", "Inggris (GBP)"], validate: "selected" }
+            ]},
+            { id: 7, title: "Finalisasi", isFinal: true }
+        ]
+    },
+    teen: {
+        name: "Remaja (11-17 Tahun)",
+        steps: [
+            { id: 1, title: "01. Identitas", fields: [
+                { id: "inputNama", label: "Nama Lengkap (Simulasi)", type: "text", placeholder: "NAMA ANDA", validate: "min3" },
+                { id: "inputDOB_Display", label: "Tanggal Lahir", type: "text", readonly: true }
+            ]},
+            { id: 2, title: "02. Kontak", fields: [
+                { id: "inputWA", label: "WhatsApp (Boleh Fiktif)", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
+                { id: "inputEmail", label: "Email (Boleh Fiktif)", type: "email", placeholder: "nama@email.com", validate: "email" }
+            ]},
+            { id: 3, title: "03. Pendidikan", fields: [
+                { id: "jobType", label: "Nama Sekolah", type: "text", placeholder: "SMA Negeri 1", validate: "min3" }
+            ]},
+            { id: 4, title: "04. Finansial", fields: [
+                { id: "incomeSource", label: "Sumber Uang Saku", type: "select", options: ["-- Pilih --", "Orang Tua", "Hadiah", "Part Time", "Lainnya"], validate: "selected" }
+            ]},
+            { id: 5, title: "05. Kontak Darurat", fields: [
+                { id: "emName", label: "Nama Penanggung Jawab", type: "text", placeholder: "Nama Orang Tua", validate: "min3" },
+                { id: "emPhone", label: "No. HP Darurat", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit10-13" }
+            ]},
+            // DIUBAH: "PIN" -> "Kode Rahasia"
+            { id: 6, title: "06. Keamanan", fields: [
+                { id: "inputPW", label: "6 Digit Kode Rahasia", type: "password", maxlength: 6, validate: "len6" }
+            ]},
+            { id: 7, title: "07. Analisis Data", type: "loading", msg: "Menghubungkan ke Database Sekolah..." },
+            { id: 8, title: "08. Konfirmasi", fields: [
+                { id: "checkAgree", label: "Saya bertanggung jawab", type: "checkbox", validate: "checked" }
+            ]},
+            { id: 9, title: "09. Legalitas", fields: [
+                { id: "checkLegal", label: "Setuju Syarat & Ketentuan", type: "checkbox", validate: "checked" }
+            ]},
+            { id: 10, title: "10. Lokasi", fields: [
+                { id: "countrySelect", label: "Negara Domisili", type: "select", options: ["-- Pilih --", "Indonesia (IDR)", "Amerika Serikat (USD)", "Inggris (GBP)"], validate: "selected" }
+            ]},
+            { id: 11, title: "Finalisasi", isFinal: true }
+        ]
+    },
+    adult: {
+        name: "Dewasa (18+ Tahun)",
+        steps: [
+            { id: 1, title: "01. Identitas", fields: [
+                { id: "inputNama", label: "Nama Lengkap KTP (Simulasi)", type: "text", placeholder: "NAMA LENGKAP", validate: "min3" },
+                { id: "inputDOB_Display", label: "Tanggal Lahir", type: "text", readonly: true }
+            ]},
+            { id: 2, title: "02. Kontak Utama", fields: [
+                { id: "inputWA", label: "WhatsApp (Boleh Fiktif)", type: "tel", placeholder: "08xxxxxxxxxx", validate: "digit11-13" },
+                { id: "inputEmail", label: "Email (Boleh Fiktif)", type: "email", placeholder: "nama@email.com", validate: "email" }
+            ]},
+            { id: 3, title: "03. Domisili", fields: [
+                { id: "address", label: "Alamat Lengkap", type: "text", placeholder: "Jalan, No Rumah...", validate: "min5" }
+            ]},
+            { id: 4, title: "04. Profesi", fields: [
+                { id: "jobType", label: "Pekerjaan", type: "text", placeholder: "Posisi & Perusahaan", validate: "min3" }
+            ]},
+            { id: 5, title: "05. Pendapatan", fields: [
+                { id: "income", label: "Penghasilan Bulanan", type: "tel", placeholder: "Contoh: 10000000", validate: "digit" }
+            ]},
+            { id: 6, title: "06. Sumber Dana", fields: [
+                { id: "incomeSource", label: "Sumber Dana", type: "select", options: ["-- Pilih --", "Gaji", "Usaha", "Investasi", "Warisan"], validate: "selected" }
+            ]},
+            { id: 7, title: "07. Tujuan Akun", fields: [
+                { id: "accPurpose", label: "Tujuan Pembukaan", type: "select", options: ["-- Pilih --", "Transaksi", "Tabungan", "Bisnis"], validate: "selected" }
+            ]},
+            { id: 8, title: "08. Kontak Darurat", fields: [
+                { id: "emName", label: "Nama Darurat", type: "text", validate: "min3" },
+                { id: "emRelation", label: "Hubungan", type: "text", placeholder: "Keluarga", validate: "min3" }
+            ]},
+            // DIUBAH: "PIN" -> "Kode Rahasia"
+            { id: 9, title: "09. Keamanan 1", fields: [
+                { id: "inputPW", label: "6 Digit Kode Rahasia", type: "password", maxlength: 6, validate: "len6" }
+            ]},
+            { id: 10, title: "10. Keamanan 2", fields: [
+                { id: "secQuestion", label: "Pertanyaan Rahasia", type: "text", placeholder: "Nama Ibu Kandung?", validate: "min3" }
+            ]},
+            { id: 11, title: "11. Background Check", type: "loading", msg: "Melakukan Sinkronisasi Database..." },
+            { id: 12, title: "12. BI Checking", type: "loading", msg: "Analisis SLIK & Skor Kredit..." },
+            { id: 13, title: "13. Konfirmasi", fields: [
+                { id: "checkAgree", label: "Saya menyatakan data benar", type: "checkbox", validate: "checked" }
+            ]},
+            { id: 14, title: "14. Kepatuhan", fields: [
+                { id: "checkCompliance", label: "Setujui Kebijakan AML", type: "checkbox", validate: "checked" }
+            ]},
+            { id: 15, title: "15. Lokasi", fields: [
+                { id: "countrySelect", label: "Negara Domisili", type: "select", options: ["-- Pilih --", "Indonesia (IDR)", "Amerika Serikat (USD)", "Inggris (GBP)", "Singapura (SGD)", "Jepang (JPY)"], validate: "selected" }
+            ]},
+            { id: 16, title: "Finalisasi", isFinal: true }
+        ]
+    }
+};
+
+// --- GLOBAL VARIABLES ---
+let currentMode = null; 
+let currentStep = 1;
+let isFlipLocked = false;
+let finalDataReady = null;
+let userDOB = ""; 
+let sessionToken = ""; 
+let formData = {}; 
+
+// --- HELPER FUNCTIONS FOR UI ---
+window.limitInput = (el, max) => {
+    if (el.value.length > max) el.value = el.value.slice(0, max);
+};
+
+window.showLoader = (text = "Memproses...") => {
+    const loader = document.getElementById('globalLoader');
+    const txt = document.getElementById('loaderText');
+    txt.innerText = text;
+    loader.classList.remove('hidden');
+};
+
+window.hideLoader = () => {
+    const loader = document.getElementById('globalLoader');
+    loader.classList.add('hidden');
+};
+
+window.updateLoaderText = (text) => {
+    document.getElementById('loaderText').innerText = text;
+};
+
+window.showModal = (title, message, type = "error") => {
+    const modal = document.getElementById('customModal');
+    const t = document.getElementById('modalTitle');
+    const m = document.getElementById('modalMessage');
+    const i = document.getElementById('modalIcon');
+    
+    t.innerText = title;
+    m.innerText = message;
+    i.innerText = type === "error" ? "⚠️" : "✅";
+    
+    modal.classList.remove('hidden');
+};
+
+window.closeModal = () => {
+    document.getElementById('customModal').classList.add('hidden');
+};
+
+// --- MANAJEMEN URL & FIREBASE ---
+function updateURL() {
+    if (!currentMode) return;
+    const hash = `m=${currentMode}|s=${currentStep}|t=${sessionToken}`;
+    window.location.hash = hash;
+    localStorage.setItem('bdn_token', sessionToken);
+    localStorage.setItem('bdn_dob', userDOB);
+    localStorage.setItem('bdn_mode', currentMode);
+}
+
+function parseURL() {
+    const hash = window.location.hash.substring(1); 
+    if (!hash) return null;
+    try {
+        const params = hash.split('|').reduce((acc, pair) => {
+            const [key, val] = pair.split('=');
+            acc[key] = val;
+            return acc;
+        }, {});
+        return params;
+    } catch (e) {
+        return null;
+    }
+}
+
+async function saveProgressToFirebase() {
+    if (!sessionToken) return;
+    const allInputs = document.querySelectorAll('input, select');
+    allInputs.forEach(input => {
+        if(input.id) {
+            formData[input.id] = input.type === 'checkbox' ? input.checked : input.value;
+        }
+    });
+
+    const progressData = {
+        mode: currentMode,
+        step: currentStep,
+        formData: formData, 
+        dob: userDOB,
+        updated_at: Date.now()
+    };
+
+    try {
+        await update(ref(db, 'progress/' + sessionToken), progressData);
+        console.log("Progress saved to Firebase");
+    } catch (e) {
+        console.error("Gagal simpan progress:", e);
+    }
+}
+
+// Cek Session dari URL & Firebase (Dengan Loading Import)
+async function checkExistingSession() {
+    const params = parseURL();
+    const urlToken = params ? params.t : null;
+
+    // Jika URL ada token
+    if (params && params.m && params.s && urlToken) {
+        try {
+            // TAMPILKAN LOADING IMPORT
+            showLoader("Memulihkan Sesi Aman...");
+            
+            // Delay sedikit agar UX terasa "loading database"
+            await new Promise(r => setTimeout(r, 1500));
+
+            const snapshot = await get(ref(db, 'progress/' + urlToken));
+            
+            if (snapshot.exists()) {
+                updateLoaderText("Memvalidasi Data...");
+                await new Promise(r => setTimeout(r, 800)); // Delay lagi
+
+                const data = snapshot.val();
+                currentMode = data.mode;
+                currentStep = parseInt(params.s);
+                sessionToken = urlToken;
+                userDOB = data.dob || "";
+                formData = data.formData || {};
+
+                document.getElementById('ageGate').style.display = 'none';
+                document.getElementById('progressContainer').style.display = 'flex';
+                initApp(true);
+                hideLoader();
+                return true;
+            } else {
+                hideLoader();
+                showModal("Sesi Kadaluarsa", "Link registrasi ini tidak valid atau sudah kedaluwarsa.");
+                // Reset hash
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }
+        } catch (e) {
+            hideLoader();
+            console.error(e);
+        }
+    }
+    return false;
+}
+
+// --- AGE GATE LOGIC ---
+window.checkAge = async () => {
+    const dd = document.getElementById('dobDD').value;
+    const mm = document.getElementById('dobMM').value;
+    const yyyy = document.getElementById('dobYYYY').value;
+
+    if(dd.length < 2 || mm.length < 2 || yyyy.length < 4) {
+        showModal("Data Tidak Lengkap", "Mohon isi tanggal lahir dengan format lengkap (DD/MM/YYYY).");
+        return;
+    }
+
+    const dobString = `${yyyy}-${mm}-${dd}`;
+    const dob = new Date(dobString);
+    
+    if(isNaN(dob.getTime())) {
+        showModal("Format Salah", "Tanggal lahir yang Anda masukkan tidak valid.");
+        return;
+    }
+
+    userDOB = dobString;
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) { age--; }
+
+    if(age < 7) { showModal("Usia Kurang", "Maaf, usia minimal pendaftaran adalah 7 tahun."); return; }
+    
+    if(age >= 7 && age <= 10) currentMode = 'child';
+    else if(age >= 11 && age <= 17) currentMode = 'teen';
+    else currentMode = 'adult';
+
+    sessionToken = 'USR-' + Math.random().toString(36).substr(2, 12).toUpperCase();
+
+    document.getElementById('ageGate').style.display = 'none';
+    document.getElementById('progressContainer').style.display = 'flex';
+    
+    await saveProgressToFirebase();
+    initApp();
+};
+
+function initApp(isRestoring = false) {
+    const config = MODES[currentMode];
+    const formContent = document.getElementById('formContent');
+    const circleWrapper = document.getElementById('circleWrapper');
+    
+    // 1. Build Progress Circles
+    circleWrapper.innerHTML = '';
+    for(let i=1; i<=config.steps.length; i++) {
+        const c = document.createElement('div');
+        c.className = 'circle';
+        c.id = `circle-${i}`;
+        c.innerText = i;
+        circleWrapper.appendChild(c);
+    }
+
+    // 2. Build Steps HTML
+    formContent.innerHTML = '';
+    config.steps.forEach((step, index) => {
+        const stepDiv = document.createElement('div');
+        stepDiv.className = 'step';
+        stepDiv.id = `step${index + 1}`;
+        
+        if (step.isFinal) {
+            const template = document.getElementById('finalStepTemplate');
+            stepDiv.innerHTML = template.innerHTML;
+            const btnDownload = stepDiv.querySelector('.btn-download');
+            const btnFlip = stepDiv.querySelector('.btn-flip-action');
+            if(btnDownload) btnDownload.onclick = () => takeScreenshot(stepDiv);
+            if(btnFlip) btnFlip.onclick = () => toggleFlip(stepDiv);
+        } else if (step.type === 'loading') {
+            const loadId = `load-${step.id}`;
+            const btnId = `btn-${step.id}`;
+            const errId = `err-${step.id}`;
+            stepDiv.innerHTML = `
+                <h2>${step.title}</h2>
+                <div class="loading-box">
+                    <div class="spinner-large"></div>
+                    <p id="${loadId}">${step.msg}</p>
+                </div>
+                <div id="${errId}" style="display:none; margin-top:15px;">
+                    <button class="btn-alt" onclick="window.prevStep()">Perbaiki Data</button>
+                </div>
+                <button class="btn-primary" id="${btnId}" style="display:none" onclick="window.nextStep(${index + 2})">Lanjutkan</button>
+            `;
+            stepDiv.dataset.nextBtnId = btnId;
+            stepDiv.dataset.loadMsgId = loadId;
+            stepDiv.dataset.errId = errId;
+        } else {
+            let fieldsHTML = '';
+            step.fields.forEach(field => {
+                let readonlyAttr = field.readonly ? 'readonly' : '';
+                let valueAttr = '';
+                if (field.id === 'inputDOB_Display') {
+                    valueAttr = `value="${userDOB}"`;
+                } else if (isRestoring && formData[field.id] !== undefined) {
+                    if (field.type === 'checkbox') {
+                        readonlyAttr = formData[field.id] ? 'checked' : '';
+                    } else {
+                        valueAttr = `value="${formData[field.id]}"`;
+                    }
+                }
+                
+                if(field.type === 'select') {
+                    let opts = field.options.map(o => {
+                        const selectedAttr = (isRestoring && formData[field.id] === o) ? 'selected' : '';
+                        return `<option value="${o}" ${selectedAttr}>${o}</option>`;
+                    }).join('');
+                    fieldsHTML += `
+                        <div class="input-group">
+                            <label>${field.label}</label>
+                            <select id="${field.id}" ${readonlyAttr}>${opts}</select>
+                        </div>`;
+                } else if (field.type === 'checkbox') {
+                    fieldsHTML += `
+                        <div class="agreement-box" style="text-align:left; margin-bottom:15px;">
+                            <label class="check-label" style="display:flex; align-items:center; font-size:0.8rem; cursor:pointer;">
+                                <input type="checkbox" id="${field.id}" ${readonlyAttr} style="width:20px; height:20px; margin-right:10px;"> 
+                                ${field.label}
+                            </label>
+                        </div>`;
+                } else {
+                    fieldsHTML += `
+                        <div class="input-group">
+                            <label>${field.label}</label>
+                            <input type="${field.type}" id="${field.id}" placeholder="${field.placeholder || ''}" ${valueAttr} ${readonlyAttr} ${field.maxlength ? `maxlength="${field.maxlength}"` : ''}>
+                        </div>`;
+                }
+            });
+
+            stepDiv.innerHTML = `
+                <h2>${step.title}</h2>
+                ${fieldsHTML}
+                <div class="nav-buttons-split">
+                    <button class="btn-primary btn-alt" onclick="window.prevStep()">< Kembali</button>
+                    <button class="btn-primary" onclick="window.nextStep(${index + 2})">Lanjutkan</button>
+                </div>
+            `;
+        }
+        formContent.appendChild(stepDiv);
+    });
+
+    setupInputListeners();
+    
+    if (isRestoring) {
+        updateUI(currentStep);
+    } else {
+        updateUI(1);
+    }
+}
+
+function setupInputListeners() {
+    const nama = document.getElementById('inputNama');
+    if(nama) nama.addEventListener('input', (e) => e.target.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, ""));
+    
+    const nums = ['inputNIK', 'inputWA', 'inputPW', 'income', 'emPhone'];
+    nums.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.addEventListener('input', (e) => e.target.value = e.target.value.replace(/[^0-9]/g, ""));
+    });
+}
+
+// --- NAVIGATION LOGIC DENGAN LOADING REALTIME ---
+window.nextStep = async (targetStep) => {
+    // 1. Tampilkan Loading "Validasi Client"
+    showLoader("Memvalidasi Data...");
+    await new Promise(r => setTimeout(r, 600)); // Fake delay
+
+    // 2. Cek Validasi
+    if(targetStep > currentStep) {
+        const isValid = validateFields(currentStep);
+        if(!isValid) {
+            hideLoader(); // Sembunyikan loading jika error agar user bisa lihat modal
+            return;
+        }
+        
+        const nextStepConfig = MODES[currentMode].steps[targetStep - 1];
+        
+        if(nextStepConfig.type === 'loading') {
+            currentStep = targetStep;
+            updateURL(); 
+            await saveProgressToFirebase();
+            updateUI(currentStep);
+            hideLoader(); // Matikan global loader karena ada loading internal di step
+            runLoadingSimulation(currentStep);
+            return;
+        }
+    }
+
+    // 3. Update Loader Text "Menghubungkan ke Firebase"
+    updateLoaderText("Menghubungkan ke Server...");
+    await new Promise(r => setTimeout(r, 800));
+
+    // 4. Simpan ke Firebase
+    await saveProgressToFirebase();
+
+    // 5. Update Loader Text "Pindah Halaman"
+    updateLoaderText("Menyiapkan Formulir...");
+    await new Promise(r => setTimeout(r, 500));
+
+    // 6. Update UI
+    currentStep = targetStep;
+    updateURL();
+    updateUI(targetStep);
+    hideLoader();
+
+    if(currentStep === MODES[currentMode].steps.length) {
+        startSecureValidation();
+    }
+};
+
+window.prevStep = () => {
+    if(currentStep > 1) {
+        currentStep--;
+        updateURL();
+        saveProgressToFirebase(); 
+        updateUI(currentStep);
+    }
+};
+
+function updateUI(s) {
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+    const activeStep = document.getElementById(`step${s}`);
+    if(activeStep) {
+        activeStep.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    const totalSteps = MODES[currentMode].steps.length;
+    const percent = totalSteps > 1 ? ((s - 1) / (totalSteps - 1)) * 100 : 100;
+    document.getElementById('progressLine').style.width = percent + "%";
+
+    document.querySelectorAll('.circle').forEach((c, i) => {
+        c.classList.remove('active', 'completed');
+        if (i < s - 1) { c.classList.add('completed'); c.innerHTML = "✓"; }
+        else if (i === s - 1) { c.classList.add('active'); c.innerHTML = i + 1; }
+        else { c.innerHTML = i + 1; }
+    });
+}
+
+// --- VALIDATION LOGIC (MENGGUNAKAN CUSTOM MODAL) ---
+function validateFields(stepIndex) {
+    const stepConfig = MODES[currentMode].steps[stepIndex - 1];
+    if(!stepConfig.fields) return true;
+
+    for(let field of stepConfig.fields) {
+        const el = document.getElementById(field.id);
+        if(!el) continue;
+        let val = el.value.trim();
+
+        if(field.validate === "min3") {
+            if(val.length < 3) { showModal("Data Kurang", `${field.label} minimal 3 karakter!`); return false; }
+        }
+        if(field.validate === "min5") {
+            if(val.length < 5) { showModal("Data Kurang", `${field.label} terlalu singkat!`); return false; }
+        }
+        if(field.validate === "len6") {
+            // DIUBAH: Pesan error "PIN" -> "Kode"
+            if(val.length !== 6) { showModal("Kode Salah", `${field.label} harus tepat 6 digit!`); return false; }
+        }
+        if(field.validate === "digit11-13") {
+            if(val.length < 11 || val.length > 13) { showModal("Format Salah", `${field.label} harus 11-13 digit!`); return false; }
+        }
+        if(field.validate === "digit10-13") {
+            if(val.length < 10 || val.length > 13) { showModal("Format Salah", `${field.label} tidak valid!`); return false; }
+        }
+        if(field.validate === "digit") {
+            if(!/^\d+$/.test(val) || val.length === 0) { showModal("Format Salah", `${field.label} harus berupa angka!`); return false; }
+        }
+        if(field.validate === "email") {
+            if(!val.includes('@') || !val.includes('.')) { showModal("Email Salah", `Format email tidak valid!`); return false; }
+        }
+        if(field.validate === "checked") {
+            if(!el.checked) { showModal("Persetujuan Diperlukan", `Anda harus menyetujui "${field.label}".`); return false; }
+        }
+        if(field.validate === "selected") {
+            if(val === "" || val.includes("-- Pilih")) { showModal("Pilihan Diperlukan", `Harap pilih ${field.label}!`); return false; }
+        }
+        
+        if(field.id === 'inputNama') {
+            if(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/.test(val)) {
+                showModal("Nama Tidak Valid", "Nama tidak boleh mengandung angka atau simbol khusus.");
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// --- LOADING SIMULATION (Special Step) ---
+function runLoadingSimulation(stepIndex) {
+    const stepDiv = document.getElementById(`step${stepIndex}`);
+    const statusEl = document.getElementById(stepDiv.dataset.loadMsgId);
+    const btnNext = document.getElementById(stepDiv.dataset.nextBtnId);
+    const errAct = document.getElementById(stepDiv.dataset.errId);
+    
+    setTimeout(() => {
+        const isSuccess = Math.random() > 0.1; 
+        if(isSuccess) {
+            statusEl.innerHTML = `<b style="color:#22c55e">VERIFIED [OK]</b>`;
+            btnNext.style.display = "flex";
+        } else {
+            statusEl.innerHTML = `<b style="color:red">CONNECTION FAILED</b>`;
+            errAct.style.display = "block";
+        }
+    }, 2000);
+}
+
+// --- FINAL GENERATION LOGIC ---
+async function startSecureValidation() {
+    const activeStepDiv = document.getElementById(`step${currentStep}`);
+    const timerDisplay = activeStepDiv.querySelector('.timer-display');
+    const processingArea = activeStepDiv.querySelector('.processing-area');
+    
+    let timeLeft = 120;
+
+    try {
+        if(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]/.test(document.getElementById('inputNama').value)) {
+            throw new Error("Data Nama Tidak Valid.");
+        }
+
+        const prefix = "0810";
+        let isUnique = false;
+        let generatedNo = "";
+        
+        const snapshot = await get(child(ref(db), 'nasabah'));
+        const dbData = snapshot.exists() ? snapshot.val() : {};
+
+        while (!isUnique) {
+            const mid = Math.floor(10000000 + Math.random() * 90000000).toString();
+            const last = Math.floor(1000 + Math.random() * 9000).toString();
+            generatedNo = prefix + mid + last;
+            if (!dbData[generatedNo]) { isUnique = true; }
+        }
+
+        finalDataReady = {
+            cardNo: generatedNo,
+            cvv: Math.floor(Math.random() * 899 + 100)
+        };
+
+    } catch (err) {
+        showModal("Terjadi Kesalahan", "Gagal memproses data: " + err.message);
+        window.location.reload();
+        return;
+    }
+
+    const countdown = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 90) timerDisplay.innerText = `Menghubungkan ke Server Pusat... (${timeLeft}s)`;
+        else if (timeLeft > 60) timerDisplay.innerText = `Memverifikasi Identitas & BI Checking... (${timeLeft}s)`;
+        else if (timeLeft > 30) timerDisplay.innerText = `Menyusun Kunci Enkripsi Kartu... (${timeLeft}s)`;
+        else timerDisplay.innerText = `Finalisasi Pencetakan Digital... (${timeLeft}s)`;
+
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            finalRevealProcess(activeStepDiv);
+        }
+    }, 1000);
+}
+
+async function finalRevealProcess(stepDiv) {
+    const processingArea = stepDiv.querySelector('.processing-area');
+    const finalReveal = stepDiv.querySelector('.final-reveal');
+    
+    processingArea.style.display = 'none';
+    finalReveal.style.display = 'block';
+    stepDiv.querySelector('.card-scene').classList.add('final-glow');
+
+    const { cardNo, cvv } = finalDataReady;
+    const cardFormatted = cardNo.match(/.{1,4}/g).join(" ");
+    
+    const nama = document.getElementById('inputNama').value;
+    const countryRaw = document.getElementById('countrySelect')?.value || "Indonesia (IDR)";
+    const pin = document.getElementById('inputPW')?.value || "000000";
+    
+    let countryCode = "ID";
+    if (countryRaw.includes("Indonesia")) countryCode = "ID";
+    else if (countryRaw.includes("Amerika")) countryCode = "US";
+    else if (countryRaw.includes("Inggris")) countryCode = "GB";
+    else if (countryRaw.includes("Singapura")) countryCode = "SG";
+    else if (countryRaw.includes("Jepang")) countryCode = "JP";
+
+    stepDiv.querySelector('.display-no').innerText = cardFormatted;
+    stepDiv.querySelector('.display-name').innerText = nama;
+    stepDiv.querySelector('.cvv-display').innerText = cvv;
+
+    const uniqueNasabahId = 'NAS-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+    const nasabahData = {
+        activeVariant: "Platinum", cardStatus: "Active", CodeQR: "", MyAccount: "active", created_at: new Date().toISOString(), 
+        nasabah_id: uniqueNasabahId, nama: nama, cardNo: cardNo, cvv: cvv, dob: userDOB, pin: pin, country: countryCode,
+        saldo: countryRaw === 'Indonesia (IDR)' ? 100000 : 10, tgl_daftar: new Date().toISOString()
+    };
+
+    const fieldsToCheck = ['inputWA', 'inputEmail', 'jobType', 'income', 'incomeSource', 'accPurpose', 'waliName', 'emName', 'emRelation', 'emPhone', 'address', 'secQuestion'];
+    fieldsToCheck.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value && el.value.trim() !== "") {
+            if(id === 'inputWA') nasabahData.noHp = el.value;
+            else if(id === 'inputEmail') nasabahData.email = el.value;
+            else if(id === 'jobType') nasabahData.pekerjaan = el.value;
+            else if(id === 'income') nasabahData.pendapatan = el.value;
+            else if(id === 'incomeSource') nasabahData.sumberDana = el.value;
+            else if(id === 'accPurpose') nasabahData.tujuanAkun = el.value;
+            else if(id === 'waliName') nasabahData.namaWali = el.value;
+            else if(id === 'emName') nasabahData.kontakDarurat = el.value;
+            else if(id === 'emRelation') nasabahData.hubunganDarurat = el.value;
+            else if(id === 'emPhone') nasabahData.noHpDarurat = el.value;
+            else if(id === 'address') nasabahData.alamat = el.value;
+            else if(id === 'secQuestion') nasabahData.pertanyaanRahasia = el.value;
+        }
+    });
+
+    try {
+        await set(ref(db, 'nasabah/' + cardNo), nasabahData);
+        await set(ref(db, 'progress/' + sessionToken), null);
+        sessionStorage.setItem('userCard', cardNo);
+        sessionStorage.setItem('isAuth', 'true');
+    } catch (e) { 
+        console.error(e);
+        showModal("Gagal Menyimpan", "Koneksi terputus saat menyimpan data ke server.");
+    }
+
+    changeCardRatio('ID-1',1.586, '85.60 × 53.98 mm');
+
+    const revs = stepDiv.querySelectorAll('.reveal-text');
+    for(let i=0; i<revs.length; i++) {
+        await new Promise(r => setTimeout(r, 600));
+        revs[i].classList.add('show');
+    }
+}
+
+// --- FITUR BARU: RASIO KARTU ---
+window.changeCardRatio = (type, ratio, dimensionText) => {
+    const cardScene = document.getElementById('cardScene');
+    const ratioInfo = document.getElementById('ratioInfo');
+    const buttons = document.querySelectorAll('.btn-ratio');
+
+    if (event && event.target) {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    if(ratioInfo) ratioInfo.innerText = `Dimensi Fisik: ${dimensionText}`;
+
+    if(cardScene) {
+        cardScene.style.aspectRatio = `${ratio} / 1`;
+        cardScene.setAttribute('data-ratio', type);
+    }
+};
+
+// --- UTILITIES ---
+window.toggleFlip = (stepDiv) => {
+    if (isFlipLocked) { showModal("Tunggu Sebentar", "Harap tunggu 5 detik sebelum memutar kartu lagi."); return; }
+    const card = stepDiv.querySelector('.card-inner-ref');
+    card.classList.toggle('is-flipped');
+    isFlipLocked = true;
+    const flipBtn = stepDiv.querySelector('.btn-flip-action');
+    let countdown = 5;
+    const timer = setInterval(() => {
+        countdown--;
+        flipBtn.innerText = `🔄 (${countdown}s)`;
+        if (countdown <= 0) {
+            clearInterval(timer);
+            isFlipLocked = false;
+            flipBtn.innerText = "🔄 PUTAR KARTU";
+        }
+    }, 1000);
+};
+
+// --- MODIFIED SCREENSHOT FUNCTION ---
+window.takeScreenshot = async (stepDiv) => {
+    const area = stepDiv.querySelector('.capture-area');
+    const btn = stepDiv.querySelector('.btn-download');
+    const cardInner = stepDiv.querySelector('.card-inner');
+    const nama = document.getElementById('inputNama').value;
+
+    // Helper delay function
+    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // 1. Ambil Gambar DEPAN
+    btn.innerText = "Mengambil Sisi Depan...";
+    
+    // Pastikan posisi depan
+    cardInner.classList.remove('is-flipped');
+    await wait(600); // Tunggu animasi selesai
+
+    html2canvas(area, { 
+        scale: 3, 
+        useCORS: true, 
+        backgroundColor: null,
+        logging: false 
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `BDN-CARD-FRONT-${nama}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    });
+
+    // 2. Ambil Gambar BELAKANG
+    btn.innerText = "Mengambil Sisi Belakang...";
+    await wait(500); // Delay sebelum putar
+
+    // Putar ke belakang
+    cardInner.classList.add('is-flipped');
+    await wait(600); // Tunggu animasi putar selesai
+
+    html2canvas(area, { 
+        scale: 3, 
+        useCORS: true, 
+        backgroundColor: null,
+        logging: false 
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `BDN-CARD-BACK-${nama}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+
+        // 3. Kembalikan posisi ke DEPAN lagi
+        cardInner.classList.remove('is-flipped');
+        btn.innerText = "📸 SIMPAN GAMBAR KARTU";
+    });
+};
+
+// --- INITIALIZATION ---
+checkExistingSession().then(restored => {
+    if (!restored) {
+        console.log("New session or invalid URL.");
+    } else {
+        console.log("Session restored from Firebase.");
+    }
+});

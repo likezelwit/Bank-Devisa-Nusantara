@@ -1,0 +1,268 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Devisa Nusantara | Game Center</title>
+    
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png">
+    
+    <!-- CSS Link (Path relatif ke root) -->
+    <link rel="stylesheet" href="../style.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- STYLE KHUSUS HALAMAN GAME -->
+    <style>
+        /* Grid Layout for Main Menu */
+        .game-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .game-card {
+            background: var(--card-bg, #ffffff);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border-color: var(--accent, #ffc107);
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: #f0f9ff;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--primary, #2563eb);
+        }
+
+        .game-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .game-card p {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* Safety Warning Styling */
+        .safety-warning {
+            background-color: #fffbeb; /* Light yellow/orange tint */
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            color: #92400e;
+        }
+
+        .safety-warning h4 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Tutorial Steps */
+        .tutorial-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .step-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            background: var(--primary, #2563eb);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIMULATION BANNER -->
+    <div id="simulasiBanner" class="simulasi-banner" style="background-color: #1e293b;">
+        EDUCATION SIMULATION MODE - NOT FOR REAL MONEY TRANSACTIONS
+    </div>
+
+    <!-- WRAPPER -->
+    <div id="app-wrapper">
+        
+        <!-- BACKGROUND (Plain) -->
+        <div class="static-bg"></div>
+
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <a href="index.html" class="logo-wrapper">
+                <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" alt="BDN Logo" class="logo-img">
+                <div class="logo">BDN<span>.</span></div>
+            </a>
+            <div class="nav-right">
+                <a href="index.html" class="btn-account">Back to Home</a>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="container">
+            
+            <header class="hero" style="text-align: center; padding: 40px 0;">
+                <div class="hero-text" style="max-width: 800px; margin: 0 auto;">
+                    <h1 id="greetingText">Welcome!</h1>
+                    <p class="text-gradient" style="font-size: 1.2rem; font-weight: 700;">Your Simulation Control Center</p>
+                    <p style="margin-top: 1rem;">
+                        Create your digital identity card and upgrade your game level here. Remember, this is strictly for educational purposes!
+                    </p>
+                </div>
+            </header>
+
+            <!-- 1. MAIN MENU (Highlighted) -->
+            <section class="game-section">
+                <div class="game-menu-grid">
+                    
+                    <!-- CARD: CREATE CARD -->
+                    <div class="game-card">
+                        <div class="card-icon">💳</div>
+                        <h3>Create Card</h3>
+                        <p>Register now to get a fictional account number and your digital bank identity.</p>
+                        <button onclick="window.location.href = 'register.html'" class="btn btn-primary" style="width: 100%;">
+                            Start Registration
+                        </button>
+                    </div>
+
+                    <!-- CARD: UPGRADE CARD -->
+                    <div class="game-card">
+                        <div class="card-icon">🚀</div>
+                        <h3>Upgrade Card</h3>
+                        <p>Already have a card? Upgrade your membership tier to unlock premium features and higher limits.</p>
+                        <button onclick="window.location.href = 'card-upgrade.html'" class="btn btn-outline" style="width: 100%;">
+                            Upgrade Now
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 2. SAFETY WARNING (IMPORTANT) -->
+            <section class="safety-warning">
+                <h4>⚠️ Security Warning & Parental Guidance</h4>
+                <ul style="margin-left: 20px; line-height: 1.6;">
+                    <li><strong>DO NOT</strong> enter real personal data such as ID Numbers (NIK), Family Card numbers, or full home addresses.</li>
+                    <li><strong>DO NOT</strong> use your real ATM PIN or Mobile Banking passwords.</li>
+                    <li>Use a cool nickname or alias.</li>
+                    <li>Always ask for permission and guidance from parents or teachers while playing.</li>
+                </ul>
+            </section>
+
+            <!-- 3. TUTORIAL -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>How to Play</h2>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="article-content" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                    <div class="tutorial-steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div>
+                                <h4>Fill Personal Data</h4>
+                                <p>Complete the registration form with any fictional data you like. Make sure the email used is accessible (for verification if applicable).</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div>
+                                <h4>Get Initial Balance</h4>
+                                <p>Once your card is created, the system will grant you an initial simulation balance. Use this to practice transferring and saving.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div>
+                                <h4>Collect Points</h4>
+                                <p>Complete missions or do routine simulations to increase your card level from Silver to Gold or Platinum.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="footer-main">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <p>Bank Devisa Nusantara - Financial Education Simulation.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2026 School Education Project. Not a Real Bank.</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- SCRIPT (Internal) -->
+    <script>
+        // 1. DYNAMIC GREETING LOGIC
+        document.addEventListener('DOMContentLoaded', () => {
+            const greetingElement = document.getElementById('greetingText');
+            const hour = new Date().getHours();
+            let greeting = "Hello";
+            
+            if (hour >= 4 && hour < 12) {
+                greeting = "Good Morning, Future Saver!";
+            } else if (hour >= 12 && hour < 18) {
+                greeting = "Good Afternoon, Future Saver!";
+            } else {
+                greeting = "Good Evening, Future Saver!";
+            }
+            
+            if(greetingElement) {
+                greetingElement.textContent = greeting;
+            }
+        });
+
+        // 2. USER INTERACTION LOG (Optional)
+        document.body.addEventListener('click', function() {
+            console.log("User interaction detected");
+        });
+    </script>
+</body>
+</html>
