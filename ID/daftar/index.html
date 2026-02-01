@@ -3,133 +3,757 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="robots" content="noindex, nofollow"> <!-- Supabaya tidak ke-index google -->
-    <title>Buat Kartu Baru | BDN</title>
+    <meta name="robots" content="noindex, nofollow">
+    <title>Pendaftaran Seru | BDN</title>
     
     <!-- FONTS & ICONS -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- CSS -->
-    <!-- Mengambil Global CSS dari root repo -->
-    <link rel="stylesheet" href="../../global.css">
-    <!-- Style Khusus Halaman Ini -->
-    <link rel="stylesheet" href="style.css">
     
     <!-- LIBRARIES -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
-    <!-- Confetti untuk efek suka cita -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #4f46e5; /* Biru ceria */
+            --accent: #f59e0b;  /* Oranye */
+            --success: #22c55e; /* Hijau */
+            --dark: #1e293b;
+            --bg: #f8fafc;
+            --kid-card: #fef3c7;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(#e0e7ff 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--dark);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            transition: 0.3s;
+        }
+        .dot.active { background: var(--primary); transform: scale(1.2); }
+        .dot.completed { background: var(--success); }
+
+        /* STEP CONTAINERS */
+        .step-container {
+            display: none;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .step-container.active { display: block; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        /* INPUT STYLES */
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-label {
+            display: block;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+        
+        .input-box {
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            width: 100%;
+            box-sizing: border-box;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .input-box:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        /* KIDS INPUTS */
+        .gender-selector { display: flex; gap: 10px; }
+        .gender-opt {
+            flex: 1;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .gender-opt.selected {
+            background: #eff6ff;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .gender-opt i { font-size: 1.5rem; display: block; margin-bottom: 5px; }
+
+        /* BUTTONS */
+        .btn-main {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-main:active { transform: scale(0.95); }
+        .btn-main:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
+
+        /* CARD PREVIEW (FINAL) */
+        .card-preview-box {
+            perspective: 1000px;
+            margin: 30px 0;
+        }
+        .bank-card {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-radius: 20px;
+            padding: 25px;
+            color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card-bg-pattern {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.1) 2px, transparent 2px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+        .card-row { display: flex; justify-content: space-between; align-items: flex-end; }
+        .card-num { font-family: monospace; font-size: 1.4rem; letter-spacing: 2px; margin: 20px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .card-chip { width: 50px; height: 40px; background: linear-gradient(135deg, #fbbf24, #d97706); border-radius: 6px; }
+        
+        /* TOAST */
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: var(--dark); color: white;
+            padding: 12px 24px; border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: 0.4s; z-index: 9999;
+            font-weight: 700; display: flex; gap: 10px; align-items: center;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.error { background: #ef4444; }
+
+        /* SCROLL CEK */
+        .scroll-container {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+            background: #fff;
+        }
+        .scroll-item {
+            display: flex; align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+        }
+        .scroll-item:last-child { border-bottom: none; }
+        .scroll-item:hover { background: #f8fafc; }
+        .check-icon { color: #cbd5e1; transition: 0.2s; }
+        .scroll-item.active .check-icon { color: var(--success); }
+
+        .loader-spinner {
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary);
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite; margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* KIDS ICON BIG */
+        .kids-hero { text-align: center; margin-bottom: 30px; }
+        .kids-hero i { font-size: 5rem; color: var(--accent); animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+    </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="logo">BDN<span>.</span></div>
-        <a href="../../" class="btn-back"><i class="fas fa-times"></i> Batal</a>
-    </nav>
-
-    <main class="wizard-container">
-        
-        <!-- STEP 0: AGE GATE -->
-        <div id="step-0" class="wizard-step active fade-in">
-            <div class="illustration-wrapper">
-                <i class="fas fa-birthday-cake fa-3x accent-color"></i>
+    <div class="container">
+        <!-- NAVBAR -->
+        <div class="header">
+            <div class="logo-img">
+                <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" style="width:100%; border-radius:10px;">
             </div>
-            <h1>Halo, Sobat BDN! 👋</h1>
-            <p class="subtitle">Sebelum kita bikin kartu ajaibmu, yuk ceritain kamu lahir tahun berapa?</p>
-            
-            <div class="dob-input-group">
-                <div class="dob-field">
-                    <label>HARI</label>
-                    <input type="number" id="dobDD" placeholder="DD" maxlength="2" inputmode="numeric">
-                </div>
-                <span class="separator">/</span>
-                <div class="dob-field">
-                    <label>BULAN</label>
-                    <input type="number" id="dobMM" placeholder="MM" maxlength="2" inputmode="numeric">
-                </div>
-                <span class="separator">/</span>
-                <div class="dob-field">
-                    <label>TAHUN</label>
-                    <input type="number" id="dobYYYY" placeholder="YYYY" maxlength="4" inputmode="numeric">
-                </div>
+            <h1 style="margin:0;">BDN<span style="color:var(--primary);">.</span> Kids</h1>
+            <div class="progress-dots" id="progressDots">
+                <!-- Dots generated by JS -->
             </div>
-
-            <button class="btn-primary pulse-animation" onclick="checkAge()">
-                Lanjut, Yuk! <i class="fas fa-arrow-right"></i>
-            </button>
         </div>
 
-        <!-- STEP 1: FORMULIR NAMA -->
-        <div id="step-1" class="wizard-step fade-in">
-            <div class="step-indicator">Langkah 1 dari 2</div>
-            <h2>Siapa Namamu?</h2>
-            <p class="subtitle">Boleh pake nama panggilan atau nama samaran biar makin seru! ✨</p>
+        <!-- STEP 0: PILIH USIA -->
+        <div id="step-0" class="step-container active">
+            <div style="text-align:center;">
+                <i class="fas fa-child fa-4x" style="color:var(--dark); margin-bottom:20px;"></i>
+                <h2>Halo Teman! 🙋‍♂️</h2>
+                <p>Kamu mau bikin kartu nama sendiri?</p>
+            </div>
             
-            <div class="form-group floating-label">
-                <input type="text" id="fullName" placeholder=" " autocomplete="off">
-                <label for="fullName">Nama Lengkap / Samaran</label>
-                <i class="fas fa-user icon-inside"></i>
+            <div class="form-group">
+                <label class="form-label">Umur kamu sekarang?</label>
+                <div class="gender-selector">
+                    <div class="gender-opt" onclick="selectAge('child')">
+                        <i class="fas fa-baby"></i>
+                        7-10 Tahun
+                    </div>
+                    <div class="gender-opt" onclick="selectAge('teen')">
+                        <i class="fas fa-user-graduate"></i>
+                        11-17 Tahun
+                    </div>
+                </div>
             </div>
-
-            <div class="info-box">
-                <i class="fas fa-info-circle"></i>
-                <p>Nama ini akan tercetak di kartu digital kamu.</p>
-            </div>
-
-            <button class="btn-primary" id="btnSubmit" onclick="submitToSupabase()">
-                <span>Cetak Kartu Ajaibku 🚀</span>
-                <i class="fas fa-spinner fa-spin hidden loading-icon"></i>
-            </button>
         </div>
 
-        <!-- STEP 2: FINAL REVEAL & DOWNLOAD -->
-        <div id="final-step" class="wizard-step fade-in">
-            <div class="success-badge"><i class="fas fa-check-circle"></i> Berhasil!</div>
-            <h2>Selamat Datang!</h2>
-            <p class="subtitle">Kartu Platinum-mu sudah siap digunakan.</p>
+        <!-- STEP 1 (KIDS): DATA DIRI -->
+        <div id="step-1-kids" class="step-container">
+            <div class="kids-hero">
+                <i class="fas fa-child-dress"></i>
+                <h2>Anak-Anak Hebat! ⭐</h2>
+                <p>Yuk isi datamu dulu ya!</p>
+            </div>
             
-            <div class="card-scene">
-                <div id="cardPreview" class="card-visual">
-                    <div class="card-bg-pattern"></div>
-                    <div class="card-front">
-                        <div class="card-header">
-                            <span class="bank-name">BANK DEVISA</span>
-                            <div class="chip"></div>
-                        </div>
-                        <div class="card-body">
-                            <div id="cardNumberDisplay" class="number">0000 0000 0000 0000</div>
-                        </div>
-                        <div class="card-footer">
-                            <div class="holder-info">
-                                <small>PEMILIK KARTU</small>
-                                <div id="cardNameDisplay" class="name">NAMA LENGKAP</div>
-                            </div>
-                            <div class="card-brand">PLATINUM</div>
-                        </div>
+            <div class="form-group">
+                <label class="form-label">Kamu Anak Laki-laki atau Perempuan?</label>
+                <div class="gender-selector">
+                    <div class="gender-opt" id="genderM" onclick="selectGender('M')">
+                        <i class="fas fa-mars"></i> Laki-laki
+                    </div>
+                    <div class="gender-opt" id="genderF" onclick="selectGender('F')">
+                        <i class="fas fa-venus"></i> Perempuan
                     </div>
                 </div>
             </div>
 
-            <button class="btn-primary btn-download" onclick="downloadCard()">
-                <i class="fas fa-camera"></i> Simpan Gambar Kartu
+            <div class="form-group">
+                <label class="form-label">Nama Panggilan Kamu</label>
+                <input type="text" id="kidsName" class="input-box" placeholder="Contoh: Budi, Siti...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Nama Sekolahmu</label>
+                <input type="text" id="kidsSchool" class="input-box" placeholder="SD Negeri 1...">
+            </div>
+
+            <button class="btn-main" onclick="nextStep(2)">
+                Lanjut <i class="fas fa-arrow-right"></i>
             </button>
-            <br>
-            <a href="../../" class="btn-text">Kembali ke Halaman Utama</a>
         </div>
 
-    </main>
+        <!-- STEP 2 (KIDS): GURU -->
+        <div id="step-2-kids" class="step-container">
+            <div class="kids-hero">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h2>Izin Orang Tua 👨‍👩‍👧‍👦</h2>
+                <p>Siapa nama guru atau orang tua yang mengizinkan?</p>
+            </div>
 
-    <!-- CUSTOM TOAST NOTIFICATION -->
-    <div id="toast" class="toast hidden">
-        <i class="fas fa-exclamation-circle"></i>
-        <span id="toastMsg">Pesan notifikasi</span>
+            <div class="form-group">
+                <label class="form-label">Nama Guru / Orang Tua</label>
+                <input type="text" id="kidsGuardian" class="input-box" placeholder="Nama Pak Guru...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Kartu ini buat apa?</label>
+                <div class="gender-selector">
+                    <div class="gender-opt" onclick="selectPurpose('main')">Main-main</div>
+                    <div class="gender-opt" onclick="selectPurpose('belajar')">Belajar</div>
+                    <div class="gender-opt" onclick="selectPurpose('hutang')">Simpan Uang</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Siapa yang pegang kartu ini?</label>
+                <div class="gender-selector">
+                    <div class="gender-opt selected" onclick="selectHolder('saya')">Saya Sendiri</div>
+                    <div class="gender-opt" onclick="selectHolder('ortu')">Orang Tua</div>
+                </div>
+            </div>
+
+            <button class="btn-main" onclick="nextStep(3)">
+                Lanjut <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- STEP 3 (KIDS): NEGARA & AUTO MONEY -->
+        <div id="step-3-kids" class="step-container">
+            <div class="kids-hero">
+                <i class="fas fa-globe-asia"></i>
+                <h2>Dari Mana Kamu? 🌏</h2>
+                <p>Pilih negara domisilimu ya!</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Negara</label>
+                <select id="kidsCountry" class="input-box">
+                    <option value="ID">Indonesia 🇮🇩</option>
+                    <option value="US">Amerika Serikat 🇺🇸</option>
+                    <option value="GB">Inggris 🇬🇧</option>
+                </select>
+            </div>
+
+            <div style="background:#eff6ff; padding:15px; border-radius:15px; border:1px dashed #3b82f6; text-align:center; margin-bottom:20px;">
+                <i class="fas fa-gift"></i> <strong>Bonus! Dapat Jatah Uang Awal!</strong>
+                <p style="font-size:0.8rem; color:#1e40af;">Karena kamu anak hebat, kamu dapat saldo awal IDR 100.000 otomatis!</p>
+            </div>
+
+            <button class="btn-main" onclick="nextStep(4)">
+                Lanjut <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- STEP 4 (KIDS): PIN -->
+        <div id="step-4-kids" class="step-container">
+            <div class="kids-hero">
+                <i class="fas fa-lock"></i>
+                <h2>Kode Rahasia 🔐</h2>
+                <p>Bikin 6 angka supaya aman ya!</p>
+            </div>
+
+            <div id="kidsPinDisplay" style="font-size:2rem; letter-spacing:10px; font-weight:900; color:var(--primary); margin-bottom:30px; text-align:center;">
+                • • • • • • •
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;">
+                <button class="gender-opt" onclick="pressPin(1)">1</button>
+                <button class="gender-opt" onclick="pressPin(2)">2</button>
+                <button class="gender-opt" onclick="pressPin(3)">3</button>
+                <button class="gender-opt" onclick="pressPin(4)">4</button>
+                <button class="gender-opt" onclick="pressPin(5)">5</button>
+                <button class="gender-opt" onclick="pressPin(6)">6</button>
+                <button class="gender-opt" style="color:#ef4444;" onclick="clearPin()">Hapus</button>
+                <button class="gender-opt" onclick="pressPin(0)">0</button>
+                <button class="gender-opt" onclick="backspacePin()">⬅</button>
+            </div>
+
+            <button class="btn-main" id="btnNextKids" disabled onclick="nextStep(5)">
+                Lanjut <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- STEP 5 (KIDS): SCROLL CEK -->
+        <div id="step-5-kids" class="step-container">
+            <div class="kids-hero">
+                <i class="fas fa-check-double"></i>
+                <h2>Yakin Sudah Benar? 🤔</h2>
+                <p>Scroll ke bawah dan ceklis semua ya!</p>
+            </div>
+
+            <div class="scroll-container" id="kidsScrollCheck">
+                <div class="scroll-item" onclick="toggleCheck(this, 1)">
+                    <i class="fas fa-square check-icon"></i>
+                    <span>Kamu sudah izin ke orang tua.</span>
+                </div>
+                <div class="scroll-item" onclick="toggleCheck(this, 2)">
+                    <i class="fas fa-square check-icon"></i>
+                    <span>Kamu tidak pakai nama asli.</span>
+                </div>
+                <div class="scroll-item" onclick="toggleCheck(this, 3)">
+                    <i class="fas fa-square check-icon"></i>
+                    <span>Kamu cuma mau main-main.</span>
+                </div>
+            </div>
+
+            <button class="btn-main" id="btnKidsCheck" disabled onclick="nextStep(6)">
+                Sudah, Lanjut!
+            </button>
+        </div>
+
+        <!-- STEP 6 (KIDS): BACA INSTRUKSI -->
+        <div id="step-6-kids" class="step-container">
+            <div class="kids-hero">
+                <i class="fas fa-book-reader"></i>
+                <h2>Baca Ini Dulu! 📖</h2>
+            </div>
+
+            <div class="form-group" style="background: white; padding:20px; border-radius:15px; text-align:left; line-height:1.6;">
+                <p><strong>Aturan Main BDN Kids:</strong></p>
+                <ul>
+                    <li>Jangan pakai nomor HP asli.</li>
+                    <li>Jangan pakai PIN ATM asli.</li>
+                    <li>Kartu ini cuma boleh dipakai di game ini saja ya.</li>
+                </ul>
+                <p style="margin-top:10px;"><em>Apakah kamu sudah mengerti dan setuju?</em></p>
+            </div>
+
+            <button class="btn-main" onclick="nextStep(7)">
+                Mengerti & Setuju!
+            </button>
+        </div>
+
+        <!-- STEP 7 (KIDS): LOADING & REVEAL -->
+        <div id="step-7-kids" class="step-container" style="text-align:center;">
+            <div id="kidsLoader">
+                <div class="loader-spinner"></div>
+                <h3>Sedang Mencetak...</h3>
+                <p id="kidsTimer">Tunggu sebentar ya...</p>
+            </div>
+
+            <!-- KARTU FINAL KIDS -->
+            <div id="kidsFinalCard" style="display:none;">
+                <i class="fas fa-star fa-3x" style="color:var(--accent); margin-bottom:10px;"></i>
+                <h2>Kartu Kamu Jadi! 🎉</h2>
+                <p>Tuh, kartunya cakep banget!</p>
+                
+                <div class="card-preview-box">
+                    <div class="bank-card" id="captureCardKids">
+                        <div class="card-bg-pattern"></div>
+                        <div class="card-row" style="align-items:center;">
+                            <span style="font-weight:800; color:var(--accent);">BANK DEVISA KIDS</span>
+                            <div class="card-chip"></div>
+                        </div>
+                        <div class="card-num" id="kidsCardNum">0000 0000 0000 0000</div>
+                        <div class="card-row">
+                            <div>
+                                <small style="font-size:0.6rem; opacity:0.7;">PEMILIK</small>
+                                <div style="font-weight:700; text-transform:uppercase;" id="kidsCardName">NAMA</div>
+                            </div>
+                            <div style="font-weight:800; font-style:italic; color:var(--accent);">JUNIOR</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background:#fff; padding:15px; border-radius:12px; margin-bottom:20px; font-size:0.8rem; color:#64748b;">
+                    <p>Bank Devisa Nusantara</p>
+                    <p>CVV: <span id="kidsCVV">***</span></p>
+                </div>
+
+                <button class="btn-main" onclick="downloadCard('kids')">
+                    <i class="fas fa-camera"></i> Simpan Gambar
+                </button>
+                <br><br>
+                <a href="../../" style="color:var(--primary); text-decoration:none; font-weight:700;">Kembali ke Menu</a>
+            </div>
+        </div>
+
+        <!-- STEP 1 (TEENS): BIODATA (Simplified) -->
+        <div id="step-1-teens" class="step-container">
+            <h2>Data Diri Remaja 👕</h2>
+            <div class="form-group">
+                <label class="form-label">Nama Lengkap (Boleh Panggilan)</label>
+                <input type="text" id="teenName" class="input-box" placeholder="Nama Kamu...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Sekolah/Kampus</label>
+                <input type="text" id="teenSchool" class="input-box" placeholder="Nama Sekolah...">
+            </div>
+            <button class="btn-main" onclick="nextStep(2)">Lanjut</button>
+        </div>
+
+        <!-- ... BISA DITAMBAHKAN STEP TEENS LAINNYA DISINI ... -->
+        <!-- UNTUK CONTOH INI SINGKAT LANGSUNG KE FINAL STEP JIKA TEENS -->
+
+        <!-- STEP FINAL TEENS -->
+        <div id="final-step-teens" class="step-container" style="text-align:center; display:none;">
+            <i class="fas fa-id-card fa-3x" style="color:var(--dark); margin-bottom:20px;"></i>
+            <h2>Registrasi Berhasil! ✅</h2>
+            <p>Kamu berhasil masuk database Bank Devisa Nusantara.</p>
+            <p style="font-size:0.8rem; color:#64748b;">Silakan login di halaman utama untuk menggunakan fitur.</p>
+            <br>
+            <a href="../../" class="btn-main">Ke Halaman Utama</a>
+        </div>
+
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script type="module" src="script.js"></script>
+    <!-- TOAST -->
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMsg">Pesan</span>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const SUPABASE_URL = 'https://ndopnxzbaygohzshqphi.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kb3BueHpiYXlnb2h6c2hxcGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzM4ODQsImV4cCI6MjA3OTMwOTg4NH0.nZC5kOVJeMAtfXlwchokXK4FLtPkPoUrxPQUzrz2C8I';
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // STATE
+        let currentMode = null; // 'child' or 'teen'
+        let currentStep = 0;
+        let totalSteps = 8; // 0 to 7 (Kids)
+        let formData = {};
+        let kidsPin = "";
+        let kidsChecks = [false, false, false];
+
+        // --- FUNGSI UMUM ---
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast');
+            const m = document.getElementById('toastMsg');
+            m.innerText = msg;
+            t.className = isError ? 'toast error show' : 'toast show';
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function updateDots() {
+            const container = document.getElementById('progressDots');
+            container.innerHTML = '';
+            const max = currentMode === 'child' ? 7 : 2; 
+            for(let i=0; i<=max; i++) {
+                const d = document.createElement('div');
+                d.className = 'dot';
+                if(i < currentStep) d.classList.add('completed');
+                if(i === currentStep) d.classList.add('active');
+                container.appendChild(d);
+            }
+        }
+
+        function selectAge(mode) {
+            currentMode = mode;
+            document.getElementById('step-0').classList.remove('active');
+            nextStep(1);
+        }
+
+        function nextStep(stepIndex) {
+            // Hide current step
+            const currentEl = document.querySelector('.step-container.active');
+            if(currentEl) currentEl.classList.remove('active');
+
+            // Logic switch step
+            if (currentMode === 'child') {
+                document.getElementById(`step-${stepIndex}-kids`).classList.add('active');
+            } else {
+                // Simplified teens logic
+                if(stepIndex === 1) document.getElementById('step-1-teens').classList.add('active');
+                if(stepIndex === 2) { 
+                    // Validate & Process Teens Directly (Shortened for brevity)
+                    processTeensRegistration(); 
+                    return; 
+                }
+            }
+            
+            currentStep = stepIndex;
+            updateDots();
+        }
+
+        // --- LOGIKA KIDS ---
+        
+        function selectGender(g) { formData.gender = g; 
+            document.querySelectorAll('#step-1-kids .gender-opt').forEach(e => e.classList.remove('selected'));
+            document.getElementById(g==='M'?'genderM':'genderF').classList.add('selected');
+        }
+
+        function selectPurpose(p) { formData.purpose = p; 
+            // Highlight selected opt (omitted for brevity)
+        }
+
+        function selectHolder(h) { formData.holder = h; }
+
+        function pressPin(n) {
+            if(kidsPin.length < 6) {
+                kidsPin += n;
+                updatePinDisplay();
+                if(kidsPin.length === 6) {
+                    document.getElementById('btnNextKids').disabled = false;
+                }
+            }
+        }
+
+        function clearPin() { kidsPin = ""; updatePinDisplay(); document.getElementById('btnNextKids').disabled = true; }
+        function backspacePin() { kidsPin = kidsPin.slice(0,-1); updatePinDisplay(); document.getElementById('btnNextKids').disabled = true; }
+        
+        function updatePinDisplay() {
+            let d = "";
+            for(let i=0; i<6; i++) {
+                d += i < kidsPin.length ? "● " : "○ ";
+            }
+            document.getElementById('kidsPinDisplay').innerText = d;
+        }
+
+        function toggleCheck(el, index) {
+            el.classList.toggle('active');
+            const icon = el.querySelector('.check-icon');
+            if(kidsChecks[index]) {
+                kidsChecks[index] = false;
+                icon.classList.remove('fa-check-square');
+                icon.classList.add('fa-square');
+            } else {
+                kidsChecks[index] = true;
+                icon.classList.remove('fa-square');
+                icon.classList.add('fa-check-square');
+            }
+
+            // Check if all 3 are true
+            if(kidsChecks.every(x => x)) {
+                document.getElementById('btnKidsCheck').disabled = false;
+            } else {
+                document.getElementById('btnKidsCheck').disabled = true;
+            }
+        }
+
+        async function submitKids() {
+            // Collect Data
+            formData.name = document.getElementById('kidsName').value;
+            formData.school = document.getElementById('kidsSchool').value;
+            formData.guardian = document.getElementById('kidsGuardian').value;
+            formData.country = document.getElementById('kidsCountry').value;
+            formData.pin = kidsPin;
+
+            if(!formData.name) return showToast("Nama belum diisi!", true);
+            if(!formData.school) return showToast("Sekolah belum diisi!", true);
+            if(kidsPin.length !== 6) return showToast("PIN belum lengkap!", true);
+
+            // Generate Card Number
+            const prefix = "4512";
+            const r = () => Math.floor(1000 + Math.random() * 9000);
+            const cardNo = `${prefix} ${r()} ${r()} ${r()}`;
+            const cvv = Math.floor(100 + Math.random() * 900);
+
+            try {
+                await _supabase.from('pendaftaran_simulasi').insert([{
+                    nama_lengkap: formData.name,
+                    sekolah: formData.school,
+                    mode: 'kids',
+                    nomor_kartu: cardNo,
+                    cvv: cvv,
+                    pin: formData.pin,
+                    country: formData.country,
+                    saldo: 100000 // Kids get 100k auto
+                }]);
+
+                // Simulate Printing
+                const timer = document.getElementById('kidsTimer');
+                let sec = 5;
+                const intv = setInterval(() => {
+                    sec--;
+                    if(sec > 0) timer.innerText = `Mencetak... ${sec}`;
+                    else {
+                        clearInterval(intv);
+                        document.getElementById('kidsLoader').style.display = 'none';
+                        document.getElementById('kidsFinalCard').style.display = 'block';
+                        
+                        // Fill Card
+                        document.getElementById('kidsCardNum').innerText = cardNo;
+                        document.getElementById('kidsCardName').innerText = formData.name.toUpperCase();
+                        document.getElementById('kidsCVV').innerText = cvv;
+                        
+                        confetti({ particleCount: 150, spread: 100 });
+                    }
+                }, 1000);
+
+            } catch(e) {
+                showToast("Gagal menyimpan!", true);
+                console.error(e);
+            }
+        }
+
+        // Override nextStep for Step 6 & 7 (Kids)
+        window.nextStep = (step) => {
+            if(step === 7) {
+                submitKids(); // Logic Submit
+            } else {
+                const currentEl = document.querySelector('.step-container.active');
+                if(currentEl) currentEl.classList.remove('active');
+                document.getElementById(`step-${step}-kids`).classList.add('active');
+                currentStep = step;
+                updateDots();
+            }
+        }
+
+        async function processTeensRegistration() {
+            // Simple placeholder for Teens
+            const name = document.getElementById('teenName').value;
+            if(!name) return showToast("Nama wajib diisi!", true);
+
+            const btn = document.querySelector('#step-1-teens .btn-main');
+            btn.innerText = "Loading...";
+            btn.disabled = true;
+
+            const cardNo = "0812 " + Math.floor(1000+Math.random()*9000) + " " + Math.floor(1000+Math.random()*9000) + " " + Math.floor(1000+Math.random()*9000);
+            
+            try {
+                await _supabase.from('pendaftaran_simulasi').insert([{
+                    nama_lengkap: name,
+                    sekolah: document.getElementById('teenSchool').value,
+                    mode: 'teen',
+                    nomor_kartu: cardNo,
+                    saldo: 500000 // Teens get more
+                }]);
+
+                document.getElementById('step-1-teens').style.display = 'none';
+                document.getElementById('final-step-teens').style.display = 'block';
+                confetti();
+
+            } catch(e) {
+                showToast("Error!", true);
+                btn.innerText = "Lanjut";
+                btn.disabled = false;
+            }
+        }
+
+        // --- DOWNLOAD LOGIC ---
+        window.downloadCard = (type) => {
+            const el = type === 'kids' ? document.getElementById('captureCardKids') : document.querySelector('.bank-card');
+            if(!el) return;
+
+            html2canvas(el, { scale: 2, backgroundColor: null }).then(canvas => {
+                const a = document.createElement('a');
+                a.download = `KARTU_BDN_${Date.now()}.png`;
+                a.href = canvas.toDataURL();
+                a.click();
+            });
+        };
+
+        // Init
+        updateDots();
+
+    </script>
 </body>
 </html>
