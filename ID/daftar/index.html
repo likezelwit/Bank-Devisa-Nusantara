@@ -4,756 +4,872 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="robots" content="noindex, nofollow">
-    <title>Pendaftaran Seru | BDN</title>
-    
-    <!-- FONTS & ICONS -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Registrasi Kartu Platinum | BDN</title>
     
     <!-- LIBRARIES -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+    <!-- STYLE.CSS START (Style Internal) -->
     <style>
         :root {
-            --primary: #4f46e5; /* Biru ceria */
-            --accent: #f59e0b;  /* Oranye */
-            --success: #22c55e; /* Hijau */
-            --dark: #1e293b;
-            --bg: #f8fafc;
-            --kid-card: #fef3c7;
+            --primary: #0f172a; /* Navy BDN */
+            --accent: #b8924e;  /* Emas BDN */
+            --accent-hover: #d4a862;
+            --success: #10b981;
+            --bg-light: #f1f5f9;
+            --white: #ffffff;
+            --gray: #94a3b8;
+            --danger: #ef4444;
+            --radius: 16px;
+            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            font-family: 'Nunito', sans-serif;
-            background-color: var(--bg);
-            background-image: radial-gradient(#e0e7ff 1px, transparent 1px);
-            background-size: 20px 20px;
-            color: var(--dark);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--primary);
             margin: 0;
-            padding: 20px;
+            padding: 0;
             min-height: 100vh;
-        }
-
-        .container {
-            max-width: 500px;
-            margin: auto;
-        }
-
-        /* HEADER */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .logo-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            background: white;
-            padding: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            margin-bottom: 10px;
-        }
-        .progress-dots {
             display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            flex-direction: column;
         }
-        .dot {
-            width: 12px; height: 12px;
-            border-radius: 50%;
-            background: #cbd5e1;
-            transition: 0.3s;
-        }
-        .dot.active { background: var(--primary); transform: scale(1.2); }
-        .dot.completed { background: var(--success); }
 
-        /* STEP CONTAINERS */
-        .step-container {
-            display: none;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* --- NAVBAR --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        .step-container.active { display: block; }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-        /* INPUT STYLES */
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-label {
-            display: block;
-            font-weight: 800;
+        .logo { font-weight: 800; font-size: 1.5rem; color: var(--primary); letter-spacing: -0.5px; }
+        .logo span { color: var(--accent); }
+        .btn-back { 
+            background: #e2e8f0; 
+            color: var(--primary); 
+            padding: 10px 20px; 
+            border-radius: 50px; 
+            text-decoration: none; 
+            font-weight: 700; 
             font-size: 0.9rem;
-            color: var(--dark);
-            margin-bottom: 8px;
+            transition: 0.2s;
+        }
+        .btn-back:hover { background: #cbd5e1; }
+
+        /* --- MAIN CONTAINER --- */
+        main {
+            flex: 1;
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* --- WIZARD STEPS --- */
+        .wizard-step {
+            display: none; /* Hidden by default */
+            animation: slideUp 0.4s ease-out;
+        }
+        .wizard-step.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2 { margin: 0 0 10px 0; font-weight: 800; line-height: 1.2; }
+        h1 { font-size: 1.8rem; }
+        h2 { font-size: 1.5rem; }
+        p.subtitle { color: var(--gray); font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6; }
+
+        /* --- DOB INPUT (New Design) --- */
+        .dob-wrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: var(--white);
+            padding: 10px;
+            border-radius: var(--radius);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .dob-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dob-box label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--gray);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .dob-box input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-align: center;
+            padding: 5px 0;
+            outline: none;
+            border-bottom: 2px solid transparent;
+            transition: 0.3s;
+            font-family: monospace; /* Monospace untuk alignment */
+        }
+
+        .dob-box input:focus { border-bottom-color: var(--accent); }
+        .dob-separator { align-self: flex-end; font-size: 1.5rem; font-weight: bold; color: var(--gray); padding-bottom: 5px; }
+
+        /* --- FORM ELEMENTS --- */
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; color: var(--primary); }
+        
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: 0.3s;
+            background: var(--white);
         }
         
-        .input-box {
-            background: white;
-            border: 3px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 15px 20px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            width: 100%;
-            box-sizing: border-box;
-            transition: 0.3s;
-            font-family: inherit;
-        }
-        .input-box:focus {
-            border-color: var(--primary);
+        input:focus, select:focus {
+            border-color: var(--accent);
             outline: none;
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            box-shadow: 0 0 0 3px rgba(184, 146, 78, 0.1);
         }
 
-        /* KIDS INPUTS */
-        .gender-selector { display: flex; gap: 10px; }
-        .gender-opt {
+        /* Gender Selector */
+        .gender-options { display: flex; gap: 10px; }
+        .gender-option {
             flex: 1;
-            background: #f1f5f9;
-            border: 2px solid transparent;
-            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             padding: 15px;
             text-align: center;
             cursor: pointer;
             transition: 0.3s;
         }
-        .gender-opt.selected {
-            background: #eff6ff;
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        .gender-opt i { font-size: 1.5rem; display: block; margin-bottom: 5px; }
+        .gender-option.selected { border-color: var(--accent); background: #fffbeb; color: var(--accent); }
+        .gender-option i { font-size: 1.5rem; margin-bottom: 5px; display: block; }
+        .gender-option span { font-size: 0.8rem; font-weight: 700; }
 
-        /* BUTTONS */
-        .btn-main {
+        /* PIN Input */
+        .pin-input { letter-spacing: 10px; text-align: center; font-family: monospace; font-size: 1.5rem !important; }
+
+        /* Checkboxes (Legal) */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--white);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 12px;
+        }
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px; height: 20px; margin-top: 3px; accent-color: var(--accent);
+        }
+        .checkbox-text { font-size: 0.85rem; color: #475569; line-height: 1.4; }
+
+        /* --- PROGRESS STEPS --- */
+        .step-progress { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 30px; 
+            position: relative; 
+        }
+        .step-progress::before {
+            content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #e2e8f0; z-index: 0; transform: translateY(-50%);
+        }
+        .step-dot {
+            width: 30px; height: 30px; border-radius: 50%; background: #e2e8f0; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; font-size: 0.8rem; color: var(--gray);
+            position: relative; z-index: 1; transition: 0.3s;
+        }
+        .step-dot.active { background: var(--accent); color: var(--white); box-shadow: 0 0 0 4px rgba(184, 146, 78, 0.2); }
+        .step-dot.completed { background: var(--primary); color: var(--white); }
+
+        /* --- BUTTONS --- */
+        .btn-primary {
             width: 100%;
             padding: 18px;
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 20px;
-            font-size: 1.1rem;
-            font-weight: 900;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
             transition: 0.2s;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             gap: 10px;
         }
-        .btn-main:active { transform: scale(0.95); }
-        .btn-main:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; }
 
-        /* CARD PREVIEW (FINAL) */
-        .card-preview-box {
-            perspective: 1000px;
-            margin: 30px 0;
+        /* --- CARD VISUAL & FLIP --- */
+        .card-container { perspective: 1000px; width: 100%; max-width: 360px; height: 230px; margin: 30px auto; }
+        .card-inner {
+            position: relative; width: 100%; height: 100%; text-align: center;
+            transition: transform 0.8s; transform-style: preserve-3d;
         }
-        .bank-card {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            border-radius: 20px;
-            padding: 25px;
+        .card-inner.flipped { transform: rotateY(180deg); }
+
+        .card-face {
+            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            border-radius: 20px; padding: 25px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: white;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.3);
             border: 1px solid rgba(255,255,255,0.1);
-            position: relative;
             overflow: hidden;
-            min-height: 220px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
         }
-        .card-bg-pattern {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background-image: radial-gradient(rgba(255,255,255,0.1) 2px, transparent 2px);
-            background-size: 20px 20px;
-            pointer-events: none;
-        }
-        .card-row { display: flex; justify-content: space-between; align-items: flex-end; }
-        .card-num { font-family: monospace; font-size: 1.4rem; letter-spacing: 2px; margin: 20px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .card-chip { width: 50px; height: 40px; background: linear-gradient(135deg, #fbbf24, #d97706); border-radius: 6px; }
         
-        /* TOAST */
+        .card-back { transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: space-between; }
+
+        .chip {
+            width: 50px; height: 40px; background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            border-radius: 6px; margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        .chip::after { content:''; position: absolute; top: 50%; width: 100%; height: 1px; background: rgba(0,0,0,0.2); left: 0; }
+        .chip::before { content:''; position: absolute; left: 50%; height: 100%; width: 1px; background: rgba(0,0,0,0.2); top: 0; }
+
+        .card-number { font-family: monospace; font-size: 1.4rem; letter-spacing: 2px; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        
+        .card-row { display: flex; justify-content: space-between; align-items: flex-end; text-align: left; }
+        .card-label { font-size: 0.6rem; text-transform: uppercase; opacity: 0.7; margin-bottom: 4px; }
+        .card-value { font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .platinum-tag {
+            font-style: italic; font-weight: 800; color: var(--accent); font-size: 1.2rem;
+            position: absolute; top: 25px; right: 25px;
+        }
+
+        .mag-stripe { width: 100%; height: 40px; background: #000; margin: 20px 0; }
+        .cvv-area { background: white; color: black; padding: 10px; border-radius: 4px; text-align: right; font-family: monospace; font-weight: bold; margin-top: auto; }
+        .bank-msg { font-size: 0.6rem; opacity: 0.6; margin-top: 15px; text-align: left; }
+
+        /* --- MODAL & TOAST --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9); z-index: 200;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: white; padding: 30px; border-radius: 20px; text-align: center;
+            max-width: 85%; animation: popIn 0.3s;
+        }
+        .modal-icon { font-size: 4rem; margin-bottom: 15px; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
         .toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
-            background: var(--dark); color: white;
-            padding: 12px 24px; border-radius: 50px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: 0.4s; z-index: 9999;
-            font-weight: 700; display: flex; gap: 10px; align-items: center;
+            background: var(--primary); color: white; padding: 12px 24px;
+            border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 999; transition: 0.4s; font-weight: 600; display: flex; align-items: center; gap: 10px;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast.error { background: #ef4444; }
-
-        /* SCROLL CEK */
-        .scroll-container {
-            max-height: 150px;
-            overflow-y: auto;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 10px;
-            margin-bottom: 20px;
-            text-align: left;
-            background: #fff;
+        
+        /* --- SCROLL CHECK ANIMATION --- */
+        .scan-container {
+            height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; margin: 20px 0; position: relative;
         }
-        .scroll-item {
-            display: flex; align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border-bottom: 1px solid #f1f5f9;
-            cursor: pointer;
+        .scan-line {
+            height: 100%; background: var(--accent); width: 0%;
+            animation: scan 2s infinite ease-in-out;
         }
-        .scroll-item:last-child { border-bottom: none; }
-        .scroll-item:hover { background: #f8fafc; }
-        .check-icon { color: #cbd5e1; transition: 0.2s; }
-        .scroll-item.active .check-icon { color: var(--success); }
+        @keyframes scan { 0% { width: 0; left: 0; } 50% { width: 100%; left: 0; } 100% { width: 0; left: 100%; } }
 
-        .loader-spinner {
-            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary);
-            border-radius: 50%; width: 40px; height: 40px;
-            animation: spin 1s linear infinite; margin: 20px auto;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
 
-        /* KIDS ICON BIG */
-        .kids-hero { text-align: center; margin-bottom: 30px; }
-        .kids-hero i { font-size: 5rem; color: var(--accent); animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-
+        /* Processing Timer */
+        .timer-display { font-size: 3rem; font-weight: 800; color: var(--accent); margin: 20px 0; font-family: monospace; }
     </style>
+    <!-- STYLE.CSS END -->
+
 </head>
 <body>
 
-    <div class="container">
-        <!-- NAVBAR -->
-        <div class="header">
-            <div class="logo-img">
-                <img src="https://i.ibb.co.com/wh8tnvk1/Gemini-Generated-Image-othv9aothv9aothv.png" style="width:100%; border-radius:10px;">
-            </div>
-            <h1 style="margin:0;">BDN<span style="color:var(--primary);">.</span> Kids</h1>
-            <div class="progress-dots" id="progressDots">
-                <!-- Dots generated by JS -->
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">BDN<span>.</span></div>
+        <a href="../../" class="btn-back"><i class="fas fa-times"></i> Batal</a>
+    </nav>
+
+    <main>
+        <!-- TOAST NOTIFICATION -->
+        <div id="toast" class="toast">
+            <i class="fas fa-info-circle"></i> <span id="toastMsg">Pesan</span>
+        </div>
+
+        <!-- MODAL KIDS CHECK -->
+        <div id="kidsModal" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-icon"><i class="fas fa-child" style="color: var(--accent);"></i></div>
+                <h2>Kamu Anak-Anak!</h2>
+                <p>Mode edukasi aktif. Pastikan izin dari orang tua saat membuat kartu.</p>
+                <button class="btn-primary" onclick="closeModal()">Saya Mengerti</button>
             </div>
         </div>
 
-        <!-- STEP 0: PILIH USIA -->
-        <div id="step-0" class="step-container active">
-            <div style="text-align:center;">
-                <i class="fas fa-child fa-4x" style="color:var(--dark); margin-bottom:20px;"></i>
-                <h2>Halo Teman! 🙋‍♂️</h2>
-                <p>Kamu mau bikin kartu nama sendiri?</p>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Umur kamu sekarang?</label>
-                <div class="gender-selector">
-                    <div class="gender-opt" onclick="selectAge('child')">
-                        <i class="fas fa-baby"></i>
-                        7-10 Tahun
-                    </div>
-                    <div class="gender-opt" onclick="selectAge('teen')">
-                        <i class="fas fa-user-graduate"></i>
-                        11-17 Tahun
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- STEP 0: AGE GATE (REDESIGNED) -->
+        <div id="step-0" class="wizard-step active">
+            <h1>Tanggal Lahir</h1>
+            <p class="subtitle">Masukkan tanggal lahir kamu untuk memulai pendaftaran.</p>
 
-        <!-- STEP 1 (KIDS): DATA DIRI -->
-        <div id="step-1-kids" class="step-container">
-            <div class="kids-hero">
-                <i class="fas fa-child-dress"></i>
-                <h2>Anak-Anak Hebat! ⭐</h2>
-                <p>Yuk isi datamu dulu ya!</p>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Kamu Anak Laki-laki atau Perempuan?</label>
-                <div class="gender-selector">
-                    <div class="gender-opt" id="genderM" onclick="selectGender('M')">
-                        <i class="fas fa-mars"></i> Laki-laki
-                    </div>
-                    <div class="gender-opt" id="genderF" onclick="selectGender('F')">
-                        <i class="fas fa-venus"></i> Perempuan
-                    </div>
+            <div class="dob-wrapper">
+                <div class="dob-box">
+                    <label>Hari</label>
+                    <input type="number" id="dobDD" placeholder="DD" maxlength="2" inputmode="numeric" oninput="limitInput(this, 2)">
+                </div>
+                <div class="dob-separator">/</div>
+                <div class="dob-box">
+                    <label>Bulan</label>
+                    <input type="number" id="dobMM" placeholder="MM" maxlength="2" inputmode="numeric" oninput="limitInput(this, 2)">
+                </div>
+                <div class="dob-separator">/</div>
+                <div class="dob-box">
+                    <label>Tahun</label>
+                    <input type="number" id="dobYYYY" placeholder="YYYY" maxlength="4" inputmode="numeric" oninput="limitInput(this, 4)">
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Nama Panggilan Kamu</label>
-                <input type="text" id="kidsName" class="input-box" placeholder="Contoh: Budi, Siti...">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Nama Sekolahmu</label>
-                <input type="text" id="kidsSchool" class="input-box" placeholder="SD Negeri 1...">
-            </div>
-
-            <button class="btn-main" onclick="nextStep(2)">
+            <button class="btn-primary" onclick="checkAge()">
                 Lanjut <i class="fas fa-arrow-right"></i>
             </button>
         </div>
 
-        <!-- STEP 2 (KIDS): GURU -->
-        <div id="step-2-kids" class="step-container">
-            <div class="kids-hero">
-                <i class="fas fa-chalkboard-teacher"></i>
-                <h2>Izin Orang Tua 👨‍👩‍👧‍👦</h2>
-                <p>Siapa nama guru atau orang tua yang mengizinkan?</p>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Nama Guru / Orang Tua</label>
-                <input type="text" id="kidsGuardian" class="input-box" placeholder="Nama Pak Guru...">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Kartu ini buat apa?</label>
-                <div class="gender-selector">
-                    <div class="gender-opt" onclick="selectPurpose('main')">Main-main</div>
-                    <div class="gender-opt" onclick="selectPurpose('belajar')">Belajar</div>
-                    <div class="gender-opt" onclick="selectPurpose('hutang')">Simpan Uang</div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Siapa yang pegang kartu ini?</label>
-                <div class="gender-selector">
-                    <div class="gender-opt selected" onclick="selectHolder('saya')">Saya Sendiri</div>
-                    <div class="gender-opt" onclick="selectHolder('ortu')">Orang Tua</div>
-                </div>
-            </div>
-
-            <button class="btn-main" onclick="nextStep(3)">
-                Lanjut <i class="fas fa-arrow-right"></i>
-            </button>
+        <!-- PROGRESS STEPS HEADER (Visible on Step 1-6) -->
+        <div id="progressHeader" class="step-progress hidden">
+            <!-- Dots injected via JS -->
         </div>
 
-        <!-- STEP 3 (KIDS): NEGARA & AUTO MONEY -->
-        <div id="step-3-kids" class="step-container">
-            <div class="kids-hero">
-                <i class="fas fa-globe-asia"></i>
-                <h2>Dari Mana Kamu? 🌏</h2>
-                <p>Pilih negara domisilimu ya!</p>
+        <!-- STEP 1: IDENTITAS -->
+        <div id="step-1" class="wizard-step">
+            <h2>Identitas Diri</h2>
+            <p class="subtitle">Langkah 1 dari 7</p>
+
+            <div class="form-group">
+                <label>Jenis Kelamin</label>
+                <div class="gender-options">
+                    <div class="gender-option" onclick="selectGender('Laki-laki', this)">
+                        <i class="fas fa-mars"></i>
+                        <span>Laki-laki</span>
+                    </div>
+                    <div class="gender-option" onclick="selectGender('Perempuan', this)">
+                        <i class="fas fa-venus"></i>
+                        <span>Perempuan</span>
+                    </div>
+                </div>
+                <input type="hidden" id="genderInput">
             </div>
 
             <div class="form-group">
-                <label class="form-label">Negara</label>
-                <select id="kidsCountry" class="input-box">
-                    <option value="ID">Indonesia 🇮🇩</option>
-                    <option value="US">Amerika Serikat 🇺🇸</option>
-                    <option value="GB">Inggris 🇬🇧</option>
+                <label>Nama Lengkap</label>
+                <input type="text" id="fullName" placeholder="Contoh: Budi Santoso">
+            </div>
+
+            <div class="form-group">
+                <label>Nama Sekolah</label>
+                <input type="text" id="schoolName" placeholder="Contoh: SD Negeri 01 Jakarta">
+            </div>
+
+            <button class="btn-primary" onclick="validateAndNext(1)">Lanjut <i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <!-- STEP 2: KEWAJIBAN & TUJUAN -->
+        <div id="step-2" class="wizard-step">
+            <h2>Kewajiban</h2>
+            <p class="subtitle">Langkah 2 dari 7</p>
+
+            <div class="form-group">
+                <label>Nama Guru Wali</label>
+                <input type="text" id="teacherName" placeholder="Nama Guru">
+            </div>
+
+            <div class="form-group">
+                <label>Perizinan Guru</label>
+                <select id="teacherPermit">
+                    <option value="">-- Pilih Status --</option>
+                    <option value="Sudah Diizinkan">Sudah Diizinkan</option>
+                    <option value="Belum Diizinkan">Belum Diizinkan</option>
                 </select>
             </div>
 
-            <div style="background:#eff6ff; padding:15px; border-radius:15px; border:1px dashed #3b82f6; text-align:center; margin-bottom:20px;">
-                <i class="fas fa-gift"></i> <strong>Bonus! Dapat Jatah Uang Awal!</strong>
-                <p style="font-size:0.8rem; color:#1e40af;">Karena kamu anak hebat, kamu dapat saldo awal IDR 100.000 otomatis!</p>
+            <div class="form-group">
+                <label>Tujuan Pembuatan Kartu</label>
+                <select id="cardPurpose">
+                    <option value="">-- Pilih Tujuan --</option>
+                    <option value="Edukasi Keuangan">Edukasi Keuangan</option>
+                    <option value="Tabungan Hadiah">Tabungan Hadiah</option>
+                    <option value="Tugas Sekolah">Tugas Sekolah</option>
+                </select>
             </div>
 
-            <button class="btn-main" onclick="nextStep(4)">
-                Lanjut <i class="fas fa-arrow-right"></i>
-            </button>
+            <div class="form-group">
+                <label>Pengelola Kartu</label>
+                <select id="cardManager">
+                    <option value="">-- Siapa Mengelola? --</option>
+                    <option value="Orang Tua">Orang Tua</option>
+                    <option value="Saya Sendiri">Saya Sendiri</option>
+                </select>
+            </div>
+
+            <button class="btn-primary" onclick="validateAndNext(2)">Lanjut <i class="fas fa-arrow-right"></i></button>
         </div>
 
-        <!-- STEP 4 (KIDS): PIN -->
-        <div id="step-4-kids" class="step-container">
-            <div class="kids-hero">
-                <i class="fas fa-lock"></i>
-                <h2>Kode Rahasia 🔐</h2>
-                <p>Bikin 6 angka supaya aman ya!</p>
+        <!-- STEP 3: LOKASI & MATA UANG -->
+        <div id="step-3" class="wizard-step">
+            <h2>Lokasi</h2>
+            <p class="subtitle">Langkah 3 dari 7</p>
+
+            <div class="form-group">
+                <label>Tinggal di Negara</label>
+                <select id="countrySelect" onchange="updateCurrency()">
+                    <option value="">-- Pilih Negara --</option>
+                    <option value="Indonesia">Indonesia</option>
+                    <option value="Malaysia">Malaysia</option>
+                    <option value="Singapura">Singapura</option>
+                    <option value="Amerika Serikat">Amerika Serikat</option>
+                    <option value="Jepang">Jepang</option>
+                </select>
             </div>
 
-            <div id="kidsPinDisplay" style="font-size:2rem; letter-spacing:10px; font-weight:900; color:var(--primary); margin-bottom:30px; text-align:center;">
-                • • • • • • •
-            </div>
-
-            <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;">
-                <button class="gender-opt" onclick="pressPin(1)">1</button>
-                <button class="gender-opt" onclick="pressPin(2)">2</button>
-                <button class="gender-opt" onclick="pressPin(3)">3</button>
-                <button class="gender-opt" onclick="pressPin(4)">4</button>
-                <button class="gender-opt" onclick="pressPin(5)">5</button>
-                <button class="gender-opt" onclick="pressPin(6)">6</button>
-                <button class="gender-opt" style="color:#ef4444;" onclick="clearPin()">Hapus</button>
-                <button class="gender-opt" onclick="pressPin(0)">0</button>
-                <button class="gender-opt" onclick="backspacePin()">⬅</button>
-            </div>
-
-            <button class="btn-main" id="btnNextKids" disabled onclick="nextStep(5)">
-                Lanjut <i class="fas fa-arrow-right"></i>
-            </button>
-        </div>
-
-        <!-- STEP 5 (KIDS): SCROLL CEK -->
-        <div id="step-5-kids" class="step-container">
-            <div class="kids-hero">
-                <i class="fas fa-check-double"></i>
-                <h2>Yakin Sudah Benar? 🤔</h2>
-                <p>Scroll ke bawah dan ceklis semua ya!</p>
-            </div>
-
-            <div class="scroll-container" id="kidsScrollCheck">
-                <div class="scroll-item" onclick="toggleCheck(this, 1)">
-                    <i class="fas fa-square check-icon"></i>
-                    <span>Kamu sudah izin ke orang tua.</span>
-                </div>
-                <div class="scroll-item" onclick="toggleCheck(this, 2)">
-                    <i class="fas fa-square check-icon"></i>
-                    <span>Kamu tidak pakai nama asli.</span>
-                </div>
-                <div class="scroll-item" onclick="toggleCheck(this, 3)">
-                    <i class="fas fa-square check-icon"></i>
-                    <span>Kamu cuma mau main-main.</span>
+            <div class="info-box" style="background: #e0f2fe; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-coins" style="color: var(--primary);"></i>
+                    <div>
+                        <small style="display: block; color: #64748b;">Mata Uang Terdeteksi</small>
+                        <strong id="currencyDisplay" style="font-size: 1.2rem;">-</strong>
+                    </div>
                 </div>
             </div>
 
-            <button class="btn-main" id="btnKidsCheck" disabled onclick="nextStep(6)">
-                Sudah, Lanjut!
-            </button>
+            <button class="btn-primary" onclick="validateAndNext(3)">Lanjut <i class="fas fa-arrow-right"></i></button>
         </div>
 
-        <!-- STEP 6 (KIDS): BACA INSTRUKSI -->
-        <div id="step-6-kids" class="step-container">
-            <div class="kids-hero">
-                <i class="fas fa-book-reader"></i>
-                <h2>Baca Ini Dulu! 📖</h2>
+        <!-- STEP 4: PIN -->
+        <div id="step-4" class="wizard-step">
+            <h2>Keamanan</h2>
+            <p class="subtitle">Langkah 4 dari 7</p>
+
+            <div class="form-group">
+                <label>Buat PIN 6 Digit</label>
+                <input type="password" id="pinInput" class="pin-input" maxlength="6" inputmode="numeric" placeholder="000000">
             </div>
 
-            <div class="form-group" style="background: white; padding:20px; border-radius:15px; text-align:left; line-height:1.6;">
-                <p><strong>Aturan Main BDN Kids:</strong></p>
-                <ul>
-                    <li>Jangan pakai nomor HP asli.</li>
-                    <li>Jangan pakai PIN ATM asli.</li>
-                    <li>Kartu ini cuma boleh dipakai di game ini saja ya.</li>
-                </ul>
-                <p style="margin-top:10px;"><em>Apakah kamu sudah mengerti dan setuju?</em></p>
+            <div class="form-group">
+                <label>Konfirmasi PIN</label>
+                <input type="password" id="pinConfirm" class="pin-input" maxlength="6" inputmode="numeric" placeholder="000000">
             </div>
 
-            <button class="btn-main" onclick="nextStep(7)">
-                Mengerti & Setuju!
-            </button>
+            <button class="btn-primary" onclick="validateAndNext(4)">Lanjut <i class="fas fa-arrow-right"></i></button>
         </div>
 
-        <!-- STEP 7 (KIDS): LOADING & REVEAL -->
-        <div id="step-7-kids" class="step-container" style="text-align:center;">
-            <div id="kidsLoader">
-                <div class="loader-spinner"></div>
-                <h3>Sedang Mencetak...</h3>
-                <p id="kidsTimer">Tunggu sebentar ya...</p>
+        <!-- STEP 5: KELAYAKAN (SCROLL CHECK) -->
+        <div id="step-5" class="wizard-step">
+            <h2>Pengecekan Kelayakan</h2>
+            <p class="subtitle">Langkah 5 dari 7</p>
+            
+            <div style="text-align: center; margin: 40px 0;">
+                <i class="fas fa-microchip fa-3x" style="color: var(--accent); margin-bottom: 20px;"></i>
+                <div class="scan-container">
+                    <div class="scan-line"></div>
+                </div>
+                <p id="scanText" style="font-weight: 600; min-height: 24px;">Menghubungkan ke server pusat...</p>
             </div>
 
-            <!-- KARTU FINAL KIDS -->
-            <div id="kidsFinalCard" style="display:none;">
-                <i class="fas fa-star fa-3x" style="color:var(--accent); margin-bottom:10px;"></i>
-                <h2>Kartu Kamu Jadi! 🎉</h2>
-                <p>Tuh, kartunya cakep banget!</p>
+            <!-- Hidden button triggered by JS timer -->
+            <button id="btnStep5" class="btn-primary hidden" onclick="validateAndNext(5)">Lanjut <i class="fas fa-check"></i></button>
+        </div>
+
+        <!-- STEP 6: PERJANJIAN -->
+        <div id="step-6" class="wizard-step">
+            <h2>Perjanjian & Sanksi</h2>
+            <p class="subtitle">Langkah 6 dari 7</p>
+
+            <div style="max-height: 300px; overflow-y: auto; background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+                <h4 style="margin-top:0">Syarat & Ketentuan</h4>
+                <p style="font-size: 0.85rem; color: #64748b; text-align: justify;">
+                    1. Kartu ini adalah simulasi edukasi dan tidak memiliki nilai legal sebagai alat pembayaran yang sah.<br>
+                    2. Pemegang kartu wajib menjaga kerahasiaan PIN.<br>
+                    3. Penyalahgunaan data seperti memasukkan data orang lain tanpa izin dilarang keras.<br>
+                    4. Sanksi pelanggaran adalah pemblokiran kartu secara permanen dari sistem simulasi.
+                </p>
+            </div>
+
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="check1" onchange="checkLegal()">
+                <div class="checkbox-text">Saya setuju dengan data yang saya masukkan adalah benar.</div>
+            </div>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="check2" onchange="checkLegal()">
+                <div class="checkbox-text">Saya memahami sanksi jika melakukan pelanggaran.</div>
+            </div>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="check3" onchange="checkLegal()">
+                <div class="checkbox-text">Saya bertanggung jawab atas penggunaan kartu ini.</div>
+            </div>
+
+            <button id="btnStep6" class="btn-primary" disabled onclick="validateAndNext(6)">Ajukan Penerbitan <i class="fas fa-paper-plane"></i></button>
+        </div>
+
+        <!-- STEP 7: PENERBITAN (TIMER) -->
+        <div id="step-7" class="wizard-step">
+            <h2>Penerbitan Kartu</h2>
+            <p class="subtitle">Langkah 7 dari 7</p>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                <style> @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } </style>
+                <p>Sedang mencetak kartu fisik digital...</p>
                 
-                <div class="card-preview-box">
-                    <div class="bank-card" id="captureCardKids">
-                        <div class="card-bg-pattern"></div>
-                        <div class="card-row" style="align-items:center;">
-                            <span style="font-weight:800; color:var(--accent);">BANK DEVISA KIDS</span>
-                            <div class="card-chip"></div>
+                <div id="countdownTimer" class="timer-display">60</div>
+                <p style="font-size: 0.8rem; color: var(--gray);">Detik tersisa</p>
+            </div>
+        </div>
+
+        <!-- FINAL STEP: KARTU -->
+        <div id="final-step" class="wizard-step">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <i class="fas fa-check-circle fa-3x" style="color: var(--success);"></i>
+                <h2 style="margin-top: 10px;">Kartu Berhasil!</h2>
+            </div>
+
+            <div class="card-container">
+                <div class="card-inner" id="cardElement">
+                    <!-- FRONT -->
+                    <div class="card-face card-front">
+                        <div class="platinum-tag">PLATINUM</div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-weight: 800;">BDN</span>
+                            <div class="chip"></div>
                         </div>
-                        <div class="card-num" id="kidsCardNum">0000 0000 0000 0000</div>
+                        <div style="margin-top: 30px;">
+                            <small style="font-size: 0.6rem; opacity: 0.7;">NOMOR KARTU</small>
+                            <div class="card-number" id="cardNoDisplay">0000 0000 0000 0000</div>
+                        </div>
                         <div class="card-row">
                             <div>
-                                <small style="font-size:0.6rem; opacity:0.7;">PEMILIK</small>
-                                <div style="font-weight:700; text-transform:uppercase;" id="kidsCardName">NAMA</div>
+                                <div class="card-label">NAMA</div>
+                                <div class="card-value" id="cardNameDisplay">NAMA ANDA</div>
                             </div>
-                            <div style="font-weight:800; font-style:italic; color:var(--accent);">JUNIOR</div>
+                            <div style="text-align: right;">
+                                <div class="card-label">VERSI</div>
+                                <div class="card-value">V.2.0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- BACK -->
+                    <div class="card-face card-back">
+                        <div class="mag-stripe"></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="font-size: 0.8rem; font-weight: bold;">BANK DEVISA NUSANTARA</span>
+                            <i class="fas fa-lock" style="font-size: 0.8rem;"></i>
+                        </div>
+                        <div style="text-align: right; margin-bottom: 10px;">
+                            <small style="font-size: 0.6rem;">KODE KEAMANAN (CVV)</small>
+                            <div style="background: white; color: black; padding: 5px 10px; border-radius: 4px; display: inline-block; font-family: monospace; font-weight: bold;" id="cvvDisplay">123</div>
+                        </div>
+                        <div class="bank-msg">
+                            Kartu ini berlaku seumur hidup selama pemegang kartu taat aturan. Jika ditemukan harap kembalikan ke kantor BDN terdekat.
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div style="background:#fff; padding:15px; border-radius:12px; margin-bottom:20px; font-size:0.8rem; color:#64748b;">
-                    <p>Bank Devisa Nusantara</p>
-                    <p>CVV: <span id="kidsCVV">***</span></p>
-                </div>
-
-                <button class="btn-main" onclick="downloadCard('kids')">
-                    <i class="fas fa-camera"></i> Simpan Gambar
-                </button>
-                <br><br>
-                <a href="../../" style="color:var(--primary); text-decoration:none; font-weight:700;">Kembali ke Menu</a>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-primary" onclick="flipCard()" style="background: var(--gray);"><i class="fas fa-sync-alt"></i> Putar</button>
+                <button class="btn-primary" onclick="downloadCard()"><i class="fas fa-camera"></i> Simpan</button>
             </div>
         </div>
 
-        <!-- STEP 1 (TEENS): BIODATA (Simplified) -->
-        <div id="step-1-teens" class="step-container">
-            <h2>Data Diri Remaja 👕</h2>
-            <div class="form-group">
-                <label class="form-label">Nama Lengkap (Boleh Panggilan)</label>
-                <input type="text" id="teenName" class="input-box" placeholder="Nama Kamu...">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Sekolah/Kampus</label>
-                <input type="text" id="teenSchool" class="input-box" placeholder="Nama Sekolah...">
-            </div>
-            <button class="btn-main" onclick="nextStep(2)">Lanjut</button>
-        </div>
+    </main>
 
-        <!-- ... BISA DITAMBAHKAN STEP TEENS LAINNYA DISINI ... -->
-        <!-- UNTUK CONTOH INI SINGKAT LANGSUNG KE FINAL STEP JIKA TEENS -->
-
-        <!-- STEP FINAL TEENS -->
-        <div id="final-step-teens" class="step-container" style="text-align:center; display:none;">
-            <i class="fas fa-id-card fa-3x" style="color:var(--dark); margin-bottom:20px;"></i>
-            <h2>Registrasi Berhasil! ✅</h2>
-            <p>Kamu berhasil masuk database Bank Devisa Nusantara.</p>
-            <p style="font-size:0.8rem; color:#64748b;">Silakan login di halaman utama untuk menggunakan fitur.</p>
-            <br>
-            <a href="../../" class="btn-main">Ke Halaman Utama</a>
-        </div>
-
-    </div>
-
-    <!-- TOAST -->
-    <div id="toast" class="toast">
-        <i class="fas fa-info-circle"></i>
-        <span id="toastMsg">Pesan</span>
-    </div>
-
-    <!-- JAVASCRIPT -->
+    <!-- SCRIPT.JS START (Script Internal) -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
+        // --- CONFIG ---
         const SUPABASE_URL = 'https://ndopnxzbaygohzshqphi.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kb3BueHpiYXlnb2h6c2hxcGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzM4ODQsImV4cCI6MjA3OTMwOTg4NH0.nZC5kOVJeMAtfXlwchokXK4FLtPkPoUrxPQUzrz2C8I';
         const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // STATE
-        let currentMode = null; // 'child' or 'teen'
-        let currentStep = 0;
-        let totalSteps = 8; // 0 to 7 (Kids)
+        // --- STATE ---
         let formData = {};
-        let kidsPin = "";
-        let kidsChecks = [false, false, false];
+        let currentStep = 0;
+        const totalSteps = 7;
+        let countdownInterval;
 
-        // --- FUNGSI UMUM ---
-        function showToast(msg, isError = false) {
-            const t = document.getElementById('toast');
-            const m = document.getElementById('toastMsg');
-            m.innerText = msg;
-            t.className = isError ? 'toast error show' : 'toast show';
-            setTimeout(() => t.classList.remove('show'), 3000);
+        // --- GLOBAL FUNCTIONS (Attached to window for HTML onclick) ---
+        window.limitInput = (el, max) => {
+            if (el.value.length > max) el.value = el.value.slice(0, max);
         }
 
-        function updateDots() {
-            const container = document.getElementById('progressDots');
-            container.innerHTML = '';
-            const max = currentMode === 'child' ? 7 : 2; 
-            for(let i=0; i<=max; i++) {
-                const d = document.createElement('div');
-                d.className = 'dot';
-                if(i < currentStep) d.classList.add('completed');
-                if(i === currentStep) d.classList.add('active');
-                container.appendChild(d);
-            }
+        window.showToast = (msg, isError = false) => {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.innerText = msg;
+            toast.style.background = isError ? 'var(--danger)' : 'var(--primary)';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        function selectAge(mode) {
-            currentMode = mode;
-            document.getElementById('step-0').classList.remove('active');
-            nextStep(1);
+        window.selectGender = (val, el) => {
+            document.querySelectorAll('.gender-option').forEach(d => d.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('genderInput').value = val;
         }
 
-        function nextStep(stepIndex) {
-            // Hide current step
-            const currentEl = document.querySelector('.step-container.active');
-            if(currentEl) currentEl.classList.remove('active');
-
-            // Logic switch step
-            if (currentMode === 'child') {
-                document.getElementById(`step-${stepIndex}-kids`).classList.add('active');
+        window.updateCurrency = () => {
+            const map = {
+                'Indonesia': 'IDR (Rp)',
+                'Malaysia': 'MYR (RM)',
+                'Singapura': 'SGD ($)',
+                'Amerika Serikat': 'USD ($)',
+                'Jepang': 'JPY (¥)'
+            };
+            const country = document.getElementById('countrySelect').value;
+            const display = document.getElementById('currencyDisplay');
+            if(map[country]) {
+                display.innerText = map[country];
+                formData.currency = map[country];
             } else {
-                // Simplified teens logic
-                if(stepIndex === 1) document.getElementById('step-1-teens').classList.add('active');
-                if(stepIndex === 2) { 
-                    // Validate & Process Teens Directly (Shortened for brevity)
-                    processTeensRegistration(); 
-                    return; 
-                }
+                display.innerText = '-';
             }
+        }
+
+        window.checkLegal = () => {
+            const c1 = document.getElementById('check1').checked;
+            const c2 = document.getElementById('check2').checked;
+            const c3 = document.getElementById('check3').checked;
+            document.getElementById('btnStep6').disabled = !(c1 && c2 && c3);
+        }
+
+        window.closeModal = () => {
+            document.getElementById('kidsModal').style.display = 'none';
+        }
+
+        window.flipCard = () => {
+            document.getElementById('cardElement').classList.toggle('flipped');
+        }
+
+        // --- CORE LOGIC ---
+
+        window.checkAge = () => {
+            const dd = document.getElementById('dobDD').value;
+            const mm = document.getElementById('dobMM').value;
+            const yyyy = document.getElementById('dobYYYY').value;
+
+            if (!dd || !mm || !yyyy || dd.length < 2 || mm.length < 2 || yyyy.length < 4) {
+                return showToast("Mohon lengkapi tanggal lahir!", true);
+            }
+
+            const dob = new Date(`${yyyy}-${mm}-${dd}`);
+            if(isNaN(dob.getTime())) return showToast("Tanggal tidak valid!", true);
+
+            const age = new Date().getFullYear() - dob.getFullYear();
             
+            // Simpan data DOB
+            formData.dob = `${dd}/${mm}/${yyyy}`;
+            formData.age = age;
+
+            if (age < 7) {
+                return showToast("Maaf, minimal usia 7 tahun.", true);
+            }
+
+            // Setup Progress Dots
+            const header = document.getElementById('progressHeader');
+            header.innerHTML = '';
+            header.classList.remove('hidden');
+            for(let i=1; i<=7; i++) {
+                const dot = document.createElement('div');
+                dot.className = `step-dot ${i===1 ? 'active' : ''}`;
+                dot.innerText = i;
+                dot.id = `dot-${i}`;
+                header.appendChild(dot);
+            }
+
+            // Check Kids Mode
+            if (age < 17) {
+                document.getElementById('kidsModal').style.display = 'flex';
+            }
+
+            goToStep(1);
+        }
+
+        window.validateAndNext = (step) => {
+            // Validasi per langkah
+            if(step === 1) {
+                const gender = document.getElementById('genderInput').value;
+                const name = document.getElementById('fullName').value;
+                const school = document.getElementById('schoolName').value;
+                if(!gender || !name || !school) return showToast("Mohon lengkapi semua data!", true);
+                formData.gender = gender;
+                formData.name = name;
+                formData.school = school;
+            }
+            else if(step === 2) {
+                const teacher = document.getElementById('teacherName').value;
+                const permit = document.getElementById('teacherPermit').value;
+                const purpose = document.getElementById('cardPurpose').value;
+                const manager = document.getElementById('cardManager').value;
+                if(!teacher || !permit || !purpose || !manager) return showToast("Data belum lengkap!", true);
+                formData.teacher = teacher;
+                formData.permit = permit;
+                formData.purpose = purpose;
+                formData.manager = manager;
+            }
+            else if(step === 3) {
+                if(!document.getElementById('countrySelect').value) return showToast("Pilih negara!", true);
+                formData.country = document.getElementById('countrySelect').value;
+            }
+            else if(step === 4) {
+                const p1 = document.getElementById('pinInput').value;
+                const p2 = document.getElementById('pinConfirm').value;
+                if(p1.length !== 6 || p2.length !== 6) return showToast("PIN harus 6 digit!", true);
+                if(p1 !== p2) return showToast("Konfirmasi PIN tidak cocok!", true);
+                formData.pin = p1;
+            }
+            else if(step === 6) {
+                // Legal check handled by button disabled state
+            }
+
+            goToStep(step + 1);
+        }
+
+        function goToStep(stepIndex) {
+            // Hide current
+            document.querySelector('.wizard-step.active').classList.remove('active');
+            
+            // Update Progress Dots
+            document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('active', 'completed'));
+            for(let i=1; i<stepIndex; i++) {
+                document.getElementById(`dot-${i}`).classList.add('completed');
+            }
+            if(stepIndex <= 7) {
+                document.getElementById(`dot-${stepIndex}`).classList.add('active');
+            }
+
+            // Show next
+            const nextId = stepIndex === 8 ? 'final-step' : `step-${stepIndex}`;
+            document.getElementById(nextId).classList.add('active');
             currentStep = stepIndex;
-            updateDots();
+
+            // Logic spesifik per step
+            if(stepIndex === 5) runScanSimulation();
+            if(stepIndex === 7) runTimer();
+            if(stepIndex === 8) submitData();
         }
 
-        // --- LOGIKA KIDS ---
-        
-        function selectGender(g) { formData.gender = g; 
-            document.querySelectorAll('#step-1-kids .gender-opt').forEach(e => e.classList.remove('selected'));
-            document.getElementById(g==='M'?'genderM':'genderF').classList.add('selected');
-        }
-
-        function selectPurpose(p) { formData.purpose = p; 
-            // Highlight selected opt (omitted for brevity)
-        }
-
-        function selectHolder(h) { formData.holder = h; }
-
-        function pressPin(n) {
-            if(kidsPin.length < 6) {
-                kidsPin += n;
-                updatePinDisplay();
-                if(kidsPin.length === 6) {
-                    document.getElementById('btnNextKids').disabled = false;
+        function runScanSimulation() {
+            const txt = document.getElementById('scanText');
+            const btn = document.getElementById('btnStep5');
+            const messages = [
+                "Memverifikasi data biometrik...",
+                "Mengecek database keuangan...",
+                "Validasi sekolah & guru...",
+                "Analisis karakteristik...",
+                "Kelayakan DITERIMA."
+            ];
+            let i = 0;
+            txt.innerText = messages[0];
+            
+            const interval = setInterval(() => {
+                i++;
+                if(i < messages.length) {
+                    txt.innerText = messages[i];
+                } else {
+                    clearInterval(interval);
+                    btn.classList.remove('hidden');
                 }
-            }
+            }, 1000);
         }
 
-        function clearPin() { kidsPin = ""; updatePinDisplay(); document.getElementById('btnNextKids').disabled = true; }
-        function backspacePin() { kidsPin = kidsPin.slice(0,-1); updatePinDisplay(); document.getElementById('btnNextKids').disabled = true; }
-        
-        function updatePinDisplay() {
-            let d = "";
-            for(let i=0; i<6; i++) {
-                d += i < kidsPin.length ? "● " : "○ ";
-            }
-            document.getElementById('kidsPinDisplay').innerText = d;
+        function runTimer() {
+            let timeLeft = 60;
+            const display = document.getElementById('countdownTimer');
+            
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                display.innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    goToStep(8); // Go to Final
+                }
+            }, 1000);
         }
 
-        function toggleCheck(el, index) {
-            el.classList.toggle('active');
-            const icon = el.querySelector('.check-icon');
-            if(kidsChecks[index]) {
-                kidsChecks[index] = false;
-                icon.classList.remove('fa-check-square');
-                icon.classList.add('fa-square');
-            } else {
-                kidsChecks[index] = true;
-                icon.classList.remove('fa-square');
-                icon.classList.add('fa-check-square');
-            }
-
-            // Check if all 3 are true
-            if(kidsChecks.every(x => x)) {
-                document.getElementById('btnKidsCheck').disabled = false;
-            } else {
-                document.getElementById('btnKidsCheck').disabled = true;
-            }
-        }
-
-        async function submitKids() {
-            // Collect Data
-            formData.name = document.getElementById('kidsName').value;
-            formData.school = document.getElementById('kidsSchool').value;
-            formData.guardian = document.getElementById('kidsGuardian').value;
-            formData.country = document.getElementById('kidsCountry').value;
-            formData.pin = kidsPin;
-
-            if(!formData.name) return showToast("Nama belum diisi!", true);
-            if(!formData.school) return showToast("Sekolah belum diisi!", true);
-            if(kidsPin.length !== 6) return showToast("PIN belum lengkap!", true);
-
-            // Generate Card Number
+        async function submitData() {
+            // Generate Card Details
             const prefix = "4512";
-            const r = () => Math.floor(1000 + Math.random() * 9000);
-            const cardNo = `${prefix} ${r()} ${r()} ${r()}`;
+            const mid = Math.floor(1000 + Math.random() * 9000);
+            const mid2 = Math.floor(1000 + Math.random() * 9000);
+            const last = Math.floor(1000 + Math.random() * 9000);
+            const cardNo = `${prefix} ${mid} ${mid2} ${last}`;
             const cvv = Math.floor(100 + Math.random() * 900);
 
+            // Update UI
+            document.getElementById('cardNoDisplay').innerText = cardNo;
+            document.getElementById('cardNameDisplay').innerText = formData.name.toUpperCase();
+            document.getElementById('cvvDisplay').innerText = cvv;
+
+            // Simpan ke Supabase
             try {
                 await _supabase.from('pendaftaran_simulasi').insert([{
                     nama_lengkap: formData.name,
-                    sekolah: formData.school,
-                    mode: 'kids',
                     nomor_kartu: cardNo,
-                    cvv: cvv,
-                    pin: formData.pin,
-                    country: formData.country,
-                    saldo: 100000 // Kids get 100k auto
+                    detail_data: formData,
+                    created_at: new Date().toISOString()
                 }]);
-
-                // Simulate Printing
-                const timer = document.getElementById('kidsTimer');
-                let sec = 5;
-                const intv = setInterval(() => {
-                    sec--;
-                    if(sec > 0) timer.innerText = `Mencetak... ${sec}`;
-                    else {
-                        clearInterval(intv);
-                        document.getElementById('kidsLoader').style.display = 'none';
-                        document.getElementById('kidsFinalCard').style.display = 'block';
-                        
-                        // Fill Card
-                        document.getElementById('kidsCardNum').innerText = cardNo;
-                        document.getElementById('kidsCardName').innerText = formData.name.toUpperCase();
-                        document.getElementById('kidsCVV').innerText = cvv;
-                        
-                        confetti({ particleCount: 150, spread: 100 });
-                    }
-                }, 1000);
-
+                console.log("Data saved");
             } catch(e) {
-                showToast("Gagal menyimpan!", true);
-                console.error(e);
+                console.error("Error saving", e);
             }
+
+            // Confetti
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
         }
 
-        // Override nextStep for Step 6 & 7 (Kids)
-        window.nextStep = (step) => {
-            if(step === 7) {
-                submitKids(); // Logic Submit
-            } else {
-                const currentEl = document.querySelector('.step-container.active');
-                if(currentEl) currentEl.classList.remove('active');
-                document.getElementById(`step-${step}-kids`).classList.add('active');
-                currentStep = step;
-                updateDots();
-            }
-        }
-
-        async function processTeensRegistration() {
-            // Simple placeholder for Teens
-            const name = document.getElementById('teenName').value;
-            if(!name) return showToast("Nama wajib diisi!", true);
-
-            const btn = document.querySelector('#step-1-teens .btn-main');
-            btn.innerText = "Loading...";
-            btn.disabled = true;
-
-            const cardNo = "0812 " + Math.floor(1000+Math.random()*9000) + " " + Math.floor(1000+Math.random()*9000) + " " + Math.floor(1000+Math.random()*9000);
-            
-            try {
-                await _supabase.from('pendaftaran_simulasi').insert([{
-                    nama_lengkap: name,
-                    sekolah: document.getElementById('teenSchool').value,
-                    mode: 'teen',
-                    nomor_kartu: cardNo,
-                    saldo: 500000 // Teens get more
-                }]);
-
-                document.getElementById('step-1-teens').style.display = 'none';
-                document.getElementById('final-step-teens').style.display = 'block';
-                confetti();
-
-            } catch(e) {
-                showToast("Error!", true);
-                btn.innerText = "Lanjut";
-                btn.disabled = false;
-            }
-        }
-
-        // --- DOWNLOAD LOGIC ---
-        window.downloadCard = (type) => {
-            const el = type === 'kids' ? document.getElementById('captureCardKids') : document.querySelector('.bank-card');
-            if(!el) return;
-
-            html2canvas(el, { scale: 2, backgroundColor: null }).then(canvas => {
-                const a = document.createElement('a');
-                a.download = `KARTU_BDN_${Date.now()}.png`;
-                a.href = canvas.toDataURL();
-                a.click();
+        window.downloadCard = () => {
+            const card = document.getElementById('cardElement');
+            // Hide flip effect momentarily for clean shot or capture front only
+            html2canvas(card, { scale: 3 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `KARTU_BDN_${formData.name.replace(/\s/g, '_')}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+                showToast("Gambar tersimpan!");
             });
-        };
-
-        // Init
-        updateDots();
-
+        }
     </script>
+    <!-- SCRIPT.JS END -->
+
 </body>
 </html>
