@@ -230,7 +230,6 @@ async function submitData() {
             nama_lengkap: formData.name,
             nomor_kartu: cardNo,
             detail_data: formData,
-            created_at: new Date().toISOString()
         }]);
         console.log("Data saved");
     } catch(e) {
@@ -252,3 +251,4 @@ window.downloadCard = () => {
         showToast("Gambar tersimpan!");
     });
 }
+
