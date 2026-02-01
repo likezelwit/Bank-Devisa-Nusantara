@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="robots" content="noindex, nofollow">
-    <title>Registrasi Kartu Platinum | BDN</title>
+    <title>Platinum Card Registration | BDN</title>
     
     <!-- LIBRARIES -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -21,49 +21,49 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
-        <a href="../../" class="btn-back"><i class="fas fa-times"></i> Batal</a>
+        <a href="../../" class="btn-back"><i class="fas fa-times"></i> Cancel</a>
     </nav>
 
     <main>
         <!-- TOAST NOTIFICATION -->
         <div id="toast" class="toast">
-            <i class="fas fa-info-circle"></i> <span id="toastMsg">Pesan</span>
+            <i class="fas fa-info-circle"></i> <span id="toastMsg">Message</span>
         </div>
 
         <!-- MODAL KIDS CHECK -->
         <div id="kidsModal" class="modal-overlay">
             <div class="modal-box">
                 <div class="modal-icon"><i class="fas fa-child" style="color: var(--accent);"></i></div>
-                <h2>Kamu Anak-Anak!</h2>
-                <p>Mode edukasi aktif. Pastikan izin dari orang tua saat membuat kartu.</p>
-                <button class="btn-primary" onclick="closeModal()">Saya Mengerti</button>
+                <h2>You're a Kid!</h2>
+                <p>Education mode active. Please ensure you have parental consent to create this card.</p>
+                <button class="btn-primary" onclick="closeModal()">I Understand</button>
             </div>
         </div>
 
         <!-- STEP 0: AGE GATE -->
         <div id="step-0" class="wizard-step active">
-            <h1>Tanggal Lahir</h1>
-            <p class="subtitle">Masukkan tanggal lahir kamu untuk memulai pendaftaran.</p>
+            <h1>Date of Birth</h1>
+            <p class="subtitle">Enter your date of birth to start registration.</p>
 
             <div class="dob-wrapper">
                 <div class="dob-box">
-                    <label>Hari</label>
+                    <label>Day</label>
                     <input type="number" id="dobDD" placeholder="DD" maxlength="2" inputmode="numeric" oninput="limitInput(this, 2)">
                 </div>
                 <div class="dob-separator">/</div>
                 <div class="dob-box">
-                    <label>Bulan</label>
+                    <label>Month</label>
                     <input type="number" id="dobMM" placeholder="MM" maxlength="2" inputmode="numeric" oninput="limitInput(this, 2)">
                 </div>
                 <div class="dob-separator">/</div>
                 <div class="dob-box">
-                    <label>Tahun</label>
+                    <label>Year</label>
                     <input type="number" id="dobYYYY" placeholder="YYYY" maxlength="4" inputmode="numeric" oninput="limitInput(this, 4)">
                 </div>
             </div>
 
             <button class="btn-primary" onclick="checkAge()">
-                Lanjut <i class="fas fa-arrow-right"></i>
+                Continue <i class="fas fa-arrow-right"></i>
             </button>
         </div>
 
@@ -74,92 +74,92 @@
 
         <!-- STEP 1: IDENTITAS -->
         <div id="step-1" class="wizard-step">
-            <h2>Identitas Diri</h2>
-            <p class="subtitle">Langkah 1 dari 7</p>
+            <h2>Personal Identity</h2>
+            <p class="subtitle">Step 1 of 7</p>
 
             <div class="form-group">
-                <label>Jenis Kelamin</label>
+                <label>Gender</label>
                 <div class="gender-options">
-                    <div class="gender-option" onclick="selectGender('Laki-laki', this)">
+                    <div class="gender-option" onclick="selectGender('Male', this)">
                         <i class="fas fa-mars"></i>
-                        <span>Laki-laki</span>
+                        <span>Male</span>
                     </div>
-                    <div class="gender-option" onclick="selectGender('Perempuan', this)">
+                    <div class="gender-option" onclick="selectGender('Female', this)">
                         <i class="fas fa-venus"></i>
-                        <span>Perempuan</span>
+                        <span>Female</span>
                     </div>
                 </div>
                 <input type="hidden" id="genderInput">
             </div>
 
             <div class="form-group">
-                <label>Nama Lengkap</label>
-                <input type="text" id="fullName" placeholder="Contoh: Budi Santoso">
+                <label>Full Name</label>
+                <input type="text" id="fullName" placeholder="e.g., John Doe">
             </div>
 
             <div class="form-group">
-                <label>Nama Sekolah</label>
-                <input type="text" id="schoolName" placeholder="Contoh: SD Negeri 01 Jakarta">
+                <label>School Name</label>
+                <input type="text" id="schoolName" placeholder="e.g., Jakarta Public School 01">
             </div>
 
-            <button class="btn-primary" onclick="validateAndNext(1)">Lanjut <i class="fas fa-arrow-right"></i></button>
+            <button class="btn-primary" onclick="validateAndNext(1)">Continue <i class="fas fa-arrow-right"></i></button>
         </div>
 
         <!-- STEP 2: KEWAJIBAN & TUJUAN -->
         <div id="step-2" class="wizard-step">
-            <h2>Kewajiban</h2>
-            <p class="subtitle">Langkah 2 dari 7</p>
+            <h2>Obligations</h2>
+            <p class="subtitle">Step 2 of 7</p>
 
             <div class="form-group">
-                <label>Nama Guru Wali</label>
-                <input type="text" id="teacherName" placeholder="Nama Guru">
+                <label>Teacher / Guardian Name</label>
+                <input type="text" id="teacherName" placeholder="Teacher's Name">
             </div>
 
             <div class="form-group">
-                <label>Perizinan Guru</label>
+                <label>Teacher's Permission</label>
                 <select id="teacherPermit">
-                    <option value="">-- Pilih Status --</option>
-                    <option value="Sudah Diizinkan">Sudah Diizinkan</option>
-                    <option value="Belum Diizinkan">Belum Diizinkan</option>
+                    <option value="">-- Select Status --</option>
+                    <option value="Sudah Diizinkan">Allowed</option>
+                    <option value="Belum Diizinkan">Not Allowed</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label>Tujuan Pembuatan Kartu</label>
+                <label>Card Purpose</label>
                 <select id="cardPurpose">
-                    <option value="">-- Pilih Tujuan --</option>
-                    <option value="Edukasi Keuangan">Edukasi Keuangan</option>
-                    <option value="Tabungan Hadiah">Tabungan Hadiah</option>
-                    <option value="Tugas Sekolah">Tugas Sekolah</option>
+                    <option value="">-- Select Purpose --</option>
+                    <option value="Edukasi Keuangan">Financial Education</option>
+                    <option value="Tabungan Hadiah">Gift Savings</option>
+                    <option value="Tugas Sekolah">School Assignment</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label>Pengelola Kartu</label>
+                <label>Card Manager</label>
                 <select id="cardManager">
-                    <option value="">-- Siapa Mengelola? --</option>
-                    <option value="Orang Tua">Orang Tua</option>
-                    <option value="Saya Sendiri">Saya Sendiri</option>
+                    <option value="">-- Who Manages It? --</option>
+                    <option value="Orang Tua">Parents</option>
+                    <option value="Saya Sendiri">Myself</option>
                 </select>
             </div>
 
-            <button class="btn-primary" onclick="validateAndNext(2)">Lanjut <i class="fas fa-arrow-right"></i></button>
+            <button class="btn-primary" onclick="validateAndNext(2)">Continue <i class="fas fa-arrow-right"></i></button>
         </div>
 
         <!-- STEP 3: LOKASI & MATA UANG -->
         <div id="step-3" class="wizard-step">
-            <h2>Lokasi</h2>
-            <p class="subtitle">Langkah 3 dari 7</p>
+            <h2>Location</h2>
+            <p class="subtitle">Step 3 of 7</p>
 
             <div class="form-group">
-                <label>Tinggal di Negara</label>
+                <label>Country of Residence</label>
                 <select id="countrySelect" onchange="updateCurrency()">
-                    <option value="">-- Pilih Negara --</option>
+                    <option value="">-- Select Country --</option>
                     <option value="Indonesia">Indonesia</option>
                     <option value="Malaysia">Malaysia</option>
-                    <option value="Singapura">Singapura</option>
-                    <option value="Amerika Serikat">Amerika Serikat</option>
-                    <option value="Jepang">Jepang</option>
+                    <option value="Singapura">Singapore</option>
+                    <option value="Amerika Serikat">United States</option>
+                    <option value="Jepang">Japan</option>
                 </select>
             </div>
 
@@ -167,92 +167,92 @@
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-coins" style="color: var(--primary);"></i>
                     <div>
-                        <small style="display: block; color: #64748b;">Mata Uang Terdeteksi</small>
+                        <small style="display: block; color: #64748b;">Detected Currency</small>
                         <strong id="currencyDisplay" style="font-size: 1.2rem;">-</strong>
                     </div>
                 </div>
             </div>
 
-            <button class="btn-primary" onclick="validateAndNext(3)">Lanjut <i class="fas fa-arrow-right"></i></button>
+            <button class="btn-primary" onclick="validateAndNext(3)">Continue <i class="fas fa-arrow-right"></i></button>
         </div>
 
         <!-- STEP 4: PIN -->
         <div id="step-4" class="wizard-step">
-            <h2>Keamanan</h2>
-            <p class="subtitle">Langkah 4 dari 7</p>
+            <h2>Security</h2>
+            <p class="subtitle">Step 4 of 7</p>
 
             <div class="form-group">
-                <label>Buat PIN 6 Digit</label>
+                <label>Create 6-Digit PIN</label>
                 <input type="password" id="pinInput" class="pin-input" maxlength="6" inputmode="numeric" placeholder="000000">
             </div>
 
             <div class="form-group">
-                <label>Konfirmasi PIN</label>
+                <label>Confirm PIN</label>
                 <input type="password" id="pinConfirm" class="pin-input" maxlength="6" inputmode="numeric" placeholder="000000">
             </div>
 
-            <button class="btn-primary" onclick="validateAndNext(4)">Lanjut <i class="fas fa-arrow-right"></i></button>
+            <button class="btn-primary" onclick="validateAndNext(4)">Continue <i class="fas fa-arrow-right"></i></button>
         </div>
 
         <!-- STEP 5: KELAYAKAN (SCROLL CHECK) -->
         <div id="step-5" class="wizard-step">
-            <h2>Pengecekan Kelayakan</h2>
-            <p class="subtitle">Langkah 5 dari 7</p>
+            <h2>Eligibility Check</h2>
+            <p class="subtitle">Step 5 of 7</p>
             
             <div style="text-align: center; margin: 40px 0;">
                 <i class="fas fa-microchip fa-3x" style="color: var(--accent); margin-bottom: 20px;"></i>
                 <div class="scan-container">
                     <div class="scan-line"></div>
                 </div>
-                <p id="scanText" style="font-weight: 600; min-height: 24px;">Menghubungkan ke server pusat...</p>
+                <p id="scanText" style="font-weight: 600; min-height: 24px;">Connecting to central server...</p>
             </div>
 
             <!-- Hidden button triggered by JS timer -->
-            <button id="btnStep5" class="btn-primary hidden" onclick="validateAndNext(5)">Lanjut <i class="fas fa-check"></i></button>
+            <button id="btnStep5" class="btn-primary hidden" onclick="validateAndNext(5)">Continue <i class="fas fa-check"></i></button>
         </div>
 
         <!-- STEP 6: PERJANJIAN -->
         <div id="step-6" class="wizard-step">
-            <h2>Perjanjian & Sanksi</h2>
-            <p class="subtitle">Langkah 6 dari 7</p>
+            <h2>Agreement & Sanctions</h2>
+            <p class="subtitle">Step 6 of 7</p>
 
             <div style="max-height: 300px; overflow-y: auto; background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
-                <h4 style="margin-top:0">Syarat & Ketentuan</h4>
+                <h4 style="margin-top:0">Terms & Conditions</h4>
                 <p style="font-size: 0.85rem; color: #64748b; text-align: justify;">
-                    1. Kartu ini adalah simulasi edukasi dan tidak memiliki nilai legal sebagai alat pembayaran yang sah.<br>
-                    2. Pemegang kartu wajib menjaga kerahasiaan PIN.<br>
-                    3. Penyalahgunaan data seperti memasukkan data orang lain tanpa izin dilarang keras.<br>
-                    4. Sanksi pelanggaran adalah pemblokiran kartu secara permanen dari sistem simulasi.
+                    1. This card is a simulation for education purposes only and has no legal value as a valid payment instrument.<br>
+                    2. Cardholders are required to keep their PIN confidential.<br>
+                    3. Misuse of data, such as entering someone else's data without permission, is strictly prohibited.<br>
+                    4. The penalty for violations is permanent blocking of the card from the simulation system.
                 </p>
             </div>
 
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="check1" onchange="checkLegal()">
-                <div class="checkbox-text">Saya setuju dengan data yang saya masukkan adalah benar.</div>
+                <div class="checkbox-text">I agree that the data I entered is correct.</div>
             </div>
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="check2" onchange="checkLegal()">
-                <div class="checkbox-text">Saya memahami sanksi jika melakukan pelanggaran.</div>
+                <div class="checkbox-text">I understand the sanctions for any violations.</div>
             </div>
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="check3" onchange="checkLegal()">
-                <div class="checkbox-text">Saya bertanggung jawab atas penggunaan kartu ini.</div>
+                <div class="checkbox-text">I am responsible for the use of this card.</div>
             </div>
 
-            <button id="btnStep6" class="btn-primary" disabled onclick="validateAndNext(6)">Ajukan Penerbitan <i class="fas fa-paper-plane"></i></button>
+            <button id="btnStep6" class="btn-primary" disabled onclick="validateAndNext(6)">Submit Issuance <i class="fas fa-paper-plane"></i></button>
         </div>
 
         <!-- STEP 7: PENERBITAN (TIMER) -->
         <div id="step-7" class="wizard-step">
-            <h2>Penerbitan Kartu</h2>
-            <p class="subtitle">Langkah 7 dari 7</p>
+            <h2>Card Issuance</h2>
+            <p class="subtitle">Step 7 of 7</p>
 
             <div style="text-align: center; margin-top: 40px;">
                 <div class="spinner"></div>
-                <p>Sedang mencetak kartu fisik digital...</p>
+                <p>Printing digital physical card...</p>
                 
                 <div id="countdownTimer" class="timer-display">60</div>
-                <p style="font-size: 0.8rem; color: var(--gray);">Detik tersisa</p>
+                <p style="font-size: 0.8rem; color: var(--gray);">Seconds remaining</p>
             </div>
         </div>
 
@@ -260,7 +260,7 @@
         <div id="final-step" class="wizard-step">
             <div style="text-align: center; margin-bottom: 30px;">
                 <i class="fas fa-check-circle fa-3x" style="color: var(--success);"></i>
-                <h2 style="margin-top: 10px;">Kartu Berhasil!</h2>
+                <h2 style="margin-top: 10px;">Card Success!</h2>
             </div>
 
             <div class="card-container">
@@ -273,16 +273,16 @@
                             <div class="chip"></div>
                         </div>
                         <div style="margin-top: 30px;">
-                            <small style="font-size: 0.6rem; opacity: 0.7;">NOMOR KARTU</small>
+                            <small style="font-size: 0.6rem; opacity: 0.7;">CARD NUMBER</small>
                             <div class="card-number" id="cardNoDisplay">0000 0000 0000 0000</div>
                         </div>
                         <div class="card-row">
                             <div>
-                                <div class="card-label">NAMA</div>
-                                <div class="card-value" id="cardNameDisplay">NAMA ANDA</div>
+                                <div class="card-label">NAME</div>
+                                <div class="card-value" id="cardNameDisplay">YOUR NAME</div>
                             </div>
                             <div style="text-align: right;">
-                                <div class="card-label">VERSI</div>
+                                <div class="card-label">VERSION</div>
                                 <div class="card-value">V.2.0</div>
                             </div>
                         </div>
@@ -295,19 +295,19 @@
                             <i class="fas fa-lock" style="font-size: 0.8rem;"></i>
                         </div>
                         <div style="text-align: right; margin-bottom: 10px;">
-                            <small style="font-size: 0.6rem;">KODE KEAMANAN (CVV)</small>
+                            <small style="font-size: 0.6rem;">SECURITY CODE (CVV)</small>
                             <div style="background: white; color: black; padding: 5px 10px; border-radius: 4px; display: inline-block; font-family: monospace; font-weight: bold;" id="cvvDisplay">123</div>
                         </div>
                         <div class="bank-msg">
-                            Kartu ini berlaku seumur hidup selama pemegang kartu taat aturan. Jika ditemukan harap kembalikan ke kantor BDN terdekat.
+                            This card is valid for life as long as the holder obeys the rules. If found, please return to the nearest BDN office.
                         </div>
                     </div>
                 </div>
             </div>
 
             <div style="display: flex; gap: 10px;">
-                <button class="btn-primary" onclick="flipCard()" style="background: var(--gray);"><i class="fas fa-sync-alt"></i> Putar</button>
-                <button class="btn-primary" onclick="downloadCard()"><i class="fas fa-camera"></i> Simpan</button>
+                <button class="btn-primary" onclick="flipCard()" style="background: var(--gray);"><i class="fas fa-sync-alt"></i> Flip</button>
+                <button class="btn-primary" onclick="downloadCard()"><i class="fas fa-camera"></i> Save</button>
             </div>
         </div>
 

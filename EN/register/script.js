@@ -211,44 +211,102 @@ function runTimer() {
 }
 
 async function submitData() {
-    // Generate Card Details
-    const prefix = "4512";
+    // 1. GENERATE NOMOR KARTU (PREFIX 0810)
+    // Format: 0810 XXXX XXXX XXXX (Total 16 digit)
+    const prefix = "0810"; 
     const mid = Math.floor(1000 + Math.random() * 9000);
     const mid2 = Math.floor(1000 + Math.random() * 9000);
     const last = Math.floor(1000 + Math.random() * 9000);
     const cardNo = `${prefix} ${mid} ${mid2} ${last}`;
     const cvv = Math.floor(100 + Math.random() * 900);
 
-    // Update UI
+    // 2. GENERATE SALDO & LIMIT (LOGIC MATA UANG)
+    let balance, limit, currencyCode;
+
+    // Cek mata uang dari formData.currency (misal: 'IDR (Rp)', 'USD ($)')
+    // Ambil kode 3 huruf depannya aja (IDR, USD, dll)
+    if (formData.currency && formData.currency.includes('IDR')) {
+        currencyCode = 'IDR';
+        balance = 'Rp 1'; // Sesuai request IDR
+        limit = 'Rp 10.000.000'; // Sesuai request IDR
+    } else {
+        // Default untuk non-IDR (USD/EN/etc)
+        currencyCode = 'USD'; 
+        balance = '$0.000060'; // Sesuai request EN
+        limit = '$625'; // Sesuai request EN
+    }
+
+    // 3. GENERATE EXPIRY DATE (5 TAHUN KE DEPAN)
+    const today = new Date();
+    const expYear = today.getFullYear() + 5;
+    const expMonth = String(today.getMonth() + 1).padStart(2, '0');
+    const expiryDate = `${expMonth}/${expYear.toString().slice(-2)}`; // Contoh: 02/31
+
+    // 4. UPDATE UI TAMPILAN KARTU
     document.getElementById('cardNoDisplay').innerText = cardNo;
     document.getElementById('cardNameDisplay').innerText = formData.name.toUpperCase();
     document.getElementById('cvvDisplay').innerText = cvv;
 
-    // Simpan ke Supabase
+    // 5. SUSUN DATA YANG MAU DIKIRIM KE DATABASE
+    // Kita gabungkan formData yang udah ada (nama, sekolah, dll) 
+    // dengan data kartu baru (saldo, limit, cvv, dll).
+    const dataToInsert = {
+        ...formData, // Data lama (gender, sekolah, guru, dll)
+        card_meta: { // Group data kartu biar rapi di jsonb
+            number: cardNo,
+            cvv: cvv,
+            expiry: expiryDate,
+            status: 'ACTIVE'
+        },
+        account_info: { // Group data keuangan
+            balance: balance,
+            limit: limit,
+            currency: currencyCode
+        },
+        audit_trail: { // Group data admin/forensik
+            registration_date: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+            device_info: navigator.userAgent // Browser/User Agent info
+        }
+    };
+
+    // 6. SIMPAN KE SUPABASE
     try {
-        await _supabase.from('pendaftaran_simulasi').insert([{
+        const { error } = await _supabase.from('pendaftaran_simulasi').insert([{
             nama_lengkap: formData.name,
             nomor_kartu: cardNo,
-            detail_data: formData,
+            detail_data: dataToInsert 
         }]);
-        console.log("Data saved");
+
+        if (error) throw error;
+        console.log("Data saved successfully");
+
     } catch(e) {
-        console.error("Error saving", e);
+        console.error("Error saving:", e.message);
+        // Tampilkan error ke user jika perlu
+        // showToast("Gagal menyimpan data.", true);
     }
 
-    // Confetti
-    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    // 7. CONFETTI
+    if (typeof confetti === 'function') {
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    }
 }
 
 window.downloadCard = () => {
     const card = document.getElementById('cardElement');
-    // Hide flip effect momentarily for clean shot or capture front only
+    
+    if (typeof html2canvas === 'undefined') {
+        return showToast("Library gambar gagal dimuat.", true);
+    }
+
     html2canvas(card, { scale: 3 }).then(canvas => {
         const link = document.createElement('a');
         link.download = `KARTU_BDN_${formData.name.replace(/\s/g, '_')}.png`;
         link.href = canvas.toDataURL();
         link.click();
         showToast("Gambar tersimpan!");
+    }).catch(err => {
+        console.error(err);
+        showToast("Gagal mengambil gambar kartu.", true);
     });
 }
-
