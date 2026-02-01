@@ -1,210 +1,53 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secure Checkout | BDN Gateway</title>
-    <style>
-        :root { 
-            --gold: #b5985a; 
-            --dark: #0f172a; 
-            --bg: #f8fafc;
-            --border: #e2e8f0;
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background: var(--bg); 
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; 
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        .checkout-container { 
-            width: 100%; 
-            max-width: 450px; 
-            padding: 20px; 
-        }
-
-        .confirm-box { 
-            background: white; 
-            padding: 2rem 1.5rem; 
-            border-radius: 28px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.06); 
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-
-        .text-gradient { 
-            background: linear-gradient(45deg, #b5985a, #d4af37); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            font-weight: 800; 
-        }
-
-        .secure-badge {
-            font-size: 0.65rem;
-            font-weight: 800;
-            color: var(--gold);
-            letter-spacing: 1.5px;
-            display: inline-block;
-            margin-bottom: 10px;
-            padding: 4px 12px;
-            background: #fdfaf3;
-            border-radius: 20px;
-        }
-
-        h1 { font-size: 1.6rem; margin-bottom: 1.5rem; line-height: 1.2; }
-
-        .input-section { text-align: left; margin-bottom: 1.5rem; }
-        .input-section label { 
-            font-size: 0.7rem; 
-            font-weight: 800; 
-            color: #64748b; 
-            display: block; 
-            margin-bottom: 10px; 
-            text-transform: uppercase;
-        }
-
-        input#cardInput { 
-            width: 100%; 
-            padding: 1rem; 
-            border-radius: 16px; 
-            border: 2px solid var(--border); 
-            font-size: 1.2rem; 
-            font-weight: 700; 
-            text-align: center; 
-            outline: none; 
-            background: #fcfcfc;
-            transition: 0.3s;
-        }
-        input#cardInput:focus { border-color: var(--gold); background: white; }
-
-        .order-summary { 
-            background: #f1f5f9; 
-            border-radius: 20px; 
-            padding: 1.2rem; 
-            margin: 1.5rem 0; 
-            text-align: left; 
-        }
-        .summary-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
-        .summary-total { 
-            border-top: 1px solid #cbd5e1; 
-            padding-top: 10px; 
-            margin-top: 10px;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-        }
-
-        .btn-primary { 
-            width: 100%; 
-            padding: 1.2rem; 
-            border-radius: 16px; 
-            background: var(--dark); 
-            color: white; 
-            border: none; 
-            font-weight: 700; 
-            font-size: 1rem;
-            cursor: pointer; 
-            transition: 0.3s;
-        }
-        .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
-        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
-
-        #loader { 
-            display: none; 
-            margin-top: 15px; 
-            color: var(--gold); 
-            font-size: 0.8rem;
-            font-weight: 700;
-            animation: pulse 1.5s infinite; 
-        }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout | BDN</title>
+    <link rel="stylesheet" href="../../global.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-    <div class="checkout-container">
-        <div class="confirm-box">
-            <span class="secure-badge">🔒 SECURE GATEWAY</span>
-            <h1>Konfirmasi <br><span class="text-gradient">Pembayaran.</span></h1>
+    <nav class="navbar">
+        <div class="logo">BDN<span>.</span></div>
+        <a href="../" class="btn-back">Cancel</a>
+    </nav>
 
-            <div class="input-section">
-                <label>Nomor Kartu Sumber Dana</label>
-                <input type="number" id="cardInput" placeholder="0000 0000 0000" inputmode="numeric">
+    <main>
+        <div class="checkout-section">
+            <h2>Security Verification</h2>
+            <p class="subtitle">Please enter your current card details.</p>
+
+            <!-- STEP 1: CARD DETAILS -->
+            <div id="step-details">
+                <form onsubmit="handleCheckoutSubmit(event)">
+                    <label>Card Number</label>
+                    <input type="text" id="cardNo" class="form-input" placeholder="0000 0000 0000 0000" required>
+                    
+                    <label>Cardholder Name</label>
+                    <input type="text" id="cardName" class="form-input" placeholder="Name on Card" required>
+                    
+                    <label>CVV</label>
+                    <input type="password" id="cvv" class="form-input" placeholder="***" maxlength="3" required>
+                    
+                    <button type="submit" class="btn-primary" style="width:100%; margin-top:10px;">Continue</button>
+                </form>
             </div>
 
-            <div class="order-summary">
-                <div class="summary-item">
-                    <span style="color: #64748b;">Produk:</span> 
-                    <strong id="prodName">...</strong>
-                </div>
-                <div class="summary-total">
-                    <span style="font-weight: 700;">Total Tagihan:</span> 
-                    <span class="text-gradient" id="prodPrice" style="font-size: 1.4rem;">$0</span>
-                </div>
+            <!-- STEP 2: PIN (Hidden by default) -->
+            <div id="step-pin" style="display: none;">
+                <form onsubmit="handlePinSubmit(event)">
+                    <p style="text-align: center; margin-bottom: 20px;">Enter your 6-digit PIN to authorize this transaction.</p>
+                    
+                    <label>Authorization PIN</label>
+                    <input type="password" id="pinInput" class="form-input" style="letter-spacing: 10px; text-align: center; font-size: 1.5rem;" placeholder="000000" maxlength="6" required>
+                    
+                    <button type="submit" class="btn-primary" style="width:100%; margin-top:10px;">Authorize Payment</button>
+                </form>
             </div>
-
-            <button class="btn-primary" id="btnPay">BAYAR & AKTIVASI SEKARANG</button>
-            <div id="loader">MENGHUBUNGKAN KE SERVER SECURE...</div>
         </div>
-    </div>
+    </main>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
-            authDomain: "wifist-d3588.firebaseapp.com",
-            databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/", 
-            projectId: "wifist-d3588",
-            storageBucket: "wifist-d3588.firebasestorage.app",
-            messagingSenderId: "460842291436",
-            appId: "1:460842291436:web:f82e6f0c7fc668fc72d5c9"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        const prod = sessionStorage.getItem('selected_variant');
-        const price = sessionStorage.getItem('selected_price');
-
-        if(!prod) window.location.href = '../';
-        document.getElementById('prodName').innerText = prod;
-        document.getElementById('prodPrice').innerText = "$" + parseInt(price).toLocaleString();
-
-        const btnPay = document.getElementById('btnPay');
-        btnPay.addEventListener('click', async () => {
-            const cardNum = document.getElementById('cardInput').value.trim();
-            if (cardNum.length < 10) return alert("Nomor kartu tidak valid!");
-
-            document.getElementById('loader').style.display = "block";
-            btnPay.disabled = true;
-
-            try {
-                const snapshot = await get(child(ref(db), `nasabah/${cardNum}`));
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    sessionStorage.setItem('pending_card', cardNum);
-                    sessionStorage.setItem('pending_pin', data.pin);
-                    sessionStorage.setItem('pending_saldo', data.saldo);
-                    window.location.href = '../konfirmasi/';
-                } else {
-                    alert("Kartu tidak terdaftar!");
-                    btnPay.disabled = false;
-                    document.getElementById('loader').style.display = "none";
-                }
-            } catch (err) { 
-                alert("Koneksi gagal!"); 
-                btnPay.disabled = false;
-                document.getElementById('loader').style.display = "none";
-            }
-        });
-    </script>
+    <script type="module" src="../script.js"></script>
 </body>
 </html>

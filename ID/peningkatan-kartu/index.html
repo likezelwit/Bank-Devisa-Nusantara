@@ -1,156 +1,29 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Elite Card Issuance | BDN Private Banking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Upgrade | BDN</title>
+    <link rel="stylesheet" href="../global.css">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-
     <nav class="navbar">
         <div class="logo">BDN<span>.</span></div>
-        <a href="../" class="btn-back">EXIT</a>
+        <a href="../" class="btn-back">Back</a>
     </nav>
 
-    <main class="card-container">
-        <header class="step-header">
-            <span class="step-badge">WORLDWIDE ELITE MEMBERSHIP</span>
-            <h1>Pilih Instrumen <br><span class="text-gradient">Finansial Anda.</span></h1>
-            <p>Eksklusivitas tanpa batas. Pilih kartu yang mencerminkan status Anda.</p>
-        </header>
+    <main>
+        <div style="text-align: center; padding: 20px;">
+            <h1>Card Upgrade Center</h1>
+            <p style="color: var(--gray)">Choose a higher tier to increase your limit.</p>
+        </div>
 
-        <section class="selection-grid">
-            <div class="card-option active" onclick="selectCard(this)" data-variant="Platinum Elite" data-price="499">
-                <div class="card-preview platinum">
-                    <div class="card-chip silver"></div>
-                    <div class="card-brand">PLATINUM ELITE</div>
-                </div>
-                <div class="option-details">
-                    <h3>Platinum Elite</h3>
-                    <p>Standard premium access.</p>
-                    <span class="price-tag">$499 / Year</span>
-                </div>
-            </div>
-
-            <div class="card-option" onclick="selectCard(this)" data-variant="Gold Priority" data-price="1200">
-                <div class="card-preview gold-card">
-                    <div class="card-chip gold"></div>
-                    <div class="card-brand">GOLD PRIORITY</div>
-                </div>
-                <div class="option-details">
-                    <h3>Gold Priority</h3>
-                    <p>Priority lane in 150+ countries.</p>
-                    <span class="price-tag">$1,200 / Year</span>
-                </div>
-            </div>
-
-            <div class="card-option" onclick="selectCard(this)" data-variant="Rose Signature" data-price="2500">
-                <div class="card-preview rose-gold">
-                    <div class="card-chip gold"></div>
-                    <div class="card-brand">ROSE SIGNATURE</div>
-                </div>
-                <div class="option-details">
-                    <h3>Rose Signature</h3>
-                    <p>Exclusive luxury shopping.</p>
-                    <span class="price-tag">$2,500 / Year</span>
-                </div>
-            </div>
-
-            <div class="card-option" onclick="selectCard(this)" data-variant="Black Signature" data-price="10000">
-                <div class="card-preview black">
-                    <div class="card-chip gold"></div>
-                    <div class="card-brand">BLACK SIGNATURE</div>
-                </div>
-                <div class="option-details">
-                    <h3>Black Signature</h3>
-                    <p>No spending limit. Concierge.</p>
-                    <span class="price-tag">$10,000 / Year</span>
-                </div>
-            </div>
-
-            <div class="card-option" onclick="selectCard(this)" data-variant="Emerald Private" data-price="25000">
-                <div class="card-preview emerald">
-                    <div class="card-chip gold"></div>
-                    <div class="card-brand">EMERALD PRIVATE</div>
-                </div>
-                <div class="option-details">
-                    <h3>Emerald Private</h3>
-                    <p>Private Jet & Yacht access.</p>
-                    <span class="price-tag special">$25,000 / Year</span>
-                </div>
-            </div>
-
-            <div class="card-option" onclick="selectCard(this)" data-variant="Diamond Royal" data-price="50000">
-                <div class="card-preview diamond">
-                    <div class="card-chip gold"></div>
-                    <div class="card-brand">DIAMOND ROYAL</div>
-                </div>
-                <div class="option-details">
-                    <h3>Diamond Royal</h3>
-                    <p>Real diamond embedded.</p>
-                    <span class="price-tag special">$50,000 / Year</span>
-                </div>
-            </div>
-        </section>
-
-        <footer class="action-footer">
-            <button id="mainBtn" class="btn-primary">KONFIRMASI PENERBITAN</button>
-        </footer>
+        <div id="cardsContainer" class="cards-container">
+            <!-- Cards will be injected by JS -->
+        </div>
     </main>
 
-    <script>
-        function selectCard(element) {
-            if (document.getElementById('mainBtn').disabled) return;
-            document.querySelectorAll('.card-option').forEach(card => card.classList.remove('active'));
-            element.classList.add('active');
-            // Haptic feedback simple untuk mobile
-            if (window.navigator.vibrate) window.navigator.vibrate(10);
-        }
-    </script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDXYDqFmhO8nacuX-hVnNsXMmpeqwYlW7U",
-            authDomain: "wifist-d3588.firebaseapp.com",
-            databaseURL: "https://wifist-d3588-default-rtdb.asia-southeast1.firebasedatabase.app/", 
-            projectId: "wifist-d3588",
-            storageBucket: "wifist-d3588.firebasestorage.app",
-            messagingSenderId: "460842291436",
-            appId: "1:460842291436:web:f82e6f0c7fc668fc72d5c9"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const btn = document.getElementById('mainBtn');
-        const grid = document.querySelector('.selection-grid');
-
-        const loggedCard = localStorage.getItem('nomorKartu'); 
-        if (loggedCard) {
-            onValue(ref(db, 'nasabah/' + loggedCard), (snapshot) => {
-                const data = snapshot.val();
-                if (data && data.cardStatus === "Active") {
-                    btn.innerText = "KARTU " + (data.activeVariant || "ELITE") + " AKTIF";
-                    btn.disabled = true;
-                    btn.style.background = "#94a3b8";
-                    grid.style.filter = "grayscale(1)";
-                    grid.style.pointerEvents = "none";
-                }
-            });
-        }
-
-        btn.addEventListener('click', () => {
-            const activeCard = document.querySelector('.card-option.active');
-            if(!activeCard) return alert("Pilih kartu terlebih dahulu");
-            
-            sessionStorage.setItem('selected_variant', activeCard.getAttribute('data-variant'));
-            sessionStorage.setItem('selected_price', activeCard.getAttribute('data-price'));
-            window.location.href = 'checkout/';
-        });
-    </script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
