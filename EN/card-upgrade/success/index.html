@@ -1,129 +1,45 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Success | BDN Private Banking</title>
-    <style>
-        :root { 
-            --gold: #b5985a; 
-            --navy: #0f172a; 
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            margin: 0; 
-            background: var(--navy); 
-            color: white; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            overflow: hidden;
-        }
-
-        .success-box { 
-            padding: 2.5rem 1.5rem; 
-            background: #1e293b; 
-            border-radius: 40px; 
-            border: 1px solid rgba(181, 152, 90, 0.3); 
-            box-shadow: 0 0 60px rgba(0,0,0,0.5); 
-            max-width: 360px; 
-            width: 90%;
-            text-align: center;
-            animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .icon-wrapper {
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(135deg, var(--gold), #d4af37);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            font-size: 45px;
-            box-shadow: 0 10px 25px rgba(181, 152, 90, 0.4);
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        h1 { 
-            margin: 0 0 12px; 
-            color: var(--gold); 
-            font-size: 1.6rem;
-            font-weight: 800;
-        }
-
-        p { 
-            color: #94a3b8; 
-            line-height: 1.6; 
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-        }
-
-        .btn-finish { 
-            display: block; 
-            padding: 1.2rem; 
-            background: white; 
-            color: var(--navy); 
-            text-decoration: none; 
-            border-radius: 18px; 
-            font-weight: 800; 
-            font-size: 1rem;
-            transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .btn-finish:active { 
-            transform: scale(0.95);
-            background: var(--gold);
-            color: white;
-        }
-
-        /* Dekorisasi kilau latar belakang */
-        .glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: var(--gold);
-            filter: blur(150px);
-            opacity: 0.1;
-            z-index: -1;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade Success | BDN</title>
+    <link rel="stylesheet" href="../../global.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-    <div class="glow"></div>
-    
-    <div class="success-box">
-        <div class="icon-wrapper">✓</div>
-        <h1>Penerbitan Berhasil</h1>
-        <p>Instrumen finansial elit Anda telah berhasil diaktivasi secara global. Selamat menikmati akses tanpa batas.</p>
-        <a href="../../" class="btn-finish">MASUK KE DASHBOARD</a>
-    </div>
+    <nav class="navbar">
+        <div class="logo">BDN<span>.</span></div>
+        <a href="../../" class="btn-back">Home</a>
+    </nav>
 
-    <script>
-        // Hapus session transaksi agar tidak bisa "back" untuk bayar ulang
-        window.onload = () => {
-            sessionStorage.removeItem('pending_card');
-            sessionStorage.removeItem('pending_pin');
-            sessionStorage.removeItem('pending_saldo');
-            sessionStorage.removeItem('selected_variant');
-            sessionStorage.removeItem('selected_price');
-        };
-    </script>
+    <main>
+        <div class="checkout-section" style="text-align: center;">
+            
+            <!-- ICONS -->
+            <div id="loadingIcon" class="loader-ring"></div>
+            <div id="successIcon" class="success-check" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <h2 id="statusText">Initializing...</h2>
+            <p class="subtitle">Processing your request with Supabase Secure Server.</p>
+
+            <!-- CARD CHANGE VISUALIZATION -->
+            <div class="receipt" style="margin-top: 30px; text-align: left;">
+                <p><strong>Old Number:</strong></p>
+                <div id="oldNumDisplay" style="font-size: 1.2rem; font-weight: bold; font-family: monospace; margin-bottom: 10px;">---</div>
+                
+                <div style="text-align: center; font-size: 1.5rem; color: var(--accent);">↓</div>
+                
+                <p><strong>New Number (Upgraded):</strong></p>
+                <div id="newNumDisplay" style="font-size: 1.2rem; font-weight: bold; font-family: monospace; color: var(--success);">...</div>
+            </div>
+
+            <button onclick="window.location.href='../../'" class="btn-primary" id="btnHome" style="display: none; width:100%;">Return to Home</button>
+        </div>
+    </main>
+
+    <script type="module" src="../script.js"></script>
 </body>
 </html>
