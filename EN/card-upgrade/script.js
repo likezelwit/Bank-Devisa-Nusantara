@@ -5,124 +5,124 @@ const SUPABASE_URL = 'https://ndopnxzbaygohzshqphi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kb3BueHpiYXlnb2h6c2hxcGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzM4ODQsImV4cCI6MjA3OTMwOTg4NH0.nZC5kOVJeMAtfXlwchokXK4FLtPkPoUrxPQUzrz2C8I';
 const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// --- CARD TIER DATA STRUCTURE (Including Colors & Features) ---
+// --- CARD TIER DATA STRUCTURE (Prices converted to USD) ---
+// Exchange Rate Approx: ~16,780 IDR = 1 USD
 const cardTiers = [
     { 
         prefix: '0810', name: 'Platinum Basic', limit: 10, price: 0, 
-        color: 'linear-gradient(135deg, #94a3b8 0%, #475569 100%)', // Grey/Silver
+        color: 'linear-gradient(135deg, #94a3b8 0%, #475569 100%)', 
         features: ['Free ATM Withdrawal', 'Mobile Banking Basic']
     },
     { 
-        prefix: '0892', name: 'Gold Elite', limit: 14, price: 2500000, 
-        color: 'linear-gradient(135deg, #fcd34d 0%, #b45309 100%)', // Gold
+        prefix: '0892', name: 'Gold Elite', limit: 14, price: 149, 
+        color: 'linear-gradient(135deg, #fcd34d 0%, #b45309 100%)', 
         features: ['Priority Support', '1% Cashback']
     },
     { 
-        prefix: '0822', name: 'Titanium', limit: 20, price: 8500000, 
-        color: 'linear-gradient(135deg, #64748b 0%, #1e293b 100%)', // Dark Grey
+        prefix: '0822', name: 'Titanium', limit: 20, price: 506, 
+        color: 'linear-gradient(135deg, #64748b 0%, #1e293b 100%)', 
         features: ['Lounge Access', '0% Foreign Tx Fee']
     },
     { 
-        prefix: '0812', name: 'Diamond I', limit: 24, price: 15000000, 
-        color: 'linear-gradient(135deg, #a5f3fc 0%, #0891b2 100%)', // Cyan
+        prefix: '0812', name: 'Diamond I', limit: 24, price: 894, 
+        color: 'linear-gradient(135deg, #a5f3fc 0%, #0891b2 100%)', 
         features: ['Concierge Basic', 'Travel Insurance']
     },
     { 
-        prefix: '0878', name: 'Diamond II', limit: 27, price: 25000000, 
-        color: 'linear-gradient(135deg, #93c5fd 0%, #2563eb 100%)', // Blue
+        prefix: '0878', name: 'Diamond II', limit: 27, price: 1490, 
+        color: 'linear-gradient(135deg, #93c5fd 0%, #2563eb 100%)', 
         features: ['VIP Lounge', 'Hotel Discounts']
     },
     { 
-        prefix: '0864', name: 'Ruby', limit: 31, price: 45000000, 
-        color: 'linear-gradient(135deg, #fca5a5 0%, #ef4444 100%)', // Red
+        prefix: '0864', name: 'Ruby', limit: 31, price: 2682, 
+        color: 'linear-gradient(135deg, #fca5a5 0%, #ef4444 100%)', 
         features: ['Airport Fast Track', 'Spa Vouchers']
     },
     { 
-        prefix: '0876', name: 'Sapphire', limit: 35, price: 75000000, 
-        color: 'linear-gradient(135deg, #c084fc 0%, #7e22ce 100%)', // Purple
+        prefix: '0876', name: 'Sapphire', limit: 35, price: 4470, 
+        color: 'linear-gradient(135deg, #c084fc 0%, #7e22ce 100%)', 
         features: ['Golf Membership', 'Fine Dining Rewards']
     },
     { 
-        prefix: '0811', name: 'Emerald', limit: 38, price: 120000000, 
-        color: 'linear-gradient(135deg, #6ee7b7 0%, #059669 100%)', // Green
+        prefix: '0811', name: 'Emerald', limit: 38, price: 7151, 
+        color: 'linear-gradient(135deg, #6ee7b7 0%, #059669 100%)', 
         features: ['Private Butler', 'Car Rental Premium']
     },
     { 
-        prefix: '0806', name: 'Amethyst', limit: 40, price: 250000000, 
-        color: 'linear-gradient(135deg, #d8b4fe 0%, #7e22ce 100%)', // Deep Purple
+        prefix: '0806', name: 'Amethyst', limit: 40, price: 14898, 
+        color: 'linear-gradient(135deg, #d8b4fe 0%, #7e22ce 100%)', 
         features: ['Yacht Charter Access', 'Event Invites']
     },
     { 
-        prefix: '0808', name: 'Black Onyx', limit: 44, price: 500000000, 
-        color: 'linear-gradient(135deg, #1e293b 0%, #000000 100%)', // Black
+        prefix: '0808', name: 'Black Onyx', limit: 44, price: 29796, 
+        color: 'linear-gradient(135deg, #1e293b 0%, #000000 100%)', 
         features: ['No Credit Limit Check', '24/7 Personal Mgr']
     },
     { 
-        prefix: '8888', name: 'Centurion', limit: 199, price: 2500000000, 
-        color: 'linear-gradient(135deg, #b45309 0%, #000000 100%)', // Black/Gold
+        prefix: '8888', name: 'Centurion', limit: 199, price: 148982, 
+        color: 'linear-gradient(135deg, #b45309 0%, #000000 100%)', 
         features: ['Jet Charter Points', 'Lifetime Membership']
     },
     { 
-        prefix: '8808', name: 'Royal Ascot', limit: 301, price: 15000000000, 
-        color: 'linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)', // Deep Red
+        prefix: '8808', name: 'Royal Ascot', limit: 301, price: 893892, 
+        color: 'linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)', 
         features: ['Private Island Access', 'Royal Concierge']
     },
     { 
-        prefix: '8870', name: 'Imperial', limit: 899, price: 85000000000, 
-        color: 'linear-gradient(135deg, #4f46e5 0%, #1e1b4b 100%)', // Deep Indigo
+        prefix: '8870', name: 'Imperial', limit: 899, price: 5065495, 
+        color: 'linear-gradient(135deg, #4f46e5 0%, #1e1b4b 100%)', 
         features: ['Personal Security Detail', 'Global Visa Waiver']
     },
     { 
-        prefix: '8843', name: 'Sovereign', limit: 1000, price: 500000000000, 
-        color: 'linear-gradient(135deg, #0ea5e9 0%, #0f172a 100%)', // Dark Blue
+        prefix: '8843', name: 'Sovereign', limit: 1000, price: 29796686, 
+        color: 'linear-gradient(135deg, #0ea5e9 0%, #0f172a 100%)', 
         features: ['Asset Protection', 'Real Estate Discounts']
     },
     { 
-        prefix: '8899', name: 'Globalist', limit: 6000, price: 3000000000000, 
-        color: 'linear-gradient(135deg, #facc15 0%, #a16207 100%)', // Gold/Dark
+        prefix: '8899', name: 'Globalist', limit: 6000, price: 178790113, 
+        color: 'linear-gradient(135deg, #facc15 0%, #a16207 100%)', 
         features: ['Private Aviation', 'Global Tax Consultation']
     },
     { 
-        prefix: '9012', name: 'Infinite', limit: 10000, price: 15000000000000, 
-        color: 'linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%)', // White/Silver
+        prefix: '9012', name: 'Infinite', limit: 10000, price: 893950536, 
+        color: 'linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%)', 
         features: ['Immigration Support', 'Medical Emergency Team']
     },
     { 
-        prefix: '9088', name: 'Quantum', limit: 80000, price: 99000000000000, 
-        color: 'linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%)', // Electric Blue
+        prefix: '9088', name: 'Quantum', limit: 80000, price: 5899940429, 
+        color: 'linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%)', 
         features: ['Space Tourism Tickets', 'AI Personal Assistant']
     },
     { 
-        prefix: '9099', name: 'Galactic', limit: 999000, price: 500000000000000, 
-        color: 'linear-gradient(135deg, #a855f7 0%, #4c1d95 100%)', // Neon Purple
+        prefix: '9099', name: 'Galactic', limit: 999000, price: 29796686126, 
+        color: 'linear-gradient(135deg, #a855f7 0%, #4c1d95 100%)', 
         features: ['Space Station Visit', 'Orbital Banking']
     },
     { 
-        prefix: '9902', name: 'Omnipotent', limit: 'Unlimited', price: 999999999999999, 
-        color: 'linear-gradient(135deg, #000000 0%, #ffd700 100%)', // Black/Gold Premium
+        prefix: '9902', name: 'Omnipotent', limit: 'Unlimited', price: 59603218855, 
+        color: 'linear-gradient(135deg, #000000 0%, #ffd700 100%)', 
         features: ['Total Anonymity', 'World Domination Key', 'God Mode Access']
     }
 ];
 
-// --- CURRENCY FORMATTING FUNCTION ---
+// --- CURRENCY FORMATTING FUNCTION (USD) ---
 function formatCurrency(amount) {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }
 
-// --- RENDER CARD LIST (For index.html) ---
+// --- RENDER CARD LIST ---
 function renderCards() {
     const container = document.getElementById('cardsContainer');
     if(!container) return;
 
     container.innerHTML = '';
-    const userCurrentPrefix = '0810'; // Simulation of user's current card prefix
+    const userCurrentPrefix = '0810'; 
 
     cardTiers.forEach(tier => {
         const isOwned = tier.prefix === userCurrentPrefix;
         const cardEl = document.createElement('div');
         cardEl.className = `card-item ${isOwned ? 'owned' : ''}`;
         
-        // Generate Features HTML
         const featuresHtml = tier.features.map(f => 
             `<li><i class="fas fa-check-circle"></i> ${f}</li>`
         ).join('');
@@ -237,7 +237,7 @@ window.handlePinSubmit = async (e) => {
     window.location.href = '../konfirmasi/';
 }
 
-// --- RENDER CONFIRMATION DETAILS (For konfirmasi/index.html) ---
+// --- RENDER CONFIRMATION DETAILS ---
 function renderConfirmation() {
     const upgradeData = JSON.parse(localStorage.getItem('selectedUpgrade'));
     const container = document.getElementById('summaryContainer');
@@ -264,7 +264,7 @@ window.processUpgrade = () => {
     window.location.href = '../sukses/';
 }
 
-// --- SUCCESS LOGIC, UPDATE DB, DEDUCT BALANCE & UPDATE LIMIT ---
+// --- SUCCESS LOGIC & DB UPDATE ---
 async function runRealtimeUpdate() {
     const upgradeData = JSON.parse(localStorage.getItem('selectedUpgrade'));
     const verifiedCardNo = localStorage.getItem('verifiedCardNo');
@@ -273,7 +273,6 @@ async function runRealtimeUpdate() {
     const oldNumDisplay = document.getElementById('oldNumDisplay');
     const newNumDisplay = document.getElementById('newNumDisplay');
 
-    // 1. First Step: Verify Account Balance
     statusText.innerText = "Verifying Account Balance...";
     await new Promise(r => setTimeout(r, 1000)); 
 
@@ -289,14 +288,14 @@ async function runRealtimeUpdate() {
         return;
     }
 
-    // PARSE CURRENT BALANCE
+    // PARSE CURRENT BALANCE (Assuming DB stores raw numbers for simplicity in calculation)
     const balanceString = currentCardData.detail_data?.account_info?.balance || "0";
     const currentBalance = parseInt(balanceString.replace(/[^0-9]/g, '')) || 0;
     
-    // UPGRADE PRICE
+    // UPGRADE PRICE (USD)
     const upgradePrice = upgradeData.price;
 
-    // CHECK IF SUFFICIENT FUNDS
+    // CHECK FUNDS
     if (currentBalance < upgradePrice) {
         statusText.innerText = "Insufficient Funds";
         statusText.style.color = "var(--danger)"; 
@@ -313,11 +312,10 @@ async function runRealtimeUpdate() {
         document.getElementById('btnHome').innerText = "Back to Confirmation";
         document.getElementById('btnHome').onclick = () => window.location.href = '../konfirmasi/';
         document.getElementById('btnHome').style.display = 'inline-block';
-        
         return; 
     }
 
-    // IF FUNDS SUFFICIENT, PROCEED WITH SIMULATION
+    // PROCESSING STEPS
     const steps = [
         "Balance Confirmed Sufficient",
         "Connecting to Secure Payment Gateway...",
@@ -331,7 +329,7 @@ async function runRealtimeUpdate() {
         await new Promise(r => setTimeout(r, 1500));
     }
 
-    // 2. NEW CARD NUMBER GENERATION LOGIC
+    // NEW CARD NUMBER GENERATION
     const oldNumber = verifiedCardNo.replace(/\s/g, ''); 
     const last12 = oldNumber.substring(4); 
     const newPrefix = upgradeData.prefix; 
@@ -339,32 +337,28 @@ async function runRealtimeUpdate() {
     const rawNewNum = newPrefix + last12;
     const formattedNewNum = `${rawNewNum.substring(0,4)} ${rawNewNum.substring(4,8)} ${rawNewNum.substring(8,12)} ${rawNewNum.substring(12,16)}`;
 
-    // 3. NEW BALANCE & LIMIT CALCULATION LOGIC
-    // New Balance = Old Balance - Upgrade Price
+    // BALANCE & LIMIT UPDATE
     const newBalanceVal = currentBalance - upgradePrice;
-    const newBalanceStr = formatCurrency(newBalanceVal);
-
-    // New Limit based on selected Tier
+    const newBalanceStr = formatCurrency(newBalanceVal); // Store as formatted string or raw based on DB need
     const newLimitStr = upgradeData.limit === 'Unlimited' ? 'Unlimited' : upgradeData.limit + ' Million';
 
-    // Assemble New Detail Data Object (Merge with old data)
     const currentDetailData = currentCardData.detail_data || {};
     const newDetailData = {
-        ...currentDetailData, // Keep CVV, PIN, Audit Trail, etc.
+        ...currentDetailData,
         account_info: {
-            ...currentDetailData.account_info, // Keep currency, etc.
-            balance: newBalanceStr,     // UPDATE BALANCE HERE
-            limit: newLimitStr            // UPDATE LIMIT HERE
+            ...currentDetailData.account_info,
+            balance: newBalanceStr, 
+            limit: newLimitStr
         }
     };
 
-    // 4. EXECUTE SUPABASE DATABASE UPDATE
+    // EXECUTE UPDATE
     try {
         const { error: updateError } = await _supabase
             .from('pendaftaran_simulasi')
             .update({
-                nomor_kartu: formattedNewNum, // Update Card Number
-                detail_data: newDetailData        // Update Detail Data (Balance & Limit)
+                nomor_kartu: formattedNewNum, 
+                detail_data: newDetailData
             })
             .eq('nomor_kartu', verifiedCardNo);
 
@@ -372,7 +366,7 @@ async function runRealtimeUpdate() {
             throw updateError;
         }
 
-        // 5. UPDATE USER INTERFACE
+        // UI UPDATE
         statusText.innerText = "Upgrade Successful!";
         statusText.style.color = "var(--primary)"; 
         document.getElementById('loadingIcon').style.display = 'none';
@@ -386,7 +380,7 @@ async function runRealtimeUpdate() {
         document.getElementById('btnHome').onclick = () => window.location.href = '../../';
         document.getElementById('btnHome').style.display = 'inline-block';
         
-        console.log("Database updated successfully. Balance and Limit have been updated.");
+        console.log("Database updated successfully.");
 
     } catch (err) {
         console.error("Failed to update database:", err);
@@ -394,12 +388,12 @@ async function runRealtimeUpdate() {
         statusText.style.color = "red";
     }
 
-    // 6. CLEAR LOCAL STORAGE
+    // CLEANUP
     localStorage.removeItem('selectedUpgrade');
     localStorage.removeItem('verifiedCardNo');
 }
 
-// --- PAGE INITIALIZATION ---
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     if(document.getElementById('cardsContainer')) renderCards();
     if(document.getElementById('summaryContainer')) renderConfirmation();
