@@ -1,6 +1,7 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
 // --- DATA TIER KARTU ---
 // Format: { prefix, limit_in_millions, price_idr }
-// Note: Prices are "Fantastic/Fantasy" as requested
 const cardTiers = [
     { prefix: '0810', limit: 10, price: 0, name: 'Platinum Basic' },
     { prefix: '0892', limit: 14, price: 2500000, name: 'Gold Elite' },
@@ -61,27 +62,27 @@ function renderCards() {
     });
 }
 
-// --- PILIH UPGRADE (Simpan ke localStorage) ---
-function selectUpgrade(prefix) {
+// --- PILIH UPGRADE (DI-ATTACH KE WINDOW BIAR HTML BISA PANGGIL) ---
+window.selectUpgrade = (prefix) => {
     const selectedCard = cardTiers.find(c => c.prefix === prefix);
     localStorage.setItem('selectedUpgrade', JSON.stringify(selectedCard));
     window.location.href = 'check-out/';
 }
 
-// --- LOGIKA CHECK-OUT (Untuk check-out/index.html) ---
-function handleCheckoutSubmit(e) {
+// --- LOGIKA CHECK-OUT (DI-ATTACH KE WINDOW) ---
+window.handleCheckoutSubmit = (e) => {
     e.preventDefault();
     const cardNo = document.getElementById('cardNo').value;
     const name = document.getElementById('cardName').value;
     const cvv = document.getElementById('cvv').value;
 
-    // Validasi Sederhana (Di real app, cek ke Supabase)
+    // Validasi Sederhana
     if(cardNo.length < 16 || name.length < 3 || cvv.length < 3) {
         alert("Please fill in valid details.");
         return;
     }
 
-    // Simpan data sementara untuk langkah selanjutnya
+    // Simpan data sementara
     localStorage.setItem('userCheckoutData', JSON.stringify({ cardNo, name, cvv }));
 
     // Tampilkan halaman PIN
@@ -89,7 +90,7 @@ function handleCheckoutSubmit(e) {
     document.getElementById('step-pin').style.display = 'block';
 }
 
-function handlePinSubmit(e) {
+window.handlePinSubmit = (e) => {
     e.preventDefault();
     const pin = document.getElementById('pinInput').value;
     
@@ -126,7 +127,8 @@ function renderConfirmation() {
     `;
 }
 
-function processUpgrade() {
+// DI-ATTACH KE WINDOW
+window.processUpgrade = () => {
     window.location.href = '../sukses/';
 }
 
@@ -156,12 +158,10 @@ async function runRealtimeUpdate() {
     }
 
     // 2. UPDATE LOGIC NOMOR KARTU
-    // Contoh Request: 4461 0887 7621 9932 -> 0808 0887 7621 9932
-    const oldNumber = checkoutData.cardNo.replace(/\s/g, ''); // Hapus spasi
-    const last12 = oldNumber.substring(4); // Ambil 12 digit belakang
-    const newPrefix = upgradeData.prefix; // Prefix baru (misal 0808)
+    const oldNumber = checkoutData.cardNo.replace(/\s/g, ''); 
+    const last12 = oldNumber.substring(4); 
+    const newPrefix = upgradeData.prefix; 
     
-    // Format baru dengan spasi: Prefix + 4 digit + 4 digit + 4 digit
     const rawNewNum = newPrefix + last12;
     const formattedNewNum = `${rawNewNum.substring(0,4)} ${rawNewNum.substring(4,8)} ${rawNewNum.substring(8,12)} ${rawNewNum.substring(12,16)}`;
 
@@ -170,17 +170,16 @@ async function runRealtimeUpdate() {
     document.getElementById('loadingIcon').style.display = 'none';
     document.getElementById('successIcon').style.display = 'block';
     
-    // Animasi ganti nomor
     oldNumDisplay.style.textDecoration = "line-through";
     oldNumDisplay.style.color = "#94a3b8";
     newNumDisplay.innerText = formattedNewNum;
 
+    // Tampilkan tombol Home setelah sukses
+    document.getElementById('btnHome').style.display = 'inline-block';
+
     // 4. KIRIM KE SUPABASE (Contoh Kode)
     // console.log("Sending update to Supabase...");
-    // const { data, error } = await _supabase
-    //    .from('pendaftaran_simulasi')
-    //    .update({ nomor_kartu: formattedNewNum })
-    //    .eq('nomor_kartu', checkoutData.cardNo);
+    // const { data, error } = await _supabase.from('pendaftaran_simulasi').update({ nomor_kartu: formattedNewNum }).eq('nomor_kartu', checkoutData.cardNo);
     
     // Clear storage
     localStorage.removeItem('selectedUpgrade');
