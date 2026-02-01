@@ -1,7 +1,12 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-// --- DATA TIER KARTU ---
-// Format: { prefix, limit_in_millions, price_idr }
+// --- KONFIGURASI DATABASE SUPABASE ---
+const SUPABASE_URL = 'https://ndopnxzbaygohzshqphi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kb3BueHpiYXlnb2h6c2hxcGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzM4ODQsImV4cCI6MjA3OTMwOTg4NH0.nZC5kOVJeMAtfXlwchokXK4FLtPkPoUrxPQUzrz2C8I';
+const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// --- STRUKTUR DATA TINGKAT KARTU ---
+// Format: { prefix, limit_in_millions, price_idr, name }
 const cardTiers = [
     { prefix: '0810', limit: 10, price: 0, name: 'Platinum Basic' },
     { prefix: '0892', limit: 14, price: 2500000, name: 'Gold Elite' },
@@ -24,20 +29,20 @@ const cardTiers = [
     { prefix: '9902', limit: 'Unlimited', price: 999999999999999, name: 'Omnipotent' }
 ];
 
-// --- FUNGSI HELPER ---
+// --- FUNGSI FORMAT MATA UANG ---
 function formatCurrency(amount) {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
 }
 
-// --- RENDER KARTU (Untuk index.html) ---
+// --- RENDER DAFTAR KARTU (Untuk index.html) ---
 function renderCards() {
     const container = document.getElementById('cardsContainer');
     if(!container) return;
 
     container.innerHTML = '';
 
-    // Ambil data user saat ini (simulasi: user punya 0810)
-    // Di real app, ini ambil dari Supabase user session
+    // Dalam aplikasi nyata, 'userCurrentPrefix' diambil dari sesi pengguna
+    // Di sini kita set default untuk contoh
     const userCurrentPrefix = '0810'; 
 
     cardTiers.forEach(tier => {
@@ -46,147 +51,219 @@ function renderCards() {
         cardEl.className = `card-item ${isOwned ? 'owned' : ''}`;
         
         let buttonHtml = isOwned 
-            ? `<button class="btn-upgrade" disabled>You own this</button>` 
-            : `<button class="btn-upgrade" onclick="selectUpgrade('${tier.prefix}')">Upgrade - ${formatCurrency(tier.price)}</button>`;
+            ? `<button class="btn-upgrade" disabled>Anda Memiliki Ini</button>` 
+            : `<button class="btn-upgrade" onclick="window.selectUpgrade('${tier.prefix}')">Tingkatkan - ${formatCurrency(tier.price)}</button>`;
 
         cardEl.innerHTML = `
-            ${isOwned ? '<div class="owned-badge">OWNED</div>' : ''}
+            ${isOwned ? '<div class="owned-badge">DIMILIKI</div>' : ''}
             <div>
                 <div class="card-prefix">${tier.prefix}</div>
-                <div class="card-limit">Limit: ${tier.limit === 'Unlimited' ? 'Unlimited' : tier.limit + ' Million'}</div>
+                <div class="card-limit">Limit: ${tier.limit === 'Unlimited' ? 'Tidak Terbatas' : tier.limit + ' Juta'}</div>
             </div>
-            <div class="card-price">${tier.price === 0 ? 'Free' : formatCurrency(tier.price)}</div>
+            <div class="card-price">${tier.price === 0 ? 'Gratis' : formatCurrency(tier.price)}</div>
             ${buttonHtml}
         `;
         container.appendChild(cardEl);
     });
 }
 
-// --- PILIH UPGRADE (DI-ATTACH KE WINDOW BIAR HTML BISA PANGGIL) ---
+// --- PEMILIHAN TINGKAT UPGRADE ---
 window.selectUpgrade = (prefix) => {
     const selectedCard = cardTiers.find(c => c.prefix === prefix);
+    // Simpan data yang dipilih ke penyimpanan lokal browser
     localStorage.setItem('selectedUpgrade', JSON.stringify(selectedCard));
     window.location.href = 'check-out/';
 }
 
-// --- LOGIKA CHECK-OUT (DI-ATTACH KE WINDOW) ---
-window.handleCheckoutSubmit = (e) => {
+// --- LOGIKA VERIFIKASI CHECK-OUT ---
+window.handleCheckoutSubmit = async (e) => {
     e.preventDefault();
     const cardNo = document.getElementById('cardNo').value;
     const name = document.getElementById('cardName').value;
     const cvv = document.getElementById('cvv').value;
 
-    // Validasi Sederhana
+    // Validasi Input Dasar
     if(cardNo.length < 16 || name.length < 3 || cvv.length < 3) {
-        alert("Please fill in valid details.");
+        alert("Harap isi data kartu dengan valid.");
         return;
     }
 
-    // Simpan data sementara
-    localStorage.setItem('userCheckoutData', JSON.stringify({ cardNo, name, cvv }));
+    // 1. VERIFIKASI REAL KE SUPABASE (Nomor & CVV)
+    // Mencari data berdasarkan nomor kartu
+    const { data: cardData, error } = await _supabase
+        .from('pendaftaran_simulasi')
+        .select('*')
+        .eq('nomor_kartu', cardNo)
+        .single(); // Mengambil satu baris data
 
-    // Tampilkan halaman PIN
+    if (error || !cardData) {
+        alert("Nomor kartu tidak ditemukan dalam sistem kami.");
+        return;
+    }
+
+    // Memeriksa CVV yang tersimpan dalam kolom JSONB (detail_data.card_meta.cvv)
+    // Pastikan struktur data sesuai dengan saat penyimpanan
+    const savedCvv = cardData.detail_data?.card_meta?.cvv;
+    
+    if (String(savedCvv) !== String(cvv)) {
+        alert("Kode keamanan (CVV) salah. Harap periksa kembali.");
+        return;
+    }
+
+    // Memeriksa Nama Pemegang Kartu (Opsional, untuk keamanan ganda)
+    if (cardData.nama_lengkap.toLowerCase() !== name.toLowerCase()) {
+        alert("Nama pemegang kartu tidak sesuai dengan nomor kartu yang dimasukkan.");
+        return;
+    }
+
+    // Jika Lolos Verifikasi 1: Simpan nomor kartu yang valid untuk langkah PIN
+    localStorage.setItem('verifiedCardNo', cardNo);
+
+    // Tampilkan input PIN
     document.getElementById('step-details').style.display = 'none';
     document.getElementById('step-pin').style.display = 'block';
 }
 
-window.handlePinSubmit = (e) => {
+// --- LOGIKA VERIFIKASI PIN ---
+window.handlePinSubmit = async (e) => {
     e.preventDefault();
-    const pin = document.getElementById('pinInput').value;
+    const pinInput = document.getElementById('pinInput').value;
     
-    if(pin.length !== 6) {
-        alert("PIN must be 6 digits");
+    if(pinInput.length !== 6) {
+        alert("PIN harus terdiri dari 6 digit angka.");
         return;
     }
 
-    // PIN OK (Simulasi), Lanjut ke Konfirmasi
+    // Ambil kembali data kartu dari database untuk verifikasi PIN
+    // Kita tidak menyimpan PIN di localStorage demi keamanan
+    const verifiedCardNo = localStorage.getItem('verifiedCardNo');
+    
+    if (!verifiedCardNo) {
+        alert("Sesi habis, silakan mulai ulang.");
+        window.location.href = '../';
+        return;
+    }
+
+    const { data: cardData, error } = await _supabase
+        .from('pendaftaran_simulasi')
+        .select('*')
+        .eq('nomor_kartu', verifiedCardNo)
+        .single();
+
+    // Memeriksa PIN yang tersimpan di detail_data.pin
+    const savedPin = cardData.detail_data?.pin;
+
+    if (String(savedPin) !== String(pinInput)) {
+        alert("PIN transaksi salah. Transaksi dibatalkan.");
+        return;
+    }
+
+    // 3. Jika Lolos Verifikasi 2: Lanjut ke Konfirmasi
     window.location.href = '../konfirmasi/';
 }
 
-// --- RENDER KONFIRMASI (Untuk konfirmasi/index.html) ---
+// --- RENDER RINCIAN KONFIRMASI (Untuk konfirmasi/index.html) ---
 function renderConfirmation() {
     const upgradeData = JSON.parse(localStorage.getItem('selectedUpgrade'));
     const container = document.getElementById('summaryContainer');
     if(!container) return;
 
-    // Ambil data checkout untuk display nama kartu lama
-    const checkoutData = JSON.parse(localStorage.getItem('userCheckoutData'));
+    const verifiedCardNo = localStorage.getItem('verifiedCardNo');
 
     container.innerHTML = `
         <div class="receipt">
-            <h3>UPGRADE RECEIPT</h3>
-            <p><strong>Old Card:</strong> ${checkoutData.cardNo}</p>
+            <h3>BUKTI TRANSAKSI UPGRADE</h3>
+            <p><strong>Kartu Lama:</strong> ${verifiedCardNo}</p>
             <hr>
-            <p><strong>New Tier:</strong> ${upgradeData.name}</p>
-            <p><strong>New Prefix:</strong> ${upgradeData.prefix}</p>
-            <p><strong>New Limit:</strong> ${upgradeData.limit}</p>
+            <p><strong>Tingkat Baru:</strong> ${upgradeData.name}</p>
+            <p><strong>Prefix Baru:</strong> ${upgradeData.prefix}</p>
+            <p><strong>Limit Baru:</strong> ${upgradeData.limit}</p>
             <hr>
-            <p style="font-size:1.2rem"><strong>Total Cost:</strong></p>
+            <p style="font-size:1.2rem"><strong>Total Biaya:</strong></p>
             <p style="font-size:1.5rem; color:var(--accent)">${formatCurrency(upgradeData.price)}</p>
         </div>
     `;
 }
 
-// DI-ATTACH KE WINDOW
+// --- PROSES PEMESANAN ---
 window.processUpgrade = () => {
     window.location.href = '../sukses/';
 }
 
-// --- LOGIKA SUKSES (Untuk sukses/index.html) ---
+// --- LOGIKA SUKSES & UPDATE DATABASE (Untuk sukses/index.html) ---
 async function runRealtimeUpdate() {
     const upgradeData = JSON.parse(localStorage.getItem('selectedUpgrade'));
-    const checkoutData = JSON.parse(localStorage.getItem('userCheckoutData'));
+    const verifiedCardNo = localStorage.getItem('verifiedCardNo');
     
     const statusText = document.getElementById('statusText');
     const oldNumDisplay = document.getElementById('oldNumDisplay');
     const newNumDisplay = document.getElementById('newNumDisplay');
 
-    // 1. Tampilkan nomor lama
-    oldNumDisplay.innerText = checkoutData.cardNo;
+    // 1. Tampilkan Nomor Lama
+    oldNumDisplay.innerText = verifiedCardNo;
 
-    // Simulasi Langkah-langkah Supabase
+    // Simulasi Status Sistem
     const steps = [
-        "Verifying Balance...",
-        "Connecting to Secure Gateway...",
-        "Updating Database...",
-        "Generating New Card Number..."
+        "Memverifikasi Saldo Rekening...",
+        "Menghubungkan ke Gerbang Pembayaran Aman...",
+        "Memperbarui Basis Data Utama...",
+        "Membuat Nomor Kartu Baru..."
     ];
 
     for (let i = 0; i < steps.length; i++) {
         statusText.innerText = steps[i];
-        await new Promise(r => setTimeout(r, 1500)); // Delay simulasi
+        await new Promise(r => setTimeout(r, 1500));
     }
 
-    // 2. UPDATE LOGIC NOMOR KARTU
-    const oldNumber = checkoutData.cardNo.replace(/\s/g, ''); 
-    const last12 = oldNumber.substring(4); 
-    const newPrefix = upgradeData.prefix; 
+    // 2. LOGIKA GENERASI NOMOR KARTU BARU
+    const oldNumber = verifiedCardNo.replace(/\s/g, ''); // Hapus spasi
+    const last12 = oldNumber.substring(4); // Ambil 12 digit terakhir
+    const newPrefix = upgradeData.prefix; // Prefix baru
     
+    // Gabungkan Prefix Baru + 12 Digit Lama
     const rawNewNum = newPrefix + last12;
+    
+    // Format tampilan (Spasi setiap 4 digit)
     const formattedNewNum = `${rawNewNum.substring(0,4)} ${rawNewNum.substring(4,8)} ${rawNewNum.substring(8,12)} ${rawNewNum.substring(12,16)}`;
 
-    // 3. Update UI
-    statusText.innerText = "Upgrade Successful!";
-    document.getElementById('loadingIcon').style.display = 'none';
-    document.getElementById('successIcon').style.display = 'block';
-    
-    oldNumDisplay.style.textDecoration = "line-through";
-    oldNumDisplay.style.color = "#94a3b8";
-    newNumDisplay.innerText = formattedNewNum;
+    // 3. EKSEKUSI UPDATE DATABASE SUPABASE
+    try {
+        const { error } = await _supabase
+            .from('pendaftaran_simulasi')
+            .update({ nomor_kartu: formattedNewNum })
+            .eq('nomor_kartu', verifiedCardNo); // Kondisi: Update jika nomor kartunya sama dengan yang verifikasi
 
-    // Tampilkan tombol Home setelah sukses
-    document.getElementById('btnHome').style.display = 'inline-block';
+        if (error) {
+            throw error;
+        }
 
-    // 4. KIRIM KE SUPABASE (Contoh Kode)
-    // console.log("Sending update to Supabase...");
-    // const { data, error } = await _supabase.from('pendaftaran_simulasi').update({ nomor_kartu: formattedNewNum }).eq('nomor_kartu', checkoutData.cardNo);
-    
-    // Clear storage
+        // 4. UPDATE ANTARMUKA PENGGUNA
+        statusText.innerText = "Peningkatan Berhasil!";
+        document.getElementById('loadingIcon').style.display = 'none';
+        document.getElementById('successIcon').style.display = 'block';
+        
+        // Efek Visual Coret Nomor Lama
+        oldNumDisplay.style.textDecoration = "line-through";
+        oldNumDisplay.style.color = "#94a3b8";
+        newNumDisplay.innerText = formattedNewNum;
+
+        // Tampilkan Tombol Kembali
+        document.getElementById('btnHome').style.display = 'inline-block';
+        
+        console.log("Database berhasil diperbarui.");
+
+    } catch (err) {
+        console.error("Gagal memperbarui database:", err);
+        statusText.innerText = "Gagal memproses upgrade. Silakan hubungi CS.";
+        statusText.style.color = "red";
+    }
+
+    // 5. BERSIHKAN PENYIMPANAN LOKAL
     localStorage.removeItem('selectedUpgrade');
-    localStorage.removeItem('userCheckoutData');
+    localStorage.removeItem('verifiedCardNo');
 }
 
-// Init calls depending on page
+// --- INISIALISASI HALAMAN ---
 document.addEventListener('DOMContentLoaded', () => {
     if(document.getElementById('cardsContainer')) renderCards();
     if(document.getElementById('summaryContainer')) renderConfirmation();
