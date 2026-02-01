@@ -1,115 +1,222 @@
-/* Card Grid Layout */
+:root {
+    --primary: #0f172a;
+    --accent: #b8924e;
+    --success: #10b981;
+    --gray: #94a3b8;
+    --bg-light: #f8fafc;
+    --card-radius: 20px;
+    --input-radius: 12px;
+}
+
+/* --- CARD GRID --- */
 .cards-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
     padding: 20px 0;
 }
 
-/* Card Item */
+/* --- CARD ITEM DESIGN --- */
 .card-item {
     background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    transition: transform 0.2s;
+    border-radius: var(--card-radius);
+    padding: 0; /* Padding handled by internal divs */
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    border: 2px solid transparent;
+    border: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    overflow: hidden;
 }
 
 .card-item:hover {
-    transform: translateY(-5px);
-    border-color: var(--accent, #b8924e);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 35px -5px rgba(0,0,0,0.15);
+    border-color: var(--accent);
 }
 
-.card-item.owned {
-    opacity: 0.6;
-    background: #f1f5f9;
-    cursor: not-allowed;
-    border-color: #cbd5e1;
+/* Dynamic Gradient Background via Inline Styles will be applied here */
+.card-header {
+    padding: 25px;
+    color: white;
+    text-align: center;
+    position: relative;
+}
+
+.card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(4px);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
 }
 
 .card-prefix {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--primary, #0f172a);
-    font-family: monospace;
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    font-family: 'Courier New', monospace;
+}
+
+.card-name {
+    font-size: 1rem;
+    opacity: 0.9;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- FEATURES LIST --- */
+.card-features {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+    flex: 1;
+}
+
+.card-features li {
+    font-size: 0.85rem;
+    color: var(--primary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-features li i {
+    color: var(--accent);
+    font-size: 0.8rem;
 }
 
 .card-limit {
     font-size: 0.9rem;
-    color: var(--gray, #64748b);
-    margin: 5px 0 15px 0;
+    font-weight: 700;
+    color: var(--gray);
+    margin-bottom: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #e2e8f0;
 }
 
 .card-price {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--accent, #b8924e);
-    margin-bottom: 15px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 20px;
 }
 
+/* --- BUTTON --- */
 .btn-upgrade {
     width: 100%;
-    padding: 10px;
-    background: var(--primary, #0f172a);
+    padding: 14px;
+    background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--input-radius);
     font-weight: 600;
     cursor: pointer;
+    font-size: 0.95rem;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.btn-upgrade:disabled {
-    background: #94a3b8;
-    cursor: not-allowed;
+.btn-upgrade:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+}
+
+.btn-upgrade:active {
+    transform: scale(0.98);
+}
+
+/* OWNED STATE */
+.card-item.owned {
+    opacity: 0.7;
+    background: #f1f5f9;
+    transform: none !important;
+    pointer-events: none;
+    filter: grayscale(100%);
+}
+
+.card-item.owned .card-header {
+    background: var(--gray) !important;
 }
 
 .owned-badge {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--success, #10b981);
+    top: -10px;
+    right: 20px;
+    background: var(--success);
     color: white;
-    font-size: 0.7rem;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border-radius: 0 0 10px 10px;
     font-weight: bold;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    z-index: 10;
 }
 
-/* Checkout Styles */
+/* --- MODERN INPUTS (Checkout Form) --- */
 .checkout-section {
     max-width: 500px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 30px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
 .form-input {
     width: 100%;
-    padding: 15px;
-    margin-bottom: 15px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: var(--input-radius);
     font-size: 1rem;
+    font-family: inherit;
+    background: #f8fafc;
+    transition: all 0.3s;
 }
 
-/* Loading Animation */
+.form-input:focus {
+    background: white;
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(184, 146, 78, 0.1);
+}
+
+.form-input::placeholder {
+    color: #94a3b8;
+}
+
+/* --- LOADING ANIMATION --- */
 .loader-ring {
     display: inline-block;
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
 }
 .loader-ring:after {
     content: " ";
     display: block;
-    width: 46px;
-    height: 46px;
-    margin: 8px;
+    width: 48px;
+    height: 48px;
+    margin: 6px;
     border-radius: 50%;
-    border: 5px solid var(--accent);
+    border: 4px solid var(--accent);
     border-color: var(--accent) transparent var(--accent) transparent;
     animation: loader-ring 1.2s linear infinite;
 }
@@ -120,15 +227,17 @@
 
 .receipt {
     background: #fff;
-    padding: 20px;
-    border-top: 2px dashed #000;
-    border-bottom: 2px dashed #000;
-    font-family: monospace;
+    padding: 30px;
+    border-top: 3px dashed #000;
+    border-bottom: 3px dashed #000;
+    font-family: 'Courier New', monospace;
     margin-bottom: 20px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
 }
 
 .success-check {
-    font-size: 4rem;
+    font-size: 5rem;
     color: var(--success);
     margin-bottom: 20px;
+    filter: drop-shadow(0 4px 6px rgba(16, 185, 129, 0.3));
 }

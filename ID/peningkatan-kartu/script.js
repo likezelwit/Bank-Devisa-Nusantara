@@ -5,28 +5,103 @@ const SUPABASE_URL = 'https://ndopnxzbaygohzshqphi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kb3BueHpiYXlnb2h6c2hxcGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzM4ODQsImV4cCI6MjA3OTMwOTg4NH0.nZC5kOVJeMAtfXlwchokXK4FLtPkPoUrxPQUzrz2C8I';
 const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// --- STRUKTUR DATA TINGKAT KARTU ---
-// Format: { prefix, limit_in_millions, price_idr, name }
+// --- STRUKTUR DATA TINGKAT KARTU (Termasuk Warna & Fitur) ---
 const cardTiers = [
-    { prefix: '0810', limit: 10, price: 0, name: 'Platinum Basic' },
-    { prefix: '0892', limit: 14, price: 2500000, name: 'Gold Elite' },
-    { prefix: '0822', limit: 20, price: 8500000, name: 'Titanium' },
-    { prefix: '0812', limit: 24, price: 15000000, name: 'Diamond I' },
-    { prefix: '0878', limit: 27, price: 25000000, name: 'Diamond II' },
-    { prefix: '0864', limit: 31, price: 45000000, name: 'Ruby' },
-    { prefix: '0876', limit: 35, price: 75000000, name: 'Sapphire' },
-    { prefix: '0811', limit: 38, price: 120000000, name: 'Emerald' },
-    { prefix: '0806', limit: 40, price: 250000000, name: 'Amethyst' },
-    { prefix: '0808', limit: 44, price: 500000000, name: 'Black Onyx' },
-    { prefix: '8888', limit: 199, price: 2500000000, name: 'Centurion' },
-    { prefix: '8808', limit: 301, price: 15000000000, name: 'Royal Ascot' },
-    { prefix: '8870', limit: 899, price: 85000000000, name: 'Imperial' },
-    { prefix: '8843', limit: 1000, price: 500000000000, name: 'Sovereign' },
-    { prefix: '8899', limit: 6000, price: 3000000000000, name: 'Globalist' },
-    { prefix: '9012', limit: 10000, price: 15000000000000, name: 'Infinite' },
-    { prefix: '9088', limit: 80000, price: 99000000000000, name: 'Quantum' },
-    { prefix: '9099', limit: 999000, price: 500000000000000, name: 'Galactic' },
-    { prefix: '9902', limit: 'Unlimited', price: 999999999999999, name: 'Omnipotent' }
+    { 
+        prefix: '0810', name: 'Platinum Basic', limit: 10, price: 0, 
+        color: 'linear-gradient(135deg, #94a3b8 0%, #475569 100%)', // Grey/Silver
+        features: ['Free ATM Withdrawal', 'Mobile Banking Basic']
+    },
+    { 
+        prefix: '0892', name: 'Gold Elite', limit: 14, price: 2500000, 
+        color: 'linear-gradient(135deg, #fcd34d 0%, #b45309 100%)', // Gold
+        features: ['Priority Support', '1% Cashback']
+    },
+    { 
+        prefix: '0822', name: 'Titanium', limit: 20, price: 8500000, 
+        color: 'linear-gradient(135deg, #64748b 0%, #1e293b 100%)', // Dark Grey
+        features: ['Lounge Access', '0% Foreign Tx Fee']
+    },
+    { 
+        prefix: '0812', name: 'Diamond I', limit: 24, price: 15000000, 
+        color: 'linear-gradient(135deg, #a5f3fc 0%, #0891b2 100%)', // Cyan
+        features: ['Concierge Basic', 'Travel Insurance']
+    },
+    { 
+        prefix: '0878', name: 'Diamond II', limit: 27, price: 25000000, 
+        color: 'linear-gradient(135deg, #93c5fd 0%, #2563eb 100%)', // Blue
+        features: ['VIP Lounge', 'Hotel Discounts']
+    },
+    { 
+        prefix: '0864', name: 'Ruby', limit: 31, price: 45000000, 
+        color: 'linear-gradient(135deg, #fca5a5 0%, #ef4444 100%)', // Red
+        features: ['Airport Fast Track', 'Spa Vouchers']
+    },
+    { 
+        prefix: '0876', name: 'Sapphire', limit: 35, price: 75000000, 
+        color: 'linear-gradient(135deg, #c084fc 0%, #7e22ce 100%)', // Purple
+        features: ['Golf Membership', 'Fine Dining Rewards']
+    },
+    { 
+        prefix: '0811', name: 'Emerald', limit: 38, price: 120000000, 
+        color: 'linear-gradient(135deg, #6ee7b7 0%, #059669 100%)', // Green
+        features: ['Private Butler', 'Car Rental Premium']
+    },
+    { 
+        prefix: '0806', name: 'Amethyst', limit: 40, price: 250000000, 
+        color: 'linear-gradient(135deg, #d8b4fe 0%, #7e22ce 100%)', // Deep Purple
+        features: ['Yacht Charter Access', 'Event Invites']
+    },
+    { 
+        prefix: '0808', name: 'Black Onyx', limit: 44, price: 500000000, 
+        color: 'linear-gradient(135deg, #1e293b 0%, #000000 100%)', // Black
+        features: ['No Credit Limit Check', '24/7 Personal Mgr']
+    },
+    { 
+        prefix: '8888', name: 'Centurion', limit: 199, price: 2500000000, 
+        color: 'linear-gradient(135deg, #b45309 0%, #000000 100%)', // Black/Gold
+        features: ['Jet Charter Points', 'Lifetime Membership']
+    },
+    { 
+        prefix: '8808', name: 'Royal Ascot', limit: 301, price: 15000000000, 
+        color: 'linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)', // Deep Red
+        features: ['Private Island Access', 'Royal Concierge']
+    },
+    { 
+        prefix: '8870', name: 'Imperial', limit: 899, price: 85000000000, 
+        color: 'linear-gradient(135deg, #4f46e5 0%, #1e1b4b 100%)', // Deep Indigo
+        features: ['Personal Security Detail', 'Global Visa Waiver']
+    },
+    { 
+        prefix: '8843', name: 'Sovereign', limit: 1000, price: 500000000000, 
+        color: 'linear-gradient(135deg, #0ea5e9 0%, #0f172a 100%)', // Dark Blue
+        features: ['Asset Protection', 'Real Estate Discounts']
+    },
+    { 
+        prefix: '8899', name: 'Globalist', limit: 6000, price: 3000000000000, 
+        color: 'linear-gradient(135deg, #facc15 0%, #a16207 100%)', // Gold/Dark
+        features: ['Private Aviation', 'Global Tax Consultation']
+    },
+    { 
+        prefix: '9012', name: 'Infinite', limit: 10000, price: 15000000000000, 
+        color: 'linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%)', // White/Silver
+        features: ['Immigration Support', 'Medical Emergency Team']
+    },
+    { 
+        prefix: '9088', name: 'Quantum', limit: 80000, price: 99000000000000, 
+        color: 'linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%)', // Electric Blue
+        features: ['Space Tourism Tickets', 'AI Personal Assistant']
+    },
+    { 
+        prefix: '9099', name: 'Galactic', limit: 999000, price: 500000000000000, 
+        color: 'linear-gradient(135deg, #a855f7 0%, #4c1d95 100%)', // Neon Purple
+        features: ['Space Station Visit', 'Orbital Banking']
+    },
+    { 
+        prefix: '9902', name: 'Omnipotent', limit: 'Unlimited', price: 999999999999999, 
+        color: 'linear-gradient(135deg, #000000 0%, #ffd700 100%)', // Black/Gold Premium
+        features: ['Total Anonymity', 'World Domination Key', 'God Mode Access']
+    }
 ];
 
 // --- FUNGSI FORMAT MATA UANG ---
@@ -40,8 +115,6 @@ function renderCards() {
     if(!container) return;
 
     container.innerHTML = '';
-
-    // Dalam aplikasi nyata, 'userCurrentPrefix' diambil dari sesi pengguna
     const userCurrentPrefix = '0810'; 
 
     cardTiers.forEach(tier => {
@@ -49,18 +122,35 @@ function renderCards() {
         const cardEl = document.createElement('div');
         cardEl.className = `card-item ${isOwned ? 'owned' : ''}`;
         
-        let buttonHtml = isOwned 
-            ? `<button class="btn-upgrade" disabled>Anda Memiliki Ini</button>` 
-            : `<button class="btn-upgrade" onclick="window.selectUpgrade('${tier.prefix}')">Tingkatkan - ${formatCurrency(tier.price)}</button>`;
+        // Generate Features HTML
+        const featuresHtml = tier.features.map(f => 
+            `<li><i class="fas fa-check-circle"></i> ${f}</li>`
+        ).join('');
 
         cardEl.innerHTML = `
             ${isOwned ? '<div class="owned-badge">DIMILIKI</div>' : ''}
-            <div>
+            
+            <div class="card-header" style="background: ${tier.color};">
+                <div class="card-badge">Tingkat ${cardTiers.indexOf(tier) + 1}</div>
                 <div class="card-prefix">${tier.prefix}</div>
-                <div class="card-limit">Limit: ${tier.limit === 'Unlimited' ? 'Tidak Terbatas' : tier.limit + ' Juta'}</div>
+                <div class="card-name">${tier.name}</div>
             </div>
-            <div class="card-price">${tier.price === 0 ? 'Gratis' : formatCurrency(tier.price)}</div>
-            ${buttonHtml}
+
+            <div class="card-body">
+                <ul class="card-features">
+                    ${featuresHtml}
+                </ul>
+                
+                <div class="card-limit">
+                    Limit: ${tier.limit === 'Unlimited' ? '∞ Tidak Terbatas' : tier.limit + ' Juta'}
+                </div>
+                
+                <div class="card-price">${tier.price === 0 ? 'Gratis' : formatCurrency(tier.price)}</div>
+                
+                ${!isOwned ? 
+                    `<button class="btn-upgrade" onclick="window.selectUpgrade('${tier.prefix}')">Tingkatkan Sekarang</button>` 
+                    : ''}
+            </div>
         `;
         container.appendChild(cardEl);
     });
@@ -204,11 +294,10 @@ async function runRealtimeUpdate() {
     }
 
     // PARSING SALDO SAAT INI
-    // Mengubah string mata uang (contoh: "Rp 2.500.000") menjadi angka (2500000)
     const balanceString = currentCardData.detail_data?.account_info?.balance || "0";
     const currentBalance = parseInt(balanceString.replace(/[^0-9]/g, '')) || 0;
     
-    // HARGA UPGRADE (Dalam bentuk angka murni)
+    // HARGA UPGRADE
     const upgradePrice = upgradeData.price;
 
     // CEK APAKAH SALDO MENCUKUPI
@@ -219,7 +308,6 @@ async function runRealtimeUpdate() {
         
         document.getElementById('loadingIcon').style.display = 'none';
         
-        // Tampilkan pesan detail menggunakan alert browser
         alert(
             `TRANSAKSI DITOLAK.\n\n` +
             `Saldo Anda: ${formatCurrency(currentBalance)}\n` +
@@ -258,7 +346,6 @@ async function runRealtimeUpdate() {
 
     // 3. EKSEKUSI UPDATE DATABASE SUPABASE
     try {
-        // Update Nomor Kartu
         const { error: updateError } = await _supabase
             .from('pendaftaran_simulasi')
             .update({ nomor_kartu: formattedNewNum })
@@ -268,12 +355,9 @@ async function runRealtimeUpdate() {
             throw updateError;
         }
 
-        // (Opsional) Logika Pengurangan Saldo Bisa Ditambahkan Disini Jika Ingin Simulasi Lebih Real
-        // await _supabase.from('pendaftaran_simulasi').update({ ...detail_data }).eq(...)
-
         // 4. UPDATE ANTARMUKA PENGGUNA
         statusText.innerText = "Peningkatan Berhasil!";
-        statusText.style.color = "var(--primary)"; // Kembalikan warna ke normal
+        statusText.style.color = "var(--primary)"; 
         document.getElementById('loadingIcon').style.display = 'none';
         document.getElementById('successIcon').style.display = 'block';
         
